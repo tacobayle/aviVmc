@@ -1,0 +1,37 @@
+#cloud-config
+users:
+  - default
+  - name: aviadmin
+    lock_passwd: true
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    chpasswd: {expire: False}
+    ssh_authorized_keys:
+      - ${pubkey}
+
+chpasswd:
+  list: |
+    ubuntu: $password
+    aviadmin: $password
+  expire: False
+
+write_files:
+  - content: |
+      #!/bin/bash
+      # populate /etc/hosts
+      # apt config
+      sudo apt update
+      sudo apt install -y apache2
+      sudo mv /var/www/html/index.html /var/www/html/index.html.old
+      echo -e "Hello World - cloud is VMC - Node is $(hostname)" | sudo tee /var/www/html/index.html
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ubuntu ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/ubuntu
+
+runcmd:
+  - /opt/bootstrap.sh

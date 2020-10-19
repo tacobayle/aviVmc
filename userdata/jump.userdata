@@ -1,0 +1,63 @@
+#cloud-config
+users:
+  - default
+  - name: aviadmin
+    lock_passwd: true
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    chpasswd: {expire: False}
+    ssh_authorized_keys:
+      - ${pubkey}
+
+chpasswd:
+  list: |
+    ubuntu: $password
+    aviadmin: $password
+  expire: False
+
+packages:
+  - language-pack-en
+  - python3-pip
+  - python-pip
+  - python-jmespath
+
+write_files:
+  - content: |
+      #!/bin/bash
+      pip install pyvmomi
+      pip install dnspython
+      pip3 install dnspython
+      pip install --upgrade pip setuptools
+      pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
+      pip install ansible==${ansibleVersion}
+      pip install avisdk==${avisdkVersion}
+      sudo -u ubuntu ansible-galaxy install -f avinetworks.avisdk
+      sudo mkdir -p /opt/ansible/inventory
+      sudo tee /opt/ansible/inventory/inventory.vmware.yml  > /dev/null <<EOT
+      plugin: vmware_vm_inventory
+      strict: False
+      hostname: ${vsphere_server}
+      username: ${vsphere_user}
+      password: ${vsphere_password}
+      validate_certs: False
+      with_tags: True
+      EOT
+      sudo mkdir -p /etc/ansible
+      sudo tee /etc/ansible/ansible.cfg > /dev/null <<EOT
+      [defaults]
+      private_key_file = /home/${username}/.ssh/${basename(privateKey)}
+      host_key_checking = False
+      host_key_auto_add = True
+      [inventory]
+      enable_plugins = vmware_vm_inventory
+      EOT
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ubuntu ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/ubuntu
+
+runcmd:
+  - /opt/bootstrap.sh

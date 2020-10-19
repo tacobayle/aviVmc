@@ -1,0 +1,37 @@
+#cloud-config
+users:
+  - default
+  - name: aviadmin
+    lock_passwd: true
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    chpasswd: {expire: False}
+    ssh_authorized_keys:
+      - ${pubkey}
+
+chpasswd:
+  list: |
+    ubuntu: $password
+    aviadmin: $password
+  expire: False
+
+write_files:
+  - content: |
+      #!/bin/bash
+      # apt config
+      sudo apt-get update
+      sudo apt install -y mysql-server
+      sudo apt install -y python-pip
+      sudo apt install -y python-pip3
+      pip install PyMySQL
+      pip3 install PyMySQL
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ubuntu ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/ubuntu
+
+runcmd:
+  - /opt/bootstrap.sh
