@@ -4,7 +4,7 @@ resource "vsphere_tag" "ansible_group_mysql" {
 }
 
 data "template_file" "mysql_userdata" {
-  count = length(var.mysqlIpsMgt)
+  count = var.mysql["count"]
   template = file("${path.module}/userdata/mysql.userdata")
   vars = {
     password     = var.mysql["password"]
@@ -65,5 +65,5 @@ resource "vsphere_virtual_machine" "mysql" {
      user-data   = base64encode(data.template_file.mysql_userdata[count.index].rendered)
    }
  }
- 
+
 }

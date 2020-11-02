@@ -19,14 +19,26 @@ variable "datastore" {
   default     = "WorkloadDatastore"
 }
 
+variable "resource_pool" {
+  default     = "Cluster-1/Resources"
+}
+
+variable "folder" {
+  default     = "AviTf"
+}
+
+variable "folderSe" {
+  default     = "aviSe"
+}
+
 variable "networkMgmt" {
   type = map
   default = {
   name     = "avi-mgmt"
-  transportZoneName = "vmc-overlay-tz"
   cidr = "10.1.1.1/24" # needs to start with the first valid Ip of the subnet
   networkRangeBegin = "10.1.1.11"
   networkRangeEnd = "10.1.1.50"
+  subnet = "10.1.1.0/24"
   }
 }
 
@@ -34,10 +46,10 @@ variable "networkBackend" {
   type = map
   default = {
   name     = "avi-backend"
-  transportZoneName = "vmc-overlay-tz"
   cidr = "10.1.2.1/24" # needs to start with the first valid Ip of the subnet
   networkRangeBegin = "10.1.2.11"
   networkRangeEnd = "10.1.2.50"
+  subnet = "10.1.2.0/24"
   }
 }
 
@@ -45,21 +57,17 @@ variable "networkVip" {
   type = map
   default = {
   name     = "avi-vip"
-  transportZoneName = "vmc-overlay-tz"
   cidr = "10.1.3.1/24" # needs to start with the first valid Ip of the subnet
-  networkRangeBegin = "10.1.3.11"
-  networkRangeEnd = "10.1.3.50"
+  networkRangeBegin = "10.1.3.11" # for NSXT segment
+  networkRangeEnd = "10.1.3.50" # for NSXT segment
+  dhcp_enabled = "no"
+  ipStartPool = "10.1.3.100" # for Avi IPAM
+  ipEndPool = "10.1.3.119" # for Avi IPAM
+  subnet = "10.1.3.0/24"
+  type = "V4"
   }
 }
 
-variable "folder" {
-  default     = "AviTf"
-}
-#
-variable "resource_pool" {
-  default     = "Cluster-1/Resources"
-}
-#
 variable "controller" {
   type = map
   default = {
@@ -73,13 +81,14 @@ variable "controller" {
     environment = "VMWARE"
     dnsMain = "8.8.8.8"
     ntpMain = "95.81.173.155"
+    floatingIp = "1.1.1.1"
   }
 }
-#
+
 variable "wait_for_guest_net_timeout" {
   default = "5"
 }
-#
+
 variable "jump" {
   type = map
   default = {
@@ -103,14 +112,14 @@ variable "ansible" {
     aviPbAbsentUrl = "https://github.com/tacobayle/ansiblePbAviAbsent"
     aviPbAbsentTag = "v1.36"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v2.11"
+    aviConfigureTag = "v2.53"
     version = "2.9.12"
     opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
     opencartInstallTag = "v1.19"
+    directory = "ansible"
   }
 }
 
-#
 variable "backend" {
   type = map
   default = {
@@ -123,7 +132,7 @@ variable "backend" {
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
   }
 }
-#
+
 variable "opencart" {
   type = map
   default = {
@@ -138,7 +147,7 @@ variable "opencart" {
     subnetSecondary = "/24"
   }
 }
-#
+
 variable "mysql" {
   type = map
   default = {
@@ -152,7 +161,6 @@ variable "mysql" {
     subnetSecondary = "/24"
   }
 }
-#
 
 variable "client" {
   type = map
@@ -168,86 +176,20 @@ variable "client" {
     netplanFile = "/etc/netplan/50-cloud-init.yaml"
     dnsMain = "10.206.8.130"
     dnsSec = "10.206.8.131"
+    count = 1
   }
 }
-#
-variable "backendIpsMgt" {
-  type = list
-  default = ["10.206.112.120/22", "10.206.112.123/22"]
-}
-#
-variable "opencartIpsMgt" {
-  type = list
-  default = ["100.64.129.201", "100.64.129.202"]
-}
-#
-variable "mysqlIpsMgt" {
-  type = list
-  default = ["100.64.129.200"]
-}
-#
-variable "clientIpsMgt" {
-  type = list
-  default = ["10.206.112.114/22"]
-}
-#
-### Ansible variables
-#
-variable "ansibleHostFile" {
-  default = "ansible/hosts"
-}
-#
-variable "ansibleDirectory" {
-  default = "ansible"
-}
-#
+
 variable "avi_password" {}
 variable "avi_user" {}
-#
-variable "avi_cloud" {
-  type = map
-  default = {
-    name = "CloudVmw"
-    network = "vxw-dvs-34-virtualwire-3-sid-6120002-wdc-06-vc12-avi-mgmt"
-    dhcp_enabled = "true"
-    networkDhcpEnabled = "true"
-    networkExcludeDiscoveredSubnets = "true"
-    networkVcenterDvs= "true"
-  }
-}
-#
-variable "avi_network_vip" {
-  type = map
-  default = {
-    name = "vxw-dvs-34-virtualwire-120-sid-6120119-wdc-06-vc12-avi-dev116"
-    subnet = "100.64.133.0/24"
-    begin = "100.64.133.50"
-    end = "100.64.133.99"
-    type = "V4"
-    exclude_discovered_subnets = "true"
-    vcenter_dvs = "true"
-    dhcp_enabled = "no"
-  }
-}
-#
-variable "avi_network_backend" {
-  type = map
-  default = {
-    subnet = "100.64.129.0/24"
-    type = "V4"
-    dhcp_enabled = "yes"
-    exclude_discovered_subnets = "true"
-    vcenter_dvs = "true"
-  }
-}
-#
+
 variable "domain" {
   type = map
   default = {
-    name = "vmw.avidemo.fr"
+    name = "vmc.avidemo.fr"
   }
 }
-#
+
 variable "avi_gslb" {
   type = map
   default = {
@@ -259,7 +201,7 @@ variable "avi_gslb" {
     secondaryFqdn = "controller.aws.avidemo.fr"
   }
 }
-#
+
 variable "gslbProfile" {
   type = map
   default = {
@@ -268,6 +210,7 @@ variable "gslbProfile" {
     fileName = "AviGeoDb.txt.gz"
   }
 }
+
 variable "avi_gslbservice" {
   type = map
   default = {

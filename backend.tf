@@ -14,14 +14,14 @@ data "template_file" "backend_userdata" {
     pubkey       = file(var.jump["public_key_path"])
   }
 }
-#
+
 data "vsphere_virtual_machine" "backend" {
   name          = var.backend["template_name"]
   datacenter_id = data.vsphere_datacenter.dc.id
 }
-#
+
 resource "vsphere_virtual_machine" "backend" {
-  count            = length(var.backendIpsMgt)
+  count            = var.backend["count"]
   name             = "backend-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -67,5 +67,5 @@ resource "vsphere_virtual_machine" "backend" {
      user-data   = base64encode(data.template_file.backend_userdata[count.index].rendered)
    }
  }
- 
+
 }

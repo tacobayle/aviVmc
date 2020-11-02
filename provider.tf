@@ -13,3 +13,8 @@ provider "nsxt" {
   allow_unverified_ssl = true
   enforcement_point    = "vmc-enforcementpoint"
 }
+
+provider "vmc" {
+  refresh_token = var.vmc_nsx_token
+  org_id = var.vmc_org_id
+}

@@ -4,7 +4,7 @@ resource "vsphere_tag" "ansible_group_client" {
 }
 
 data "template_file" "client_userdata" {
-  count = length(var.clientIpsMgt)
+  count = var.client["count"]
   template = file("${path.module}/userdata/client.userdata")
   vars = {
     password     = var.client["password"]
@@ -18,7 +18,7 @@ data "vsphere_virtual_machine" "client" {
 }
 
 resource "vsphere_virtual_machine" "client" {
-  count            = length(var.clientIpsMgt)
+  count            = var.client["count"]
   name             = "client-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id

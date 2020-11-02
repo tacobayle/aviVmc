@@ -4,7 +4,7 @@ resource "vsphere_tag" "ansible_group_opencart" {
 }
 
 data "template_file" "opencart_userdata" {
-  count = length(var.opencartIpsMgt)
+  count            = var.opencart["count"]
   template = file("${path.module}/userdata/opencart.userdata")
   vars = {
     password     = var.opencart["password"]
