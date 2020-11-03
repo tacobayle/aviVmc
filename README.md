@@ -4,28 +4,34 @@
 Spin up a full Avi environment (through Terraform) in VMC
 
 ## Prerequisites:
-- Make sure terraform in installed in the orchestrator VM
-- Make sure VMware credential/details are configured as environment variable:
+- Terraform installed in the orchestrator VM
+- The following environment variables need to be defined:
 ```
-TF_VAR_vmc_vsphere_password=******
-TF_VAR_vmc_vsphere_user=******
-TF_VAR_vmc_org_id=******
-TF_VAR_vmc_nsx_server=******
-TF_VAR_vmc_nsx_token=******
-TF_VAR_vmc_vsphere_server=******
+TF_VAR_vmc_vsphere_password=blablabla
+TF_VAR_vmc_vsphere_user=blablabla
+TF_VAR_vmc_org_id=blablabla
+TF_VAR_vmc_nsx_server=blablabla
+TF_VAR_vmc_nsx_token=blablabla
+TF_VAR_vmc_vsphere_server=blablabla
+TF_VAR_avi_user=blablabla
+TF_VAR_avi_password=blablabla
 ```
-- Make sure you have VM template file in V-center:
+- The following VM templates need to be defined in V-center:
 ```
 - ubuntu-bionic-18.04-cloudimg-template
 - controller-20.1.1-9071-template
 ```
+![](.README_images/baba5c92.png)
+
+- The following firewall Gateway need to be defined:
+
+![](.README_images/d9b432c2.png)
 
 ## Environment:
 
 Terraform Plan has/have been tested against:
 
 ### terraform
-
 ```
 Your version of Terraform is out of date! The latest version
 is 0.13.5. You can update by downloading from https://www.terraform.io/downloads.html
@@ -44,19 +50,21 @@ Avi 20.1.1 with one controller node
 ```
 
 ### VMC:
+```
 - 1 node
+```
 
 ## Input/Parameters:
-1. All the paramaters/variables are stored in variables.tf or ansible.tf
+1. All the parameters/variables defined in variables.tf and ansible.tf
 
-## Use the the terraform script to:
+## Use the terraform script to:
 - Create a new folder within v-center
 - Spin up 1 Avi Controller
 - Spin up 2 backend VM(s)
 - Spin up 2 web opencart VM(s)
 - Spin up 1 mysql server
 - Spin up 1 client server(s) - while true ; do ab -n 1000 -c 1000 https://100.64.133.51/ ; done - with two interfaces: static for mgmt, dhcp for web traffic
-- Spin up a jump server with ansible intalled - userdata to install packages
+- Spin up a jump server with ansible installed - userdata to install packages
 - Create a yaml variable file - in the jump server
 - Call ansible to run the opencart config (git clone)
 - Call ansible to do the Avi configuration (git clone)
@@ -69,4 +77,4 @@ Avi 20.1.1 with one controller node
 
 ## Improvement:
 
-### future devlopment:
+### future development:
