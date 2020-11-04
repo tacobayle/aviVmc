@@ -97,10 +97,12 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v2.8"
+    aviConfigureTag = "v2.81"
     opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
     opencartInstallTag = "v1.19"
     directory = "ansible"
+    jsonFile = "~/ansible/vars/fromTf.json"
+    yamlFile = "~/ansible/vars/fromTerraform.yml"
   }
 }
 
@@ -177,12 +179,14 @@ variable "serviceEngineGroup" {
       cpu_reserve = "true"
       memory_per_se = "4096"
       mem_reserve = "true"
+      cloud_ref = "cloudNoAccess"
       extra_shared_config_memory = "0"
-      networks = "avi-vip\",\"avi-backend"
+      networks = ["avi-vip", "avi-backend"]
     },
     {
       name = "seGroupGslb"
       numberOfSe = "1"
+      cloud_ref = "cloudNoAccess"
       ha_mode = "HA_MODE_SHARED"
       min_scaleout_per_vs = "1"
       disk_per_se = "25"
@@ -191,7 +195,7 @@ variable "serviceEngineGroup" {
       memory_per_se = "8192"
       mem_reserve = "true"
       extra_shared_config_memory = "2000"
-      networks = "avi-vip"
+      networks = ["avi-vip"]
     },
   ]
 }

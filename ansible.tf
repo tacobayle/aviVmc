@@ -1,28 +1,28 @@
-data "template_file" "itemServiceEngineGroup" {
-  template = "${file("templates/itemServiceEngineGroup.json.tmpl")}"
-  count    = "${length(var.serviceEngineGroup)}"
-  vars = {
-    name = "${lookup(var.serviceEngineGroup[count.index], "name", "what")}"
-    numberOfSe = "${lookup(var.serviceEngineGroup[count.index], "numberOfSe", "what")}"
-    ha_mode = "${lookup(var.serviceEngineGroup[count.index], "ha_mode", "what")}"
-    min_scaleout_per_vs = "${lookup(var.serviceEngineGroup[count.index], "min_scaleout_per_vs", "what")}"
-    disk_per_se = "${lookup(var.serviceEngineGroup[count.index], "disk_per_se", "what")}"
-    vcpus_per_se = "${lookup(var.serviceEngineGroup[count.index], "vcpus_per_se", "what")}"
-    cpu_reserve = "${lookup(var.serviceEngineGroup[count.index], "cpu_reserve", "what")}"
-    memory_per_se = "${lookup(var.serviceEngineGroup[count.index], "memory_per_se", "what")}"
-    mem_reserve = "${lookup(var.serviceEngineGroup[count.index], "mem_reserve", "what")}"
-    cloud_ref = var.avi_cloud["name"]
-    extra_shared_config_memory = "${lookup(var.serviceEngineGroup[count.index], "extra_shared_config_memory", "what")}"
-    networks = var.serviceEngineGroup[count.index]["networks"]
-  }
-}
-
-data "template_file" "serviceEngineGroup" {
-  template = "${file("templates/serviceEngineGroup.json.tmpl")}"
-  vars = {
-    serviceEngineGroup = "${join(",", data.template_file.itemServiceEngineGroup.*.rendered)}"
-  }
-}
+//data "template_file" "itemServiceEngineGroup" {
+//  template = "${file("templates/itemServiceEngineGroup.json.tmpl")}"
+//  count    = "${length(var.serviceEngineGroup)}"
+//  vars = {
+//    name = "${lookup(var.serviceEngineGroup[count.index], "name", "what")}"
+//    numberOfSe = "${lookup(var.serviceEngineGroup[count.index], "numberOfSe", "what")}"
+//    ha_mode = "${lookup(var.serviceEngineGroup[count.index], "ha_mode", "what")}"
+//    min_scaleout_per_vs = "${lookup(var.serviceEngineGroup[count.index], "min_scaleout_per_vs", "what")}"
+//    disk_per_se = "${lookup(var.serviceEngineGroup[count.index], "disk_per_se", "what")}"
+//    vcpus_per_se = "${lookup(var.serviceEngineGroup[count.index], "vcpus_per_se", "what")}"
+//    cpu_reserve = "${lookup(var.serviceEngineGroup[count.index], "cpu_reserve", "what")}"
+//    memory_per_se = "${lookup(var.serviceEngineGroup[count.index], "memory_per_se", "what")}"
+//    mem_reserve = "${lookup(var.serviceEngineGroup[count.index], "mem_reserve", "what")}"
+//    cloud_ref = var.avi_cloud["name"]
+//    extra_shared_config_memory = "${lookup(var.serviceEngineGroup[count.index], "extra_shared_config_memory", "what")}"
+//    networks = var.serviceEngineGroup[count.index]["networks"]
+//  }
+//}
+//
+//data "template_file" "serviceEngineGroup" {
+//  template = "${file("templates/serviceEngineGroup.json.tmpl")}"
+//  vars = {
+//    serviceEngineGroup = "${join(",", data.template_file.itemServiceEngineGroup.*.rendered)}"
+//  }
+//}
 
 
 resource "null_resource" "foo" {
@@ -87,7 +87,7 @@ dnsServers:
 ${yamlencode(var.controller["dns"].*)}
 
 no_access:
-  name:  &cloud0 ${var.avi_cloud["name"]}
+  name: &cloud0 ${var.avi_cloud["name"]}
 
 domain:
   name: ${var.domain["name"]}
@@ -112,31 +112,35 @@ avi_gslb:
   dns_configs:
     - domain_name: ${var.avi_gslb["domain"]}
 
+yamlFile: ${var.ansible["yamlFile"]}
+
+jsonFile: ${var.ansible["jsonFile"]}
+
 EOF
-  destination = "~/ansible/vars/fromTerraform.yml"
+  destination = var.ansible["yamlFile"]
   }
 
   provisioner "file" {
     content      = <<EOF
-{"serviceEngineGroup": ${data.template_file.serviceEngineGroup.rendered}}
+{"serviceEngineGroup": ${jsonencode(var.serviceEngineGroup)}, "avi_virtualservice": ${jsonencode(var.avi_virtualservice)}}
 EOF
-    destination = "~/ansible/vars/fromTfServiceEngineGroup.json"
+    destination = var.ansible["jsonFile"]
   }
 
-  provisioner "file" {
-    content      = <<EOF
-{"avi_virtualservice": ${jsonencode(var.avi_virtualservice)}}
-EOF
-    destination = "~/ansible/vars/fromTfVs.json"
-  }
+//  provisioner "file" {
+//    content      = <<EOF
+//{"avi_virtualservice": ${jsonencode(var.avi_virtualservice)}}
+//EOF
+//    destination = "~/ansible/vars/fromTfVs.json"
+//  }
 
   provisioner "remote-exec" {
     inline      = [
       "chmod 600 ~/.ssh/${basename(var.jump["private_key_path"])}",
-      "cat ~/ansible/vars/fromTfServiceEngineGroup.json",
+      "cat ~/ansible/vars/fromTf.json",
       "cat ~/ansible/vars/fromTerraform.yml",
-      "cd ~/ansible ; git clone ${var.ansible["opencartInstallUrl"]} --branch ${var.ansible["opencartInstallTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml ansibleOpencartInstall/local.yml --extra-vars @vars/fromTerraform.yml",
-      "cd ~/ansible ; git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml aviConfigure/local.yml --extra-vars @vars/fromTerraform.yml --extra-vars @vars/fromTfServiceEngineGroup.json --extra-vars @vars/fromTfVs.json",
+      "cd ~/ansible ; git clone ${var.ansible["opencartInstallUrl"]} --branch ${var.ansible["opencartInstallTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml ansibleOpencartInstall/local.yml --extra-vars @${var.ansible["yamlFile"]}",
+      "cd ~/ansible ; git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml aviConfigure/local.yml --extra-vars @${var.ansible["yamlFile"]} --extra-vars @${var.ansible["jsonFile"]}",
     ]
   }
 }
