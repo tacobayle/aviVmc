@@ -1,3 +1,30 @@
+data "template_file" "itemServiceEngineGroup" {
+  template = "${file("templates/itemServiceEngineGroup.json.tmpl")}"
+  count    = "${length(var.serviceEngineGroup)}"
+  vars = {
+    name = "${lookup(var.serviceEngineGroup[count.index], "name", "what")}"
+    numberOfSe = "${lookup(var.serviceEngineGroup[count.index], "numberOfSe", "what")}"
+    ha_mode = "${lookup(var.serviceEngineGroup[count.index], "ha_mode", "what")}"
+    min_scaleout_per_vs = "${lookup(var.serviceEngineGroup[count.index], "min_scaleout_per_vs", "what")}"
+    disk_per_se = "${lookup(var.serviceEngineGroup[count.index], "disk_per_se", "what")}"
+    vcpus_per_se = "${lookup(var.serviceEngineGroup[count.index], "vcpus_per_se", "what")}"
+    cpu_reserve = "${lookup(var.serviceEngineGroup[count.index], "cpu_reserve", "what")}"
+    memory_per_se = "${lookup(var.serviceEngineGroup[count.index], "memory_per_se", "what")}"
+    mem_reserve = "${lookup(var.serviceEngineGroup[count.index], "mem_reserve", "what")}"
+    cloud_ref = var.avi_cloud["name"]
+    extra_shared_config_memory = "${lookup(var.serviceEngineGroup[count.index], "extra_shared_config_memory", "what")}"
+    networks = var.serviceEngineGroup[count.index]["networks"]
+  }
+}
+
+data "template_file" "serviceEngineGroup" {
+  template = "${file("templates/serviceEngineGroup.json.tmpl")}"
+  vars = {
+    serviceEngineGroup = "${join(",", data.template_file.itemServiceEngineGroup.*.rendered)}"
+  }
+}
+
+
 resource "null_resource" "foo" {
   depends_on = [nsxt_policy_predefined_gateway_policy.cgw_jump]
   connection {
@@ -31,9 +58,9 @@ vcenter:
   username: ${var.vmc_vsphere_user}
   password: ${var.vmc_vsphere_password}
   hostname: ${var.vmc_vsphere_server}
-  datacenter: ${var.dc}
-  cluster: ${var.cluster}
-  datastore: ${var.datastore}
+  datacenter: ${var.vcenter["dc"]}
+  cluster: ${var.vcenter["cluster"]}
+  datastore: ${var.vcenter["datastore"]}
   networkManagementSe: ${var.networkMgmt["name"]}
 
 mysql_db_hostname: ${vsphere_virtual_machine.mysql[0].default_ip_address}
@@ -45,98 +72,41 @@ controller:
   password: ${var.avi_password}
   floatingIp: ${var.controller["floatingIp"]}
   count: ${var.controller["count"]}
+  from_email: ${var.controller["from_email"]}
+  se_in_provider_context: ${var.controller["se_in_provider_context"]}
+  tenant_access_to_provider_se: ${var.controller["tenant_access_to_provider_se"]}
+  tenant_vrf: ${var.controller["tenant_vrf"]}
 
 controllerPrivateIps:
 ${yamlencode(vsphere_virtual_machine.controller.*.default_ip_address)}
 
-avi_systemconfiguration:
-  global_tenant_config:
-    se_in_provider_context: false
-    tenant_access_to_provider_se: true
-    tenant_vrf: false
-  welcome_workflow_complete: true
-  ntp_configuration:
-    ntp_servers:
-      - server:
-          type: V4
-          addr: ${var.controller["ntpMain"]}
-  dns_configuration:
-    search_domain: ''
-    server_list:
-      - type: V4
-        addr: ${var.controller["dnsMain"]}
-  email_configuration:
-    from_email: test@avicontroller.net
-    smtp_type: SMTP_LOCAL_HOST
+ntpServers:
+${yamlencode(var.controller["ntp"].*)}
+
+dnsServers:
+${yamlencode(var.controller["dns"].*)}
 
 no_access:
-  name: &cloud0 cloudNoAccess # don't change the name
-  dhcp_enabled: true
-  ip6_autocfg_enabled: false
-  state_based_dns_registration: false
-
-serviceEngineGroup:
-  - name: &segroup0 Default-Group
-    cloud_ref: *cloud0
-    numberOfSe: 2
-    ha_mode: HA_MODE_SHARED
-    min_scaleout_per_vs: 2
-    buffer_se: 1
-    extra_shared_config_memory: 0
-    vcenter_folder: ${var.folder}
-    vcpus_per_se: 2
-    cpu_reserve: true
-    memory_per_se: 4096
-    mem_reserve: true
-    disk_per_se: 25
-    realtime_se_metrics:
-      enabled: true
-      duration: 0
-    networks:
-      - ${var.networkVip["name"]}
-      - ${var.networkBackend["name"]}
-    folder: /${var.dc}/${var.folderSe}
-  - name: &segroup1 seGroupGslb
-    cloud_ref: *cloud0
-    numberOfSe: 1
-    ha_mode: HA_MODE_SHARED
-    min_scaleout_per_vs: 1
-    buffer_se: 0
-    extra_shared_config_memory: 2000
-    vcenter_folder: ${var.folder}
-    vcpus_per_se: 2
-    cpu_reserve: true
-    memory_per_se: 8192
-    mem_reserve: true
-    disk_per_se: 25
-    realtime_se_metrics:
-      enabled: true
-      duration: 0
-    networks:
-      - ${var.networkVip["name"]}
-      - ${var.networkBackend["name"]}
-    folder: /${var.dc}/${var.folderSe}
+  name:  &cloud0 ${var.avi_cloud["name"]}
 
 domain:
   name: ${var.domain["name"]}
 
 network:
-  name: net-avi
   dhcp_enabled: ${var.networkVip["dhcp_enabled"]}
-  cloud_ref: *cloud0
-  subnet:
-    - prefix:
-        mask: ${split("/", var.networkVip["subnet"])[1]}
-        ip_addr:
-          type: ${var.networkVip["type"]}
-          addr: ${split("/", var.networkVip["subnet"])[0]}
-      static_ranges:
-        - begin:
-            type: ${var.networkVip["type"]}
-            addr: ${var.networkVip["ipStartPool"]}
-          end:
-            type: ${var.networkVip["type"]}
-            addr: ${var.networkVip["ipEndPool"]}
+  cloud_ref: ${var.avi_cloud["name"]}
+  cidr: ${var.networkVip["cidr"]}
+  ipStartPool: ${var.networkVip["ipStartPool"]}
+  ipEndPool: ${var.networkVip["ipEndPool"]}
+  defaultGateway: ${cidrhost(var.networkVip["cidr"], 1)}
+
+avi_servers:
+${yamlencode(vsphere_virtual_machine.backend.*.guest_ip_addresses)}
+
+avi_pool:
+  name: ${var.avi_pool["name"]}
+  lb_algorithm: ${var.avi_pool["lb_algorithm"]}
+  cloud_ref: ${var.avi_cloud["name"]}
 
 avi_gslb:
   dns_configs:
@@ -146,12 +116,27 @@ EOF
   destination = "~/ansible/vars/fromTerraform.yml"
   }
 
+  provisioner "file" {
+    content      = <<EOF
+{"serviceEngineGroup": ${data.template_file.serviceEngineGroup.rendered}}
+EOF
+    destination = "~/ansible/vars/fromTfServiceEngineGroup.json"
+  }
+
+  provisioner "file" {
+    content      = <<EOF
+{"avi_virtualservice": ${jsonencode(var.avi_virtualservice)}}
+EOF
+    destination = "~/ansible/vars/fromTfVs.json"
+  }
+
   provisioner "remote-exec" {
     inline      = [
       "chmod 600 ~/.ssh/${basename(var.jump["private_key_path"])}",
+      "cat ~/ansible/vars/fromTfServiceEngineGroup.json",
       "cat ~/ansible/vars/fromTerraform.yml",
       "cd ~/ansible ; git clone ${var.ansible["opencartInstallUrl"]} --branch ${var.ansible["opencartInstallTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml ansibleOpencartInstall/local.yml --extra-vars @vars/fromTerraform.yml",
-      "cd ~/ansible ; git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml aviConfigure/local.yml --extra-vars @vars/fromTerraform.yml",
+      "cd ~/ansible ; git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml aviConfigure/local.yml --extra-vars @vars/fromTerraform.yml --extra-vars @vars/fromTfServiceEngineGroup.json --extra-vars @vars/fromTfVs.json",
     ]
   }
 }

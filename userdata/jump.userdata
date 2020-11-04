@@ -28,6 +28,8 @@ write_files:
       pip install pyvmomi
       pip install dnspython
       pip3 install dnspython
+      pip install netaddr
+      pip3 install netaddr
       pip install --upgrade pip setuptools
       pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
       pip install ansible==${ansibleVersion}

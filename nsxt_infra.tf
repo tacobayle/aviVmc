@@ -9,8 +9,8 @@ resource "nsxt_policy_segment" "networkMgmt" {
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = var.networkMgmt["cidr"]
-    dhcp_ranges = ["${var.networkMgmt["networkRangeBegin"]}-${var.networkMgmt["networkRangeEnd"]}"]
+    cidr        = "${cidrhost(var.networkMgmt["cidr"], 1)}/${split("/", var.networkMgmt["cidr"])[1]}"
+    dhcp_ranges = ["${cidrhost(var.networkMgmt["cidr"], var.networkMgmt["networkRangeBegin"])}-${cidrhost(var.networkMgmt["cidr"], var.networkMgmt["networkRangeEnd"])}"]
   }
 }
 
@@ -21,8 +21,8 @@ resource "nsxt_policy_segment" "networkBackend" {
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = var.networkBackend["cidr"]
-    dhcp_ranges = ["${var.networkBackend["networkRangeBegin"]}-${var.networkBackend["networkRangeEnd"]}"]
+    cidr        = "${cidrhost(var.networkBackend["cidr"], 1)}/${split("/", var.networkBackend["cidr"])[1]}"
+    dhcp_ranges = ["${cidrhost(var.networkBackend["cidr"], var.networkBackend["networkRangeBegin"])}-${cidrhost(var.networkBackend["cidr"], var.networkBackend["networkRangeEnd"])}"]
   }
 }
 
@@ -33,8 +33,8 @@ resource "nsxt_policy_segment" "networkVip" {
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = var.networkVip["cidr"]
-    dhcp_ranges = ["${var.networkVip["networkRangeBegin"]}-${var.networkVip["networkRangeEnd"]}"]
+    cidr        = "${cidrhost(var.networkVip["cidr"], 1)}/${split("/", var.networkVip["cidr"])[1]}"
+    dhcp_ranges = ["${cidrhost(var.networkVip["cidr"], var.networkVip["networkRangeBegin"])}-${cidrhost(var.networkVip["cidr"], var.networkVip["networkRangeEnd"])}"]
   }
 }
 
@@ -66,13 +66,38 @@ resource "nsxt_policy_nat_rule" "dnat_jump" {
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
 }
 
+resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
+  count = length(var.avi_virtualservice["http"])
+  display_name         = "dnat_VS-HTTP-${count.index}"
+  action               = "DNAT"
+  source_networks      = []
+  destination_networks = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}"]
+  translated_networks  = ["${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)}"]
+  gateway_path         = "/infra/tier-1s/cgw"
+  logging              = false
+  firewall_match       = "MATCH_INTERNAL_ADDRESS"
+}
+
+resource "nsxt_policy_nat_rule" "dnat_vsDns" {
+  depends_on = [nsxt_policy_nat_rule.dnat_vsHttp]
+  count = length(var.avi_virtualservice["dns"])
+  display_name         = "dnat_VS-DNS-${count.index}"
+  action               = "DNAT"
+  source_networks      = []
+  destination_networks = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}"]
+  translated_networks  = ["${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)}"]
+  gateway_path         = "/infra/tier-1s/cgw"
+  logging              = false
+  firewall_match       = "MATCH_INTERNAL_ADDRESS"
+}
+
 resource "nsxt_policy_group" "avi_networks" {
   display_name = "all Avi Networks"
   domain       = "cgw"
   description  = "all Avi Networks"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${var.networkMgmt["subnet"]}", "${var.networkBackend["subnet"]}"]
+      ip_addresses = ["${var.networkMgmt["cidr"]}", "${var.networkBackend["cidr"]}"]
     }
   }
 }
@@ -97,6 +122,93 @@ resource "nsxt_policy_group" "jump" {
     ipaddress_expression {
       ip_addresses = ["${vmc_public_ip.public_ip_jump.ip}", "${vsphere_virtual_machine.jump.default_ip_address}"]
     }
+  }
+}
+
+resource "nsxt_policy_group" "vsHttp" {
+  count = length(var.avi_virtualservice["http"])
+  display_name = "group-VS-Http-${count.index}"
+  domain       = "cgw"
+  description  = "group-VS-Http-${count.index}"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}", "${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)}"]
+    }
+  }
+}
+
+resource "nsxt_policy_group" "vsDns" {
+  count = length(var.avi_virtualservice["dns"])
+  depends_on = [nsxt_policy_group.vsHttp]
+  display_name = "group-VS-Dns-${count.index}"
+  domain       = "cgw"
+  description  = "group-VS-Dns-${count.index}"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}", "${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)}"]
+    }
+  }
+}
+
+resource "nsxt_policy_service" "serviceHttp" {
+  description = "Avi HTTP VS provisioned by Terraform"
+  display_name = "Avi HTTP VS provisioned by Terraform"
+  l4_port_set_entry {
+    display_name = "TCP80 and TCP443"
+    description = "TCP80 and TCP443"
+    protocol = "TCP"
+    destination_ports = ["80", "443"]
+  }
+}
+
+resource "nsxt_policy_service" "serviceDns" {
+  description = "Avi DNS VS provisioned by Terraform"
+  display_name = "Avi DNS VS provisioned by Terraform"
+  l4_port_set_entry {
+    display_name = "DNS53"
+    description = "DNS53"
+    protocol = "UDP"
+    destination_ports = ["53"]
+  }
+}
+
+resource "nsxt_policy_predefined_gateway_policy" "cgw_vsHttp" {
+  path = "/infra/domains/cgw/gateway-policies/default"
+  count = length(var.avi_virtualservice["http"])
+  rule {
+    action = "ALLOW"
+    destination_groups    = [nsxt_policy_group.vsHttp[count.index].path]
+    destinations_excluded = false
+    direction             = "IN_OUT"
+    disabled              = false
+    display_name          = "HTTP VS - ${count.index}"
+    ip_version            = "IPV4_IPV6"
+    logged                = false
+    profiles              = []
+    scope                 = ["/infra/labels/cgw-public"]
+    services              = [nsxt_policy_service.serviceHttp.path]
+    source_groups         = []
+    sources_excluded      = false
+  }
+}
+
+resource "nsxt_policy_predefined_gateway_policy" "cgw_vsDns" {
+  path = "/infra/domains/cgw/gateway-policies/default"
+  count = length(var.avi_virtualservice["dns"])
+  rule {
+    action = "ALLOW"
+    destination_groups    = [nsxt_policy_group.vsDns[count.index].path]
+    destinations_excluded = false
+    direction             = "IN_OUT"
+    disabled              = false
+    display_name          = "DNS VS - ${count.index}"
+    ip_version            = "IPV4_IPV6"
+    logged                = false
+    profiles              = []
+    scope                 = ["/infra/labels/cgw-public"]
+    services              = [nsxt_policy_service.serviceDns.path]
+    source_groups         = []
+    sources_excluded      = false
   }
 }
 

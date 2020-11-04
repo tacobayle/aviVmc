@@ -1,4 +1,4 @@
-# aviVmw
+# aviVmc
 
 ## Goals
 Spin up a full Avi environment (through Terraform) in VMC
@@ -29,7 +29,7 @@ TF_VAR_avi_password=blablabla
 
 ## Environment:
 
-Terraform Plan has/have been tested against:
+Terraform Plan has been tested against:
 
 ### terraform
 ```
@@ -47,6 +47,7 @@ Terraform v0.13.0
 ### Avi version
 ```
 Avi 20.1.1 with one controller node
+DNS VS and/or HTTP VS only
 ```
 
 ### VMC:
@@ -58,13 +59,19 @@ Avi 20.1.1 with one controller node
 1. All the parameters/variables defined in variables.tf and ansible.tf
 
 ## Use the terraform script to:
-- Create a new folder within v-center
-- Spin up 1 Avi Controller
+- Create a new folder(s) within v-center
+- Create NSX-T segment(s)
+- Spin up 1 Avi Controller VM(s)
 - Spin up 2 backend VM(s)
 - Spin up 2 web opencart VM(s)
-- Spin up 1 mysql server
-- Spin up 1 client server(s) - while true ; do ab -n 1000 -c 1000 https://100.64.133.51/ ; done - with two interfaces: static for mgmt, dhcp for web traffic
-- Spin up a jump server with ansible installed - userdata to install packages
+- Spin up 1 mysql VM(s)
+- Spin up 1 client VM(s)
+- Spin up 1 jump VM with ansible installed - userdata to install packages
+- Request Public IP(s) for Jump host, Controller and Virtual Services
+- Create NSX-T NAT Rule(s) for Jump host, Controller and Virtual Services
+- Create NSX-T policy Group for Jump host, Controller and Virtual Services
+- Create NSX-T Service for Virtual Services (only HTTP (tcp/80 and tcp/443) and DNS (udp/53))
+- Create NSX-T Gateway Policies for Jump host, Controller and Virtual Services
 - Create a yaml variable file - in the jump server
 - Call ansible to run the opencart config (git clone)
 - Call ansible to do the Avi configuration (git clone)
@@ -72,7 +79,6 @@ Avi 20.1.1 with one controller node
 ## Run the terraform:
 ```
 ``cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; terraform init ; terraform apply -auto-approve``
-# the terraform will output the command to destroy the environment.
 ```
 
 ## Improvement:
