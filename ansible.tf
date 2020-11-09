@@ -76,6 +76,7 @@ controller:
   se_in_provider_context: ${var.controller["se_in_provider_context"]}
   tenant_access_to_provider_se: ${var.controller["tenant_access_to_provider_se"]}
   tenant_vrf: ${var.controller["tenant_vrf"]}
+  aviCredsJsonFile: ${var.controller["aviCredsJsonFile"]}
 
 controllerPrivateIps:
 ${yamlencode(vsphere_virtual_machine.controller.*.default_ip_address)}
@@ -126,13 +127,6 @@ EOF
 EOF
     destination = var.ansible["jsonFile"]
   }
-
-//  provisioner "file" {
-//    content      = <<EOF
-//{"avi_virtualservice": ${jsonencode(var.avi_virtualservice)}}
-//EOF
-//    destination = "~/ansible/vars/fromTfVs.json"
-//  }
 
   provisioner "remote-exec" {
     inline      = [

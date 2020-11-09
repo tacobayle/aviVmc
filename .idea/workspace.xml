@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9c7f682e-2e01-4c7c-946e-f3442cb5f117" name="Default Changelist" comment="" />
+    <list default="true" id="bf50dca0-c7ea-48cf-8ee4-c6121f0374ed" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,20 +10,29 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../aviGcp" />
+  <component name="ProjectId" id="1k30dHg4oQAfn6fHCi3nMni5hIJ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bf50dca0-c7ea-48cf-8ee4-c6121f0374ed" name="Default Changelist" comment="" />
+      <created>1604914052937</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1604914052937</updated>
+    </task>
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="-188" y="-790" key="FileChooserDialogImpl" timestamp="1604473854575">
+    <state x="-152" y="-707" key="GrepConsoleSound" timestamp="1604939278362">
       <screen x="-928" y="-1085" width="1920" height="1080" />
     </state>
-    <state x="-188" y="-790" key="FileChooserDialogImpl/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@-928.-1085.1920.1080" timestamp="1604473854575" />
-    <state x="-312" y="-292" key="run.anything.popup" timestamp="1604424159273">
-      <screen x="-928" y="-1085" width="1920" height="1080" />
-    </state>
-    <state x="-312" y="-292" key="run.anything.popup/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@-928.-1085.1920.1080" timestamp="1604424159273" />
+    <state x="-152" y="-707" key="GrepConsoleSound/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@-928.-1085.1920.1080" timestamp="1604939278362" />
   </component>
 </project>

@@ -25,7 +25,7 @@ TF_VAR_avi_password=blablabla
 
 - The following firewall Gateway need to be defined:
 
-![](.README_images/d9b432c2.png)
+![](.README_images/8577c0fb.png)
 
 ## Environment:
 
