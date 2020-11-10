@@ -1,38 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bf50dca0-c7ea-48cf-8ee4-c6121f0374ed" name="Default Changelist" comment="" />
+    <list default="true" id="5b662bca-6cbd-4f17-be8e-ce11defae4a6" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectId" id="1k30dHg4oQAfn6fHCi3nMni5hIJ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bf50dca0-c7ea-48cf-8ee4-c6121f0374ed" name="Default Changelist" comment="" />
-      <created>1604914052937</created>
+      <changelist id="5b662bca-6cbd-4f17-be8e-ce11defae4a6" name="Default Changelist" comment="" />
+      <created>1605030585504</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1604914052937</updated>
+      <updated>1605030585504</updated>
     </task>
     <servers />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="-152" y="-707" key="GrepConsoleSound" timestamp="1604939278362">
-      <screen x="-928" y="-1085" width="1920" height="1080" />
-    </state>
-    <state x="-152" y="-707" key="GrepConsoleSound/0.0.1920.1040/-928.-1085.1920.1080/992.-1080.1920.1080@-928.-1085.1920.1080" timestamp="1604939278362" />
   </component>
 </project>

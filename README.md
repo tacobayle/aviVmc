@@ -23,6 +23,9 @@ TF_VAR_avi_password=blablabla
 ```
 ![](.README_images/baba5c92.png)
 
+Ubuntu image can be found here:
+https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
+
 - The following firewall Gateway need to be defined:
 
 ![](.README_images/8577c0fb.png)
