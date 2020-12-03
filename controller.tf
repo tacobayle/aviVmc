@@ -5,7 +5,7 @@ resource "vsphere_tag" "ansible_group_controller" {
 
 resource "vsphere_virtual_machine" "controller" {
   count            = var.controller["count"]
-  name             = "controller-${split(".ova", basename(var.contentLibrary.files[0]))[0]}-${count.index}"
+  name             = "${split(".ova", basename(var.contentLibrary.files[0]))[0]}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = vsphere_folder.folderController.path
