@@ -12,11 +12,6 @@ data "template_file" "client_userdata" {
   }
 }
 
-data "vsphere_virtual_machine" "client" {
-  name          = var.client["template_name"]
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 resource "vsphere_virtual_machine" "client" {
   count            = var.client["count"]
   name             = "client-${count.index}"
@@ -32,16 +27,12 @@ resource "vsphere_virtual_machine" "client" {
   memory = var.client["memory"]
   #wait_for_guest_net_timeout = var.client["wait_for_guest_net_timeout"]
   wait_for_guest_net_routable = var.client["wait_for_guest_net_routable"]
-  guest_id = data.vsphere_virtual_machine.client.guest_id
-  scsi_type = data.vsphere_virtual_machine.client.scsi_type
-  scsi_bus_sharing = data.vsphere_virtual_machine.client.scsi_bus_sharing
-  scsi_controller_count = data.vsphere_virtual_machine.client.scsi_controller_scan_count
+  guest_id = "guestid-client-${count.index}"
 
   disk {
     size             = var.client["disk"]
     label            = "client-${count.index}.lab_vmdk"
-    eagerly_scrub    = data.vsphere_virtual_machine.client.disks.0.eagerly_scrub
-    thin_provisioned = data.vsphere_virtual_machine.client.disks.0.thin_provisioned
+    thin_provisioned = true
   }
 
   cdrom {
@@ -49,7 +40,7 @@ resource "vsphere_virtual_machine" "client" {
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.client.id
+    template_uuid = vsphere_content_library_item.files[1].id
   }
 
   tags = [

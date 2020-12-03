@@ -12,11 +12,6 @@ data "template_file" "mysql_userdata" {
   }
 }
 
-data "vsphere_virtual_machine" "mysql" {
-  name          = var.mysql["template_name"]
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 resource "vsphere_virtual_machine" "mysql" {
   count            = var.mysql["count"]
   name             = "mysql-${count.index}"
@@ -32,16 +27,12 @@ resource "vsphere_virtual_machine" "mysql" {
   memory = var.mysql["memory"]
   wait_for_guest_net_timeout = var.mysql["wait_for_guest_net_timeout"]
   #wait_for_guest_net_routable = var.mysql["wait_for_guest_net_routable"]
-  guest_id = data.vsphere_virtual_machine.mysql.guest_id
-  scsi_type = data.vsphere_virtual_machine.mysql.scsi_type
-  scsi_bus_sharing = data.vsphere_virtual_machine.mysql.scsi_bus_sharing
-  scsi_controller_count = data.vsphere_virtual_machine.mysql.scsi_controller_scan_count
+  guest_id = "guestid-mysql-${count.index}"
 
   disk {
     size             = var.mysql["disk"]
     label            = "mysql-${count.index}.lab_vmdk"
-    eagerly_scrub    = data.vsphere_virtual_machine.mysql.disks.0.eagerly_scrub
-    thin_provisioned = data.vsphere_virtual_machine.mysql.disks.0.thin_provisioned
+    thin_provisioned = true
   }
 
   cdrom {
@@ -49,7 +40,7 @@ resource "vsphere_virtual_machine" "mysql" {
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.mysql.id
+    template_uuid = vsphere_content_library_item.files[1].id
   }
 
   tags = [

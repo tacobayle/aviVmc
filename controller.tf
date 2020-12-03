@@ -3,11 +3,6 @@ resource "vsphere_tag" "ansible_group_controller" {
   category_id      = vsphere_tag_category.ansible_group_controller.id
 }
 
-data "vsphere_virtual_machine" "controller_template" {
-  name          = "controller-${var.controller["version"]}-template"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 resource "vsphere_virtual_machine" "controller" {
   count            = var.controller["count"]
   name             = "controller-${var.controller["version"]}-${count.index}"
@@ -21,21 +16,17 @@ resource "vsphere_virtual_machine" "controller" {
   num_cpus = var.controller["cpu"]
   memory = var.controller["memory"]
   wait_for_guest_net_timeout = var.controller["wait_for_guest_net_timeout"]
+  guest_id = "guestid-${var.controller.version}-${count.index}"
 
-  guest_id = data.vsphere_virtual_machine.controller_template.guest_id
-  scsi_type = data.vsphere_virtual_machine.controller_template.scsi_type
-  scsi_bus_sharing = data.vsphere_virtual_machine.controller_template.scsi_bus_sharing
-  scsi_controller_count = data.vsphere_virtual_machine.controller_template.scsi_controller_scan_count
 
   disk {
     size             = var.controller["disk"]
-    label            = "controller-${var.controller["version"]}-${count.index}.lab_vmdk"
-    eagerly_scrub    = data.vsphere_virtual_machine.controller_template.disks.0.eagerly_scrub
-    thin_provisioned = data.vsphere_virtual_machine.controller_template.disks.0.thin_provisioned
+    label            = "controller-${var.controller.version}-${count.index}.lab_vmdk"
+    thin_provisioned = true
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.controller_template.id
+    template_uuid = vsphere_content_library_item.files[0].id
   }
 
   tags = [

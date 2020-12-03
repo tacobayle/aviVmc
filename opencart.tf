@@ -14,11 +14,6 @@ data "template_file" "opencart_userdata" {
   }
 }
 
-data "vsphere_virtual_machine" "opencart" {
-  name          = var.opencart["template_name"]
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-#
 resource "vsphere_virtual_machine" "opencart" {
   count            = var.opencart["count"]
   name             = "opencart-${count.index}"
@@ -35,16 +30,12 @@ resource "vsphere_virtual_machine" "opencart" {
   memory = var.opencart["memory"]
   wait_for_guest_net_timeout = var.opencart["wait_for_guest_net_timeout"]
   #wait_for_guest_net_routable = var.opencart["wait_for_guest_net_routable"]
-  guest_id = data.vsphere_virtual_machine.opencart.guest_id
-  scsi_type = data.vsphere_virtual_machine.opencart.scsi_type
-  scsi_bus_sharing = data.vsphere_virtual_machine.opencart.scsi_bus_sharing
-  scsi_controller_count = data.vsphere_virtual_machine.opencart.scsi_controller_scan_count
+  guest_id = "guestid-opencart-${count.index}"
 
   disk {
     size             = var.opencart["disk"]
     label            = "opencart-${count.index}.lab_vmdk"
-    eagerly_scrub    = data.vsphere_virtual_machine.opencart.disks.0.eagerly_scrub
-    thin_provisioned = data.vsphere_virtual_machine.opencart.disks.0.thin_provisioned
+    thin_provisioned = true
   }
 
   cdrom {
@@ -52,7 +43,7 @@ resource "vsphere_virtual_machine" "opencart" {
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.opencart.id
+    template_uuid = vsphere_content_library_item.files[1].id
   }
 
   tags = [

@@ -18,11 +18,6 @@ data "template_file" "jumpbox_userdata" {
   }
 }
 
-data "vsphere_virtual_machine" "jump" {
-  name          = var.jump["template_name"]
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 resource "vsphere_virtual_machine" "jump" {
   name             = var.jump["name"]
   datastore_id     = data.vsphere_datastore.datastore.id
@@ -35,16 +30,12 @@ resource "vsphere_virtual_machine" "jump" {
   num_cpus = var.jump["cpu"]
   memory = var.jump["memory"]
   wait_for_guest_net_timeout = var.jump["wait_for_guest_net_timeout"]
-  guest_id = data.vsphere_virtual_machine.jump.guest_id
-  scsi_type = data.vsphere_virtual_machine.jump.scsi_type
-  scsi_bus_sharing = data.vsphere_virtual_machine.jump.scsi_bus_sharing
-  scsi_controller_count = data.vsphere_virtual_machine.jump.scsi_controller_scan_count
+  guest_id = "guestid-jump"
 
   disk {
     size             = var.jump["disk"]
     label            = "jump.lab_vmdk"
-    eagerly_scrub    = data.vsphere_virtual_machine.jump.disks.0.eagerly_scrub
-    thin_provisioned = data.vsphere_virtual_machine.jump.disks.0.thin_provisioned
+    thin_provisioned = true
   }
 
   cdrom {
@@ -52,7 +43,7 @@ resource "vsphere_virtual_machine" "jump" {
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.jump.id
+    template_uuid = vsphere_content_library_item.files[1].id
   }
 
   tags = [

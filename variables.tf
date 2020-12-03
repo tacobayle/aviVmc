@@ -22,6 +22,14 @@ variable "vcenter" {
   }
 }
 
+variable "contentLibrary" {
+  default = {
+    name = "Avi Content Library"
+    description = "Avi Content Library"
+    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "bionic-server-cloudimg-amd64.ova"]
+  }
+}
+
 variable "networkMgmt" {
   type = map
   default = {
@@ -164,7 +172,6 @@ variable "avi_cloud" {
   type = map
   default = {
     name = "cloudNoAccess" # don't change the name
-
   }
 }
 

@@ -15,11 +15,6 @@ data "template_file" "backend_userdata" {
   }
 }
 
-data "vsphere_virtual_machine" "backend" {
-  name          = var.backend["template_name"]
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 resource "vsphere_virtual_machine" "backend" {
   count            = var.backend["count"]
   name             = "backend-${count.index}"
@@ -35,16 +30,12 @@ resource "vsphere_virtual_machine" "backend" {
   memory = var.backend["memory"]
   #wait_for_guest_net_timeout = var.backend["wait_for_guest_net_timeout"]
   wait_for_guest_net_routable = var.backend["wait_for_guest_net_routable"]
-  guest_id = data.vsphere_virtual_machine.backend.guest_id
-  scsi_type = data.vsphere_virtual_machine.backend.scsi_type
-  scsi_bus_sharing = data.vsphere_virtual_machine.backend.scsi_bus_sharing
-  scsi_controller_count = data.vsphere_virtual_machine.backend.scsi_controller_scan_count
+  guest_id = "guestid-backend-${count.index}"
 
   disk {
     size             = var.backend["disk"]
     label            = "backend-${count.index}.lab_vmdk"
-    eagerly_scrub    = data.vsphere_virtual_machine.backend.disks.0.eagerly_scrub
-    thin_provisioned = data.vsphere_virtual_machine.backend.disks.0.thin_provisioned
+    thin_provisioned = true
   }
 
   cdrom {
@@ -52,7 +43,7 @@ resource "vsphere_virtual_machine" "backend" {
   }
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.backend.id
+    template_uuid = vsphere_content_library_item.files[1].id
   }
 
   tags = [

@@ -10,7 +10,7 @@ Spin up a full Avi environment (through Terraform) in VMC
 TF_VAR_vmc_vsphere_password=blablabla
 TF_VAR_vmc_vsphere_user=blablabla
 TF_VAR_vmc_org_id=blablabla
-TF_VAR_vmc_nsx_server=blablabla
+TF_VAR_vmc_nsx_server=blablabla # keep the https:// at the beginning - it seeems to be required for the vmc provider
 TF_VAR_vmc_nsx_token=blablabla
 TF_VAR_vmc_vsphere_server=blablabla
 TF_VAR_avi_user=blablabla
