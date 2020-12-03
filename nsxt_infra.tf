@@ -59,8 +59,8 @@ resource "nsxt_policy_nat_rule" "dnat_jump" {
   display_name         = "dnat_jump"
   action               = "DNAT"
   source_networks      = []
-  destination_networks = ["${vmc_public_ip.public_ip_jump.ip}"]
-  translated_networks  = ["${vsphere_virtual_machine.jump.default_ip_address}"]
+  destination_networks = ["vmc_public_ip.public_ip_jump.ip"]
+  translated_networks  = ["vsphere_virtual_machine.jump.default_ip_address"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -71,8 +71,8 @@ resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
   display_name         = "dnat_VS-HTTP-${count.index}"
   action               = "DNAT"
   source_networks      = []
-  destination_networks = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}"]
-  translated_networks  = ["${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)}"]
+  destination_networks = ["vmc_public_ip.public_ip_vsHttp[count.index].ip"]
+  translated_networks  = ["cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -84,8 +84,8 @@ resource "nsxt_policy_nat_rule" "dnat_vsDns" {
   display_name         = "dnat_VS-DNS-${count.index}"
   action               = "DNAT"
   source_networks      = []
-  destination_networks = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}"]
-  translated_networks  = ["${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)}"]
+  destination_networks = ["vmc_public_ip.public_ip_vsDns[count.index].ip"]
+  translated_networks  = ["cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -97,7 +97,7 @@ resource "nsxt_policy_group" "avi_networks" {
   description  = "all Avi Networks"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${var.networkMgmt["cidr"]}", "${var.networkBackend["cidr"]}"]
+      ip_addresses = ["var.networkMgmt["cidr"]}", "var.networkBackend["cidr"]"]
     }
   }
 }
@@ -109,7 +109,7 @@ resource "nsxt_policy_group" "controller" {
   description  = "Avi Controller${count.index} Public and Private IPs"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_controller[count.index].ip}", "${vsphere_virtual_machine.controller[count.index].default_ip_address}"]
+      ip_addresses = ["vmc_public_ip.public_ip_controller[count.index].ip", "vsphere_virtual_machine.controller[count.index].default_ip_address"]
     }
   }
 }
@@ -120,7 +120,7 @@ resource "nsxt_policy_group" "jump" {
   description  = "Jump Public and Private IPs"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_jump.ip}", "${vsphere_virtual_machine.jump.default_ip_address}"]
+      ip_addresses = ["vmc_public_ip.public_ip_jump.ip", "vsphere_virtual_machine.jump.default_ip_address"]
     }
   }
 }
@@ -132,7 +132,7 @@ resource "nsxt_policy_group" "vsHttp" {
   description  = "group-VS-Http-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}", "${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)}"]
+      ip_addresses = ["vmc_public_ip.public_ip_vsHttp[count.index].ip", "cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)"]
     }
   }
 }
@@ -145,7 +145,7 @@ resource "nsxt_policy_group" "vsDns" {
   description  = "group-VS-Dns-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}", "${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)}"]
+      ip_addresses = ["vmc_public_ip.public_ip_vsDns[count.index].ip", "cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)"]
     }
   }
 }
