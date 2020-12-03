@@ -17,8 +17,7 @@ variable "vcenter" {
     cluster = "Cluster-1"
     datastore = "WorkloadDatastore"
     resource_pool = "Cluster-1/Resources"
-    folder = "AviTf"
-    folderSe = "aviSe"
+    folder= "Avi-App"
   }
 }
 
@@ -81,6 +80,7 @@ variable "controller" {
     tenant_access_to_provider_se = "true"
     tenant_vrf = "false"
     aviCredsJsonFile = "~/ansible/vars/creds.json"
+    folder = "Avi-Controllers"
   }
 }
 
@@ -106,7 +106,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v2.81"
+    aviConfigureTag = "v3.06"
     opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
     opencartInstallTag = "v1.19"
     directory = "ansible"

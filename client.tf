@@ -17,7 +17,7 @@ resource "vsphere_virtual_machine" "client" {
   name             = "client-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.folder.path
+  folder           = vsphere_folder.folderApp.path
 
   network_interface {
                       network_id = data.vsphere_network.networkVip.id
