@@ -10,7 +10,6 @@ data "template_file" "backend_userdata" {
   count = var.backend["count"]
   template = file("${path.module}/userdata/backend.userdata")
   vars = {
-    password     = var.backend["password"]
     pubkey       = file(var.jump["public_key_path"])
   }
 }

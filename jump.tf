@@ -6,7 +6,6 @@ resource "vsphere_tag" "ansible_group_jump" {
 data "template_file" "jumpbox_userdata" {
   template = file("${path.module}/userdata/jump.userdata")
   vars = {
-    password      = var.jump["password"]
     pubkey        = file(var.jump["public_key_path"])
     avisdkVersion = var.jump["avisdkVersion"]
     ansibleVersion = var.ansible["version"]

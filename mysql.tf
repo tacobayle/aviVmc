@@ -7,7 +7,6 @@ data "template_file" "mysql_userdata" {
   count = var.mysql["count"]
   template = file("${path.module}/userdata/mysql.userdata")
   vars = {
-    password     = var.mysql["password"]
     pubkey       = file(var.jump["public_key_path"])
   }
 }

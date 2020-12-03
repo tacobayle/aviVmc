@@ -91,7 +91,6 @@ variable "jump" {
     cpu = 2
     memory = 4096
     disk = 20
-    password = "Avi_2020"
     public_key_path = "~/.ssh/cloudKey.pub"
     private_key_path = "~/.ssh/cloudKey"
     wait_for_guest_net_timeout = 2
@@ -121,7 +120,6 @@ variable "backend" {
     cpu = 2
     memory = 4096
     disk = 20
-    password = "Avi_2020"
     count = 2
     wait_for_guest_net_routable = "false"
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
@@ -135,7 +133,6 @@ variable "opencart" {
     memory = 4096
     count = 2
     disk = 20
-    password = "Avi_2020"
     wait_for_guest_net_timeout = 2
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
     opencartDownloadUrl = "https://github.com/opencart/opencart/releases/download/3.0.3.5/opencart-3.0.3.5.zip"
@@ -149,7 +146,6 @@ variable "mysql" {
     memory = 4096
     count = 1
     disk = 20
-    password = "Avi_2020"
     wait_for_guest_net_timeout = 2
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
   }
@@ -161,7 +157,6 @@ variable "client" {
     cpu = 2
     memory = 4096
     disk = 20
-    password = "Avi_2020"
     wait_for_guest_net_routable = "false"
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
     count = 1

@@ -7,7 +7,6 @@ data "template_file" "opencart_userdata" {
   count            = var.opencart["count"]
   template = file("${path.module}/userdata/opencart.userdata")
   vars = {
-    password     = var.opencart["password"]
     pubkey       = file(var.jump["public_key_path"])
     opencartDownloadUrl = var.opencart["opencartDownloadUrl"]
     domainName = var.avi_gslb["domain"]

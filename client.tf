@@ -7,7 +7,6 @@ data "template_file" "client_userdata" {
   count = var.client["count"]
   template = file("${path.module}/userdata/client.userdata")
   vars = {
-    password     = var.client["password"]
     pubkey       = file(var.jump["public_key_path"])
   }
 }
