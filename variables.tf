@@ -26,7 +26,7 @@ variable "contentLibrary" {
   default = {
     name = "Avi Content Library"
     description = "Avi Content Library"
-    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "bionic-server-cloudimg-amd64.ova"]
+    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"]
   }
 }
 
