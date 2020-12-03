@@ -50,7 +50,6 @@ resource "vsphere_virtual_machine" "mysql" {
   vapp {
     properties = {
      hostname    = "mysql-${count.index}"
-     password    = var.mysql["password"]
      public-keys = file(var.jump["public_key_path"])
      user-data   = base64encode(data.template_file.mysql_userdata[count.index].rendered)
    }

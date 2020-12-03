@@ -52,7 +52,6 @@ resource "vsphere_virtual_machine" "opencart" {
   vapp {
     properties = {
      hostname    = "opencart-${count.index}"
-     password    = var.opencart["password"]
      public-keys = file(var.jump["public_key_path"])
      user-data   = base64encode(data.template_file.opencart_userdata[count.index].rendered)
    }
