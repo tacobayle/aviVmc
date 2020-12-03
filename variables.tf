@@ -17,7 +17,8 @@ variable "vcenter" {
     cluster = "Cluster-1"
     datastore = "WorkloadDatastore"
     resource_pool = "Cluster-1/Resources"
-    folder= "Avi-App"
+    folderApps = "Avi-Apps"
+    folderAvi = "Avi-Controllers"
   }
 }
 
@@ -80,7 +81,6 @@ variable "controller" {
     tenant_access_to_provider_se = "true"
     tenant_vrf = "false"
     aviCredsJsonFile = "~/ansible/vars/creds.json"
-    folder = "Avi-Controllers"
   }
 }
 

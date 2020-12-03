@@ -36,13 +36,13 @@ data "vsphere_network" "networkVip" {
 }
 
 resource "vsphere_folder" "folderController" {
-  path          = var.controller.folder
+  path          = var.vcenter.folderAvi
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_folder" "folderApp" {
-  path          = var.vcenter.folder
+  path          = var.vcenter.folderApps
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
