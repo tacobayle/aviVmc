@@ -68,7 +68,7 @@ mysql_db_hostname: ${vsphere_virtual_machine.mysql[0].default_ip_address}
 controller:
   environment: ${var.controller["environment"]}
   username: ${var.avi_user}
-  version: ${split("-", var.controller["version"])[0]}
+  version: ${split("-", basename(var.contentLibrary.files[0]))[1]}
   password: ${var.avi_password}
   floatingIp: ${var.controller["floatingIp"]}
   count: ${var.controller["count"]}

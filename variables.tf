@@ -26,7 +26,7 @@ variable "contentLibrary" {
   default = {
     name = "Avi Content Library"
     description = "Avi Content Library"
-    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"]
+    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
   }
 }
 
@@ -69,7 +69,6 @@ variable "controller" {
     memory = 24768
     disk = 128
     count = "1"
-    version = "20.1.1-9071"
     wait_for_guest_net_timeout = 2
     private_key_path = "~/.ssh/cloudKey"
     environment = "VMWARE"

@@ -4,7 +4,7 @@
 Spin up a full Avi environment (through Terraform) in VMC
 
 ## Prerequisites:
-- Terraform installed in the orchestrator VM
+- Terraform installed in the orchestrator VM (TF host)
 - The following environment variables need to be defined:
 ```
 TF_VAR_vmc_vsphere_password=blablabla
@@ -16,12 +16,19 @@ TF_VAR_vmc_vsphere_server=blablabla
 TF_VAR_avi_user=blablabla
 TF_VAR_avi_password=blablabla
 ```
-- The following VM templates need to be defined in V-center:
+- The following ova needs to be available in the TF host and defined in var.contentLibrary.files:
 ```
-- ubuntu-bionic-18.04-cloudimg-template
-- controller-20.1.1-9071-template
+- bionic-server-cloudimg-amd64.ova
+- controller-20.1.2-9171.ova (or any other version)
+like:
+variable "contentLibrary" {
+  default = {
+    name = "Avi Content Library"
+    description = "Avi Content Library"
+    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"]
+  }
+}
 ```
-![](.README_images/baba5c92.png)
 
 - Ubuntu image can be found here:
 https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
@@ -51,7 +58,7 @@ Terraform v0.13.0
 
 ### Avi version
 ```
-Avi 20.1.1 with one controller node
+Avi 20.1.2 with one controller node
 DNS VS and/or HTTP VS only
 ```
 
@@ -64,14 +71,15 @@ DNS VS and/or HTTP VS only
 1. All the parameters/variables defined in variables.tf and ansible.tf
 
 ## Use the terraform script to:
-- Create a new folder(s) within v-center
+- Create new folder(s) within v-center - one for the Avi Apps - one for the Avi controller
 - Create NSX-T segment(s)
-- Spin up 1 Avi Controller VM(s)
-- Spin up 2 backend VM(s)
-- Spin up 2 web opencart VM(s)
-- Spin up 1 mysql VM(s)
-- Spin up 1 client VM(s)
-- Spin up 1 jump VM with ansible installed - userdata to install packages
+- Create Content Library and populate it with the ova mentioned above 
+- Spin up 1 Avi Controller VM(s) - Clone from Content Library
+- Spin up 2 backend VM(s) - Clone from Content Library
+- Spin up 2 web opencart VM(s) - Clone from Content Library
+- Spin up 1 mysql VM(s) - Clone from Content Library
+- Spin up 1 client VM(s) - Clone from Content Library
+- Spin up 1 jump VM with ansible installed  - Clone from Content Library - userdata to install packages
 - Request Public IP(s) for Jump host, Controller and Virtual Services
 - Create NSX-T NAT Rule(s) for Jump host, Controller and Virtual Services
 - Create NSX-T policy Group for Jump host, Controller and Virtual Services
