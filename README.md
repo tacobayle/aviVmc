@@ -83,7 +83,7 @@ DNS VS and/or HTTP VS only
 
 ## Run the terraform:
 ```
-``cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; terraform init ; terraform apply -auto-approve``
+cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; terraform init ; terraform apply -auto-approve
 ```
 
 ## Improvement:

@@ -48,7 +48,7 @@ resource "nsxt_policy_nat_rule" "dnat_controller" {
   display_name         = "dnat_avicontroller"
   action               = "DNAT"
   source_networks      = []
-  destination_networks = ["${vmc_public_ip.public_ip_controller[count.index].ip}"]
+  destination_networks = vmc_public_ip.public_ip_controller[count.index].ip
   translated_networks  = ["${vsphere_virtual_machine.controller[count.index].default_ip_address}"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
