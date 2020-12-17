@@ -5,6 +5,13 @@ Spin up a full Avi environment (through Terraform) in VMC
 
 ## Prerequisites:
 - Terraform installed in the orchestrator VM (TF host)
+
+
+- The following firewall Gateway need to be defined:
+
+![](.README_images/8577c0fb.png)
+
+
 - The following environment variables need to be defined:
 ```
 TF_VAR_vmc_vsphere_password=blablabla
@@ -34,10 +41,6 @@ variable "contentLibrary" {
 https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
 - Avi Networks OVA can be found here:
 https://portal.avinetworks.com/
-
-- The following firewall Gateway need to be defined:
-
-![](.README_images/8577c0fb.png)
 
 ## Environment:
 
