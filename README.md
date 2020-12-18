@@ -7,21 +7,16 @@ Spin up a full Avi environment (through Terraform) in VMC
 - Terraform installed in the orchestrator VM (TF host)
 
 
-- The following firewall Gateway need to be defined:
+- The following firewall Gateway rules need to be defined:
 
 ![](.README_images/8577c0fb.png)
 
 
 - The following environment variables need to be defined:
 ```
-TF_VAR_vmc_vsphere_password=blablabla
-TF_VAR_vmc_vsphere_user=blablabla
-TF_VAR_vmc_org_id=blablabla
-TF_VAR_vmc_nsx_server=blablabla # keep the https:// at the beginning - it seeems to be required for the vmc provider
-TF_VAR_vmc_nsx_token=blablabla
-TF_VAR_vmc_vsphere_server=blablabla
-TF_VAR_avi_user=blablabla
-TF_VAR_avi_password=blablabla
+vmc_nsx_token=blablabla
+vmc_org_id=blablabla
+vmc_sddc_name=blablabla
 ```
 - The following ova needs to be available in the TF host and defined in var.contentLibrary.files:
 ```
@@ -94,7 +89,7 @@ DNS VS and/or HTTP VS only
 
 ## Run the terraform:
 ```
-cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; terraform init ; terraform apply -auto-approve
+cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; terraform init ; terraform apply -var-file=sddc.json -auto-approve
 ```
 
 ## Improvement:
