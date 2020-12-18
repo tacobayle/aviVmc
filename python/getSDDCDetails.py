@@ -77,7 +77,7 @@ nsxUrl = 'https://{0}.rp.vmwarevmc.com/vmc/reverse-proxy/api/orgs/{1}/sddcs/{2}'
 avi_username = 'admin'
 alphabet = string.ascii_letters + string.digits + string.punctuation
 avi_password = ''.join(secrets.choice(alphabet) for i in range(12))
-SDDCDetails = {'vmc_org_id': ORG_ID, 'vmc_nsx_server': sddc_url, 'vmc_nsx_token': Refresh_Token, 'vmc_vsphere_user': 'cloudadmin@vmc.local', \
+SDDCDetails = {'vmc_org_id': ORG_ID, 'vmc_nsx_server': sddc_url.split('//')[1], 'vmc_nsx_token': Refresh_Token, 'vmc_vsphere_user': 'cloudadmin@vmc.local', \
                'vmc_vsphere_password': sddc_password, 'vmc_vsphere_server': sddc_url, 'avi_user': 'admin', 'avi_password': avi_password}
 with open('sddc.json', 'w') as filehandle:
     filehandle.write(json.dumps(SDDCDetails))
