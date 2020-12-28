@@ -69,7 +69,7 @@ sddc_id = getSDDCIDOdyssey(ORG_ID,session_token,sddc_name)
 #print(sddc_id)
 sddc_password, sddc_url = getSDDCIDOdysseyCreds(ORG_ID,session_token,sddc_id)
 # print(ORG_ID)
-# print(sddc_url.split('//')[1])
+# print(sddc_url.split('//')[1][:-1])
 # print(sddc_password)
 nsxUrlBase = sddc_url.split('//')[1].split('.')[1].split('-')
 nsxUrlBase[0] = 'nsx'
@@ -78,6 +78,7 @@ avi_username = 'admin'
 alphabet = string.ascii_letters + string.digits + string.punctuation
 avi_password = ''.join(secrets.choice(alphabet) for i in range(12))
 SDDCDetails = {'vmc_org_id': ORG_ID, 'vmc_nsx_server': nsxUrl, 'vmc_nsx_token': Refresh_Token, 'vmc_vsphere_user': 'cloudadmin@vmc.local', \
-               'vmc_vsphere_password': sddc_password, 'vmc_vsphere_server': sddc_url.split('//')[1], 'avi_user': 'admin', 'avi_password': avi_password}
+               'vmc_vsphere_password': sddc_password, 'vmc_vsphere_server': sddc_url.split('//')[1][:-1], 'avi_user': 'admin', \
+               'avi_password': avi_password}
 with open('sddc.json', 'w') as filehandle:
     filehandle.write(json.dumps(SDDCDetails))
