@@ -72,7 +72,7 @@ resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_vsHttp[count.index].ip]
-  translated_networks  = ["${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + count.index)}"]
+  translated_networks  = ["cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + count.index)"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -84,8 +84,8 @@ resource "nsxt_policy_nat_rule" "dnat_vsDns" {
   display_name         = "dnat_VS-DNS-${count.index}"
   action               = "DNAT"
   source_networks      = []
-  destination_networks = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}"]
-  translated_networks  = ["${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + length(var.vmc.virtualservices.http) + count.index)}"]
+  destination_networks = ["vmc_public_ip.public_ip_vsDns[count.index].ip"]
+  translated_networks  = ["cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + length(var.vmc.virtualservices.http) + count.index)"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"

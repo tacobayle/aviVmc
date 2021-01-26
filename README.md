@@ -96,8 +96,13 @@ DNS VS and/or HTTP VS only
 - Call ansible to do the Avi configuration (git clone)
 
 ## Run the terraform:
+- build:
 ```
 cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; terraform init ; terraform apply -var-file=sddc.json -auto-approve
+```
+- destroy:
+```
+terraform destroy -var-file=sddc.json -auto-approve
 ```
 
 ## Improvement:
