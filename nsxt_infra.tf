@@ -97,7 +97,7 @@ resource "nsxt_policy_group" "avi_networks" {
   description  = "all Avi Networks"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${var.vmc.network_mgmt.cidr}", "${var.vmc.network_backend.cidr}"]
+      ip_addresses = [var.vmc.network_mgmt.cidr, var.vmc.network_backend.cidr]
     }
   }
 }
@@ -109,7 +109,7 @@ resource "nsxt_policy_group" "controller" {
   description  = "Avi Controller${count.index} Public and Private IPs"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_controller[count.index].ip}", "${vsphere_virtual_machine.controller[count.index].default_ip_address}"]
+      ip_addresses = [vmc_public_ip.public_ip_controller[count.index].ip, vsphere_virtual_machine.controller[count.index].default_ip_address]
     }
   }
 }
@@ -120,7 +120,7 @@ resource "nsxt_policy_group" "jump" {
   description  = "Jump Public and Private IPs"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_jump.ip}", "${vsphere_virtual_machine.jump.default_ip_address}"]
+      ip_addresses = [vmc_public_ip.public_ip_jump.ip, vsphere_virtual_machine.jump.default_ip_address]
     }
   }
 }
@@ -132,7 +132,7 @@ resource "nsxt_policy_group" "vsHttp" {
   description  = "group-VS-Http-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}", "${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + count.index)}"]
+      ip_addresses = [vmc_public_ip.public_ip_vsHttp[count.index].ip, cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + count.index)]
     }
   }
 }
@@ -145,7 +145,7 @@ resource "nsxt_policy_group" "vsDns" {
   description  = "group-VS-Dns-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}", "${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + length(var.vmc.virtualservices.http) + count.index)}"]
+      ip_addresses = [vmc_public_ip.public_ip_vsDns[count.index].ip, cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + length(var.vmc.virtualservices.http) + count.index)]
     }
   }
 }
