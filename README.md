@@ -32,10 +32,17 @@ variable "contentLibrary" {
 }
 ```
 
-- Ubuntu image can be found here:
-https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
-- Avi Networks OVA can be found here:
-https://portal.avinetworks.com/
+- Ubuntu image can be found here: https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
+- Avi Networks OVA can be found here: https://portal.avinetworks.com/
+- The following ssh key needs to exist:
+```
+variable "jump" {
+  type = map
+  default = {
+    public_key_path = "~/.ssh/cloudKey.pub"
+    private_key_path = "~/.ssh/cloudKey"
+```
+  
 
 ## Environment:
 

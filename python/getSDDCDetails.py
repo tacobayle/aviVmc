@@ -42,6 +42,7 @@ def getSDDCIDOdyssey(tenantid, sessiontoken, sddc_name):
     myURL = strProdURL + "/vmc/api/orgs/" + tenantid + "/sddcs"
     response = requests.get(myURL, headers=myHeader)
     jsonResponse = response.json()
+    #print(jsonResponse)
     extracted_sddc = next(item for item in jsonResponse if item["name"] == sddc_name)
     sddc = extracted_sddc['resource_config']['sddc_id']
     return sddc
@@ -68,17 +69,19 @@ session_token = getAccessToken(Refresh_Token)
 sddc_id = getSDDCIDOdyssey(ORG_ID,session_token,sddc_name)
 #print(sddc_id)
 sddc_password, sddc_url = getSDDCIDOdysseyCreds(ORG_ID,session_token,sddc_id)
+#print(sddc_password)
+#print(sddc_url)
 # print(ORG_ID)
 # print(sddc_url.split('//')[1][:-1])
 # print(sddc_password)
 nsxUrlBase = sddc_url.split('//')[1].split('.')[1].split('-')
 nsxUrlBase[0] = 'nsx'
 nsxUrl = 'https://{0}.rp.vmwarevmc.com/vmc/reverse-proxy/api/orgs/{1}/sddcs/{2}'.format('-'.join(nsxUrlBase), ORG_ID, sddc_id)
-avi_username = 'admin'
-alphabet = string.ascii_letters + string.digits + string.punctuation
-avi_password = ''.join(secrets.choice(alphabet) for i in range(12))
+avi_password = os.environ['TF_VAR_avi_password']
+# alphabet = string.ascii_letters + string.digits + string.punctuation
+# avi_password = ''.join(secrets.choice(alphabet) for i in range(12))
 SDDCDetails = {'vmc_org_id': ORG_ID, 'vmc_nsx_server': nsxUrl, 'vmc_nsx_token': Refresh_Token, 'vmc_vsphere_user': 'cloudadmin@vmc.local', \
-               'vmc_vsphere_password': sddc_password, 'vmc_vsphere_server': sddc_url.split('//')[1][:-1], 'avi_user': 'admin', \
+               'vmc_vsphere_password': sddc_password, 'vmc_vsphere_server': sddc_url.split('//')[1][:-1], 'avi_username': 'admin', \
                'avi_password': avi_password}
 with open('sddc.json', 'w') as filehandle:
     filehandle.write(json.dumps(SDDCDetails))

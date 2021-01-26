@@ -7,7 +7,7 @@ data "template_file" "client_userdata" {
   count = var.client["count"]
   template = file("${path.module}/userdata/client.userdata")
   vars = {
-    pubkey       = file(var.jump["public_key_path"])
+    pubkey       = file(var.jump.public_key_path)
   }
 }
 
@@ -49,7 +49,7 @@ resource "vsphere_virtual_machine" "client" {
   vapp {
     properties = {
      hostname    = "client-${count.index}"
-     public-keys = file(var.jump["public_key_path"])
+     public-keys = file(var.jump.public_key_path)
      user-data   = base64encode(data.template_file.client_userdata[count.index].rendered)
    }
  }

@@ -7,7 +7,7 @@ data "template_file" "mysql_userdata" {
   count = var.mysql["count"]
   template = file("${path.module}/userdata/mysql.userdata")
   vars = {
-    pubkey       = file(var.jump["public_key_path"])
+    pubkey       = file(var.jump.public_key_path)
   }
 }
 
@@ -50,7 +50,7 @@ resource "vsphere_virtual_machine" "mysql" {
   vapp {
     properties = {
      hostname    = "mysql-${count.index}"
-     public-keys = file(var.jump["public_key_path"])
+     public-keys = file(var.jump.public_key_path)
      user-data   = base64encode(data.template_file.mysql_userdata[count.index].rendered)
    }
  }

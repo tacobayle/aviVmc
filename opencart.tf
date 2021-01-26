@@ -7,9 +7,9 @@ data "template_file" "opencart_userdata" {
   count            = var.opencart["count"]
   template = file("${path.module}/userdata/opencart.userdata")
   vars = {
-    pubkey       = file(var.jump["public_key_path"])
+    pubkey       = file(var.jump.public_key_path)
     opencartDownloadUrl = var.opencart["opencartDownloadUrl"]
-    domainName = var.avi_gslb["domain"]
+    domainName = var.vmc.domains[0].name
   }
 }
 
@@ -52,7 +52,7 @@ resource "vsphere_virtual_machine" "opencart" {
   vapp {
     properties = {
      hostname    = "opencart-${count.index}"
-     public-keys = file(var.jump["public_key_path"])
+     public-keys = file(var.jump.public_key_path)
      user-data   = base64encode(data.template_file.opencart_userdata[count.index].rendered)
    }
  }

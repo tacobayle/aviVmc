@@ -31,7 +31,7 @@ resource "null_resource" "foo" {
    host        = vmc_public_ip.public_ip_jump.ip
    type        = "ssh"
    agent       = false
-   user        = "ubuntu"
+   user        = var.jump.username
    private_key = file(var.jump["private_key_path"])
   }
 
@@ -51,90 +51,11 @@ resource "null_resource" "foo" {
   destination = "~/ansible"
   }
 
-  provisioner "file" {
-  content      = <<EOF
----
-vcenter:
-  username: ${var.vmc_vsphere_user}
-  password: ${var.vmc_vsphere_password}
-  hostname: ${var.vmc_vsphere_server}
-  datacenter: ${var.vcenter["dc"]}
-  cluster: ${var.vcenter["cluster"]}
-  datastore: ${var.vcenter["datastore"]}
-  networkManagementSe: ${var.networkMgmt["name"]}
-
-mysql_db_hostname: ${vsphere_virtual_machine.mysql[0].default_ip_address}
-
-controller:
-  environment: ${var.controller["environment"]}
-  username: ${var.avi_user}
-  version: ${split("-", basename(var.contentLibrary.files[0]))[1]}
-  password: ${var.avi_password}
-  floatingIp: ${var.controller["floatingIp"]}
-  count: ${var.controller["count"]}
-  from_email: ${var.controller["from_email"]}
-  se_in_provider_context: ${var.controller["se_in_provider_context"]}
-  tenant_access_to_provider_se: ${var.controller["tenant_access_to_provider_se"]}
-  tenant_vrf: ${var.controller["tenant_vrf"]}
-  aviCredsJsonFile: ${var.controller["aviCredsJsonFile"]}
-
-controllerPrivateIps:
-${yamlencode(vsphere_virtual_machine.controller.*.default_ip_address)}
-
-ntpServers:
-${yamlencode(var.controller["ntp"].*)}
-
-dnsServers:
-${yamlencode(var.controller["dns"].*)}
-
-no_access:
-  name: &cloud0 ${var.avi_cloud["name"]}
-
-domain:
-  name: ${var.domain["name"]}
-
-network:
-  dhcp_enabled: ${var.networkVip["dhcp_enabled"]}
-  cloud_ref: ${var.avi_cloud["name"]}
-  cidr: ${var.networkVip["cidr"]}
-  ipStartPool: ${var.networkVip["ipStartPool"]}
-  ipEndPool: ${var.networkVip["ipEndPool"]}
-  defaultGateway: ${cidrhost(var.networkVip["cidr"], 1)}
-
-avi_servers:
-${yamlencode(vsphere_virtual_machine.backend.*.guest_ip_addresses)}
-
-avi_pool:
-  name: ${var.avi_pool["name"]}
-  lb_algorithm: ${var.avi_pool["lb_algorithm"]}
-  cloud_ref: ${var.avi_cloud["name"]}
-
-avi_gslb:
-  dns_configs:
-    - domain_name: ${var.avi_gslb["domain"]}
-
-yamlFile: ${var.ansible["yamlFile"]}
-
-jsonFile: ${var.ansible["jsonFile"]}
-
-EOF
-  destination = var.ansible["yamlFile"]
-  }
-
-  provisioner "file" {
-    content      = <<EOF
-{"serviceEngineGroup": ${jsonencode(var.serviceEngineGroup)}, "avi_virtualservice": ${jsonencode(var.avi_virtualservice)}}
-EOF
-    destination = var.ansible["jsonFile"]
-  }
-
   provisioner "remote-exec" {
     inline      = [
       "chmod 600 ~/.ssh/${basename(var.jump["private_key_path"])}",
-      "cat ~/ansible/vars/fromTf.json",
-      "cat ~/ansible/vars/fromTerraform.yml",
-      "cd ~/ansible ; git clone ${var.ansible["opencartInstallUrl"]} --branch ${var.ansible["opencartInstallTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml ansibleOpencartInstall/local.yml --extra-vars @${var.ansible["yamlFile"]}",
-      "cd ~/ansible ; git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml aviConfigure/local.yml --extra-vars @${var.ansible["yamlFile"]} --extra-vars @${var.ansible["jsonFile"]}",
+      "cd ~/ansible ; git clone ${var.ansible["opencartInstallUrl"]} --branch ${var.ansible["opencartInstallTag"]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml ansibleOpencartInstall/local.yml --extra-vars '{\"mysql_db_hostname\": ${jsonencode(vsphere_virtual_machine.mysql[0].default_ip_address)}, \"domainName\": ${jsonencode(var.vmc.domains[0].name)}}'",
+      "cd ~/ansible ; git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]} ; cd ${split("/", var.ansible.aviConfigureUrl)[4]} ; ansible-playbook -i /opt/ansible/inventory/inventory.vmware.yml aviConfigure/local.yml --extra-vars '{\"vmc_vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.contentLibrary.files[0]))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vmc_vsphere_password\": ${jsonencode(vmc_vsphere_password)}, \"controller\": ${jsonencode(var.controller)}, \"vmc_vsphere_user\": ${jsonencode(vmc_vsphere_user)}, \"vmc\": ${jsonencode(var.vmc)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}, \"avi_backend_servers_vmc\": ${jsonencode(vsphere_virtual_machine.backend.*.guest_ip_addresses)}, \"avi_servers_opencart_vmc\": ${jsonencode(vsphere_virtual_machine.opencart.*.guest_ip_addresses)}}'",
     ]
   }
 }

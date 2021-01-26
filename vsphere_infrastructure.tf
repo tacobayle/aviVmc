@@ -1,48 +1,48 @@
 data "vsphere_datacenter" "dc" {
-  name = var.vcenter["dc"]
+  name = var.vmc.vcenter.dc
 }
 
 data "vsphere_compute_cluster" "compute_cluster" {
-  name          = var.vcenter["cluster"]
+  name          = var.vmc.vcenter.cluster
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_datastore" "datastore" {
-  name = var.vcenter["datastore"]
+  name = var.vmc.vcenter.datastore
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_resource_pool" "pool" {
-  name          = var.vcenter["resource_pool"]
+  name          = var.vmc.vcenter.resource_pool
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkMgmt" {
   depends_on = [time_sleep.wait_60_seconds]
-  name = var.networkMgmt["name"]
+  name = var.vmc.network_mgmt.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkBackend" {
   depends_on = [time_sleep.wait_60_seconds]
-  name = var.networkBackend["name"]
+  name = var.vmc.network_backend.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkVip" {
   depends_on = [time_sleep.wait_60_seconds]
-  name = var.networkVip["name"]
+  name = var.vmc.network_vip.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_folder" "folderController" {
-  path          = var.vcenter.folderAvi
+  path          = var.vmc.vcenter.folderAvi
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_folder" "folderApp" {
-  path          = var.vcenter.folderApps
+  path          = var.vmc.vcenter.folderApps
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
 }

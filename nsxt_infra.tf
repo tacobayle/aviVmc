@@ -3,38 +3,38 @@ data "nsxt_policy_transport_zone" "tzMgmt" {
 }
 
 resource "nsxt_policy_segment" "networkMgmt" {
-  display_name        = var.networkMgmt["name"]
+  display_name        = var.vmc.network_mgmt.name
   connectivity_path   = "/infra/tier-1s/cgw"
   transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = "${cidrhost(var.networkMgmt["cidr"], 1)}/${split("/", var.networkMgmt["cidr"])[1]}"
-    dhcp_ranges = ["${cidrhost(var.networkMgmt["cidr"], var.networkMgmt["networkRangeBegin"])}-${cidrhost(var.networkMgmt["cidr"], var.networkMgmt["networkRangeEnd"])}"]
+    cidr        = "${cidrhost(var.vmc.network_mgmt.cidr, 1)}/${split("/", var.vmc.network_mgmt.cidr)[1]}"
+    dhcp_ranges = ["${cidrhost(var.vmc.network_mgmt.cidr, var.vmc.network_mgmt.networkRangeBegin)}-${cidrhost(var.vmc.network_mgmt.cidr, var.vmc.network_mgmt.networkRangeEnd)}"]
   }
 }
 
 resource "nsxt_policy_segment" "networkBackend" {
-  display_name        = var.networkBackend["name"]
+  display_name        = var.vmc.network_backend.name
   connectivity_path   = "/infra/tier-1s/cgw"
   transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = "${cidrhost(var.networkBackend["cidr"], 1)}/${split("/", var.networkBackend["cidr"])[1]}"
-    dhcp_ranges = ["${cidrhost(var.networkBackend["cidr"], var.networkBackend["networkRangeBegin"])}-${cidrhost(var.networkBackend["cidr"], var.networkBackend["networkRangeEnd"])}"]
+    cidr        = "${cidrhost(var.vmc.network_backend.cidr, 1)}/${split("/", var.vmc.network_backend.cidr)[1]}"
+    dhcp_ranges = ["${cidrhost(var.vmc.network_backend.cidr, var.vmc.network_backend.networkRangeBegin)}-${cidrhost(var.vmc.network_backend.cidr, var.vmc.network_backend.networkRangeEnd)}"]
   }
 }
 
 resource "nsxt_policy_segment" "networkVip" {
-  display_name        = var.networkVip["name"]
+  display_name        = var.vmc.network_vip.name
   connectivity_path   = "/infra/tier-1s/cgw"
   transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = "${cidrhost(var.networkVip["cidr"], 1)}/${split("/", var.networkVip["cidr"])[1]}"
-    dhcp_ranges = ["${cidrhost(var.networkVip["cidr"], var.networkVip["networkRangeBegin"])}-${cidrhost(var.networkVip["cidr"], var.networkVip["networkRangeEnd"])}"]
+    cidr        = "${cidrhost(var.vmc.network_vip.cidr, 1)}/${split("/", var.vmc.network_vip.cidr)[1]}"
+    dhcp_ranges = ["${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.networkRangeBegin)}-${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.networkRangeEnd)}"]
   }
 }
 
@@ -67,12 +67,12 @@ resource "nsxt_policy_nat_rule" "dnat_jump" {
 }
 
 resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
-  count = length(var.avi_virtualservice["http"])
+  count = length(var.vmc.virtualservices.http)
   display_name         = "dnat_VS-HTTP-${count.index}"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_vsHttp[count.index].ip]
-  translated_networks  = ["${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)}"]
+  translated_networks  = ["${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + count.index)}"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -80,12 +80,12 @@ resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
 
 resource "nsxt_policy_nat_rule" "dnat_vsDns" {
   depends_on = [nsxt_policy_nat_rule.dnat_vsHttp]
-  count = length(var.avi_virtualservice["dns"])
+  count = length(var.vmc.virtualservices.dns)
   display_name         = "dnat_VS-DNS-${count.index}"
   action               = "DNAT"
   source_networks      = []
   destination_networks = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}"]
-  translated_networks  = ["${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)}"]
+  translated_networks  = ["${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + length(var.vmc.virtualservices.http) + count.index)}"]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -97,7 +97,7 @@ resource "nsxt_policy_group" "avi_networks" {
   description  = "all Avi Networks"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${var.networkMgmt["cidr"]}", "${var.networkBackend["cidr"]}"]
+      ip_addresses = ["${var.vmc.network_mgmt.cidr}", "${var.vmc.network_backend.cidr}"]
     }
   }
 }
@@ -126,26 +126,26 @@ resource "nsxt_policy_group" "jump" {
 }
 
 resource "nsxt_policy_group" "vsHttp" {
-  count = length(var.avi_virtualservice["http"])
+  count = length(var.vmc.virtualservices.http)
   display_name = "group-VS-Http-${count.index}"
   domain       = "cgw"
   description  = "group-VS-Http-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}", "${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + count.index)}"]
+      ip_addresses = ["${vmc_public_ip.public_ip_vsHttp[count.index].ip}", "${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + count.index)}"]
     }
   }
 }
 
 resource "nsxt_policy_group" "vsDns" {
-  count = length(var.avi_virtualservice["dns"])
+  count = length(var.vmc.virtualservices.dns)
   depends_on = [nsxt_policy_group.vsHttp]
   display_name = "group-VS-Dns-${count.index}"
   domain       = "cgw"
   description  = "group-VS-Dns-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}", "${cidrhost(var.networkVip["cidr"], var.networkVip["ipStartPool"] + length(var.avi_virtualservice["http"]) + count.index)}"]
+      ip_addresses = ["${vmc_public_ip.public_ip_vsDns[count.index].ip}", "${cidrhost(var.vmc.network_vip.cidr, var.vmc.network_vip.ipStartPool + length(var.vmc.virtualservices.http) + count.index)}"]
     }
   }
 }
@@ -174,7 +174,7 @@ resource "nsxt_policy_service" "serviceDns" {
 
 resource "nsxt_policy_predefined_gateway_policy" "cgw_vsHttp" {
   path = "/infra/domains/cgw/gateway-policies/default"
-  count = length(var.avi_virtualservice["http"])
+  count = length(var.vmc.virtualservices.http)
   rule {
     action = "ALLOW"
     destination_groups    = [nsxt_policy_group.vsHttp[count.index].path]
@@ -194,7 +194,7 @@ resource "nsxt_policy_predefined_gateway_policy" "cgw_vsHttp" {
 
 resource "nsxt_policy_predefined_gateway_policy" "cgw_vsDns" {
   path = "/infra/domains/cgw/gateway-policies/default"
-  count = length(var.avi_virtualservice["dns"])
+  count = length(var.vmc.virtualservices.dns)
   rule {
     action = "ALLOW"
     destination_groups    = [nsxt_policy_group.vsDns[count.index].path]
