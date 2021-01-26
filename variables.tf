@@ -139,14 +139,13 @@ variable "vmc" {
       dhcp_enabled = "no" # for Avi
       ipStartPool = "100" # for Avi IPAM
       ipEndPool = "119" # for Avi IPAM
+      defaultGateway = "1"
     }
     network_backend = {
       name = "avi-backend"
       cidr = "10.1.2.0/24"
-      networkRangeBegin = "11"
-      # for NSX-T segment
-      networkRangeEnd = "50"
-      # for NSX-T segment
+      networkRangeBegin = "11" # for NSX-T segment
+      networkRangeEnd = "50" # for NSX-T segment
     }
     serviceEngineGroup = [
       {
