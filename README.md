@@ -17,6 +17,7 @@ Spin up a full Avi environment (through Terraform) in VMC
 vmc_nsx_token=blablabla
 vmc_org_id=blablabla
 vmc_sddc_name=blablabla
+TF_VAR_avi_password=blablabla
 ```
 - The following ova needs to be available in the TF host and defined in var.contentLibrary.files:
 ```

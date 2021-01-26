@@ -27,8 +27,6 @@ resource "vsphere_virtual_machine" "opencart" {
 
   num_cpus = var.opencart["cpu"]
   memory = var.opencart["memory"]
-  wait_for_guest_net_timeout = var.opencart["wait_for_guest_net_timeout"]
-  #wait_for_guest_net_routable = var.opencart["wait_for_guest_net_routable"]
   guest_id = "guestid-opencart-${count.index}"
 
   disk {

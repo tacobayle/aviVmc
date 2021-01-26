@@ -24,8 +24,6 @@ resource "vsphere_virtual_machine" "client" {
 
   num_cpus = var.client["cpu"]
   memory = var.client["memory"]
-  #wait_for_guest_net_timeout = var.client["wait_for_guest_net_timeout"]
-  wait_for_guest_net_routable = var.client["wait_for_guest_net_routable"]
   guest_id = "guestid-client-${count.index}"
 
   disk {
