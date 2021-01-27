@@ -55,7 +55,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v3.91"
+    aviConfigureTag = "v3.93"
     opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
     opencartInstallTag = "v1.21"
     directory = "ansible"
@@ -150,7 +150,7 @@ variable "vmc" {
     serviceEngineGroup = [
       {
         name = "Default-Group"
-        numberOfSe = "2"
+        numberOfSe = "4"
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
         disk_per_se = "25"
