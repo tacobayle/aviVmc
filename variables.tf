@@ -204,7 +204,7 @@ variable "vmc" {
         },
         {
           name = "opencart"
-          pool_ref = "poolOpencart"
+          pool_ref = "pool2-opencart"
           services: [
             {
               port = 80
