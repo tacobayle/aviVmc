@@ -154,10 +154,10 @@ resource "nsxt_policy_service" "serviceHttp" {
   description = "Avi HTTP VS provisioned by Terraform"
   display_name = "Avi HTTP VS provisioned by Terraform"
   l4_port_set_entry {
-    display_name = "TCP80 and TCP443"
-    description = "TCP80 and TCP443"
+    display_name = "TCP80-8080 and TCP443"
+    description = "TCP80-8080 and TCP443"
     protocol = "TCP"
-    destination_ports = ["80", "443"]
+    destination_ports = ["80", "8080", "443"]
   }
 }
 
