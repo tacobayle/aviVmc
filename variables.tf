@@ -142,7 +142,7 @@ variable "no_access_vcenter" {
       dhcp_enabled = "no" # for Avi
       ipStartPool = "100" # for Avi IPAM
       ipEndPool = "119" # for Avi IPAM
-      defaultGateway = "1"
+      defaultGateway = 1
     }
     network_backend = {
       name = "avi-backend"
