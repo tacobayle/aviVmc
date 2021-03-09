@@ -14,6 +14,7 @@ packages:
   - python-pip
   - python-jmespath
   - sshpass
+  - gunzip
 
 write_files:
   - content: |
@@ -48,6 +49,11 @@ write_files:
       [inventory]
       enable_plugins = vmware_vm_inventory
       EOT
+      cd /usr/local/bin
+      sudo wget https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz
+      sudo gunzip govc_linux_amd64.gz
+      sudo mv govc_linux_amd64 govc
+      sudo chmod +x govc
       echo "cloud init done" | tee /tmp/cloudInitDone.log
     path: /opt/bootstrap.sh
     permissions: 0755
