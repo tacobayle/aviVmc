@@ -11,7 +11,7 @@ variable "contentLibrary" {
   default = {
     name = "Avi Content Library"
     description = "Avi Content Library"
-    files = ["/home/ubuntu/controller-20.1.3-9085.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
+    files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
   }
 }
 
