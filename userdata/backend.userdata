@@ -16,9 +16,16 @@ write_files:
       sudo apt update
       sudo apt install -y apache2
       sudo mv /var/www/html/index.html /var/www/html/index.html.old
-      echo -e "Hello World - cloud is VMC - Node is $(hostname)" | sudo tee /var/www/html/index.html
+      echo -e "Hello World - cloud is VMC - Node is $(hostname) - IP is $(ip address show dev $(ip -o link show | awk -F': ' '{print $2}' | tail -1) | awk -F'inet ' '{print $2}' |  awk -F'/' '{print $1}' | tr -d '\n')" | sudo tee /var/www/html/index.html
+      sudo apt install -y docker.io
+      sudo usermod -a -G docker ${username}
+      git clone ${url_demovip_server}
+      cd $(basename ${url_demovip_server})
+      docker build . --tag demovip_server:latest
+      ifPrimary=`ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//"`
+      ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
+      docker run -d -p $ip:8080:80 demovip_server:latest
       echo "cloud init done" | tee /tmp/cloudInitDone.log
-
     path: /opt/bootstrap.sh
     permissions: 0755
 

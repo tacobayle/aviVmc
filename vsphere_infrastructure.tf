@@ -1,48 +1,48 @@
 data "vsphere_datacenter" "dc" {
-  name = var.vmc.vcenter.dc
+  name = var.no_access_vcenter.vcenter.dc
 }
 
 data "vsphere_compute_cluster" "compute_cluster" {
-  name          = var.vmc.vcenter.cluster
+  name          = var.no_access_vcenter.vcenter.cluster
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_datastore" "datastore" {
-  name = var.vmc.vcenter.datastore
+  name = var.no_access_vcenter.vcenter.datastore
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_resource_pool" "pool" {
-  name          = var.vmc.vcenter.resource_pool
+  name          = var.no_access_vcenter.vcenter.resource_pool
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkMgmt" {
   depends_on = [time_sleep.wait_60_seconds]
-  name = var.vmc.network_mgmt.name
+  name = var.no_access_vcenter.network_management.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkBackend" {
   depends_on = [time_sleep.wait_60_seconds]
-  name = var.vmc.network_backend.name
+  name = var.no_access_vcenter.network_backend.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkVip" {
   depends_on = [time_sleep.wait_60_seconds]
-  name = var.vmc.network_vip.name
+  name = var.no_access_vcenter.network_vip.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_folder" "folderController" {
-  path          = var.vmc.vcenter.folderAvi
+  path          = var.no_access_vcenter.vcenter.folderAvi
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_folder" "folderApp" {
-  path          = var.vmc.vcenter.folderApps
+  path          = var.no_access_vcenter.vcenter.folderApps
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -55,13 +55,13 @@ resource "vsphere_tag_category" "ansible_group_backend" {
   ]
 }
 
-resource "vsphere_tag_category" "ansible_group_client" {
-  name = "ansible_group_client"
-  cardinality = "SINGLE"
-  associable_types = [
-    "VirtualMachine",
-  ]
-}
+//resource "vsphere_tag_category" "ansible_group_client" {
+//  name = "ansible_group_client"
+//  cardinality = "SINGLE"
+//  associable_types = [
+//    "VirtualMachine",
+//  ]
+//}
 
 resource "vsphere_tag_category" "ansible_group_controller" {
   name = "ansible_group_controller"
@@ -79,18 +79,18 @@ resource "vsphere_tag_category" "ansible_group_jump" {
   ]
 }
 
-resource "vsphere_tag_category" "ansible_group_mysql" {
-  name = "ansible_group_mysql"
-  cardinality = "SINGLE"
-  associable_types = [
-    "VirtualMachine",
-  ]
-}
-
-resource "vsphere_tag_category" "ansible_group_opencart" {
-  name = "ansible_group_opencart"
-  cardinality = "SINGLE"
-  associable_types = [
-    "VirtualMachine",
-  ]
-}
+//resource "vsphere_tag_category" "ansible_group_mysql" {
+//  name = "ansible_group_mysql"
+//  cardinality = "SINGLE"
+//  associable_types = [
+//    "VirtualMachine",
+//  ]
+//}
+//
+//resource "vsphere_tag_category" "ansible_group_opencart" {
+//  name = "ansible_group_opencart"
+//  cardinality = "SINGLE"
+//  associable_types = [
+//    "VirtualMachine",
+//  ]
+//}

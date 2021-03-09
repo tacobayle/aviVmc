@@ -1,6 +1,6 @@
 variable "avi_password" {}
 variable "avi_username" {}
-variable "vmc_vsphere_user" {}
+variable "vmc_vsphere_username" {}
 variable "vmc_vsphere_password" {}
 variable "vmc_vsphere_server" {}
 variable "vmc_nsx_server" {}
@@ -55,9 +55,9 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v3.93"
-    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
-    opencartInstallTag = "v1.21"
+    aviConfigureTag = "v4.39"
+//    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
+//    opencartInstallTag = "v1.21"
     directory = "ansible"
   }
 }
@@ -71,47 +71,50 @@ variable "backend" {
     count = 2
     wait_for_guest_net_routable = "false"
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
+    url_demovip_server = "https://github.com/tacobayle/demovip_server"
+    username = "ubuntu"
   }
 }
 
-variable "opencart" {
-  type = map
-  default = {
-    cpu = 2
-    memory = 4096
-    count = 2
-    disk = 20
-    template_name = "ubuntu-bionic-18.04-cloudimg-template"
-    opencartDownloadUrl = "https://github.com/opencart/opencart/releases/download/3.0.3.5/opencart-3.0.3.5.zip"
-  }
-}
+//variable "opencart" {
+//  type = map
+//  default = {
+//    cpu = 2
+//    memory = 4096
+//    count = 2
+//    disk = 20
+//    template_name = "ubuntu-bionic-18.04-cloudimg-template"
+//    opencartDownloadUrl = "https://github.com/opencart/opencart/releases/download/3.0.3.5/opencart-3.0.3.5.zip"
+//  }
+//}
 
-variable "mysql" {
-  type = map
-  default = {
-    cpu = 2
-    memory = 4096
-    count = 1
-    disk = 20
-    wait_for_guest_net_timeout = 2
-    template_name = "ubuntu-bionic-18.04-cloudimg-template"
-  }
-}
+//variable "mysql" {
+//  type = map
+//  default = {
+//    cpu = 2
+//    memory = 4096
+//    count = 1
+//    disk = 20
+//    wait_for_guest_net_timeout = 2
+//    template_name = "ubuntu-bionic-18.04-cloudimg-template"
+//  }
+//}
 
-variable "client" {
-  type = map
-  default = {
-    cpu = 2
-    memory = 4096
-    disk = 20
-    template_name = "ubuntu-bionic-18.04-cloudimg-template"
-    count = 1
-  }
-}
+//variable "client" {
+//  type = map
+//  default = {
+//    cpu = 2
+//    memory = 4096
+//    disk = 20
+//    template_name = "ubuntu-bionic-18.04-cloudimg-template"
+//    count = 1
+//  }
+//}
 
-variable "vmc" {
+variable "no_access_vcenter" {
   default = {
     name = "cloudVmc"
+    dhcp_enabled = true
     vcenter = {
       dc = "SDDC-Datacenter"
       cluster = "Cluster-1"
@@ -125,7 +128,7 @@ variable "vmc" {
         name = "vmc.avidemo.fr"
       }
     ]
-    network_mgmt = {
+    network_management = {
       name = "avi-mgmt"
       networkRangeBegin = "11" # for NSX-T segment
       networkRangeEnd = "50" # for NSX-T segment
@@ -150,7 +153,9 @@ variable "vmc" {
     serviceEngineGroup = [
       {
         name = "Default-Group"
-        numberOfSe = "4"
+        numberOfSe = 2
+        folder = "Avi - SE - Default-Group"
+        dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
         disk_per_se = "25"
@@ -159,13 +164,12 @@ variable "vmc" {
         memory_per_se = "4096"
         mem_reserve = "true"
         extra_shared_config_memory = "0"
-        networks = [
-          "avi-vip"]
       },
       {
         name = "seGroupGslb"
-        numberOfSe = "1"
-        cloud_ref = "cloudNoAccess"
+        numberOfSe = 1
+        folder = "Avi - SE - GSLB"
+        dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
         disk_per_se = "25"
@@ -174,23 +178,95 @@ variable "vmc" {
         memory_per_se = "8192"
         mem_reserve = "true"
         extra_shared_config_memory = "2000"
-        networks = [
-          "avi-vip"]
       }
     ]
-    pool = {
-      name = "pool1"
-      lb_algorithm = "LB_ALGORITHM_ROUND_ROBIN"
-    }
-    pool_opencart = {
-      name = "pool2-opencart"
-      lb_algorithm = "LB_ALGORITHM_ROUND_ROBIN"
-    }
+    httppolicyset = [
+      {
+        name = "http-request-policy-app1-content-switching-vmc"
+        http_request_policy = {
+          rules = [
+            {
+              name = "Rule 1"
+              match = {
+                path = {
+                  match_criteria = "CONTAINS"
+                  match_str = ["hello", "world"]
+                }
+              }
+              rewrite_url_action = {
+                path = {
+                  type = "URI_PARAM_TYPE_TOKENIZED"
+                  tokens = [
+                    {
+                      type = "URI_TOKEN_TYPE_STRING"
+                      str_value = "index.html"
+                    }
+                  ]
+                }
+                query = {
+                  keep_query = true
+                }
+              }
+              switching_action = {
+                action = "HTTP_SWITCHING_SELECT_POOL"
+                status_code = "HTTP_LOCAL_RESPONSE_STATUS_CODE_200"
+                pool_ref = "/api/pool?name=pool1-hello-vmc"
+              }
+            },
+            {
+              name = "Rule 2"
+              match = {
+                path = {
+                  match_criteria = "CONTAINS"
+                  match_str = ["avi"]
+                }
+              }
+              rewrite_url_action = {
+                path = {
+                  type = "URI_PARAM_TYPE_TOKENIZED"
+                  tokens = [
+                    {
+                      type = "URI_TOKEN_TYPE_STRING"
+                      str_value = ""
+                    }
+                  ]
+                }
+                query = {
+                  keep_query = true
+                }
+              }
+              switching_action = {
+                action = "HTTP_SWITCHING_SELECT_POOL"
+                status_code = "HTTP_LOCAL_RESPONSE_STATUS_CODE_200"
+                pool_ref = "/api/pool?name=pool2-avi-vmc"
+              }
+            },
+          ]
+        }
+      }
+    ]
+    pools = [
+      {
+        name = "pool1-hello-vmc"
+        lb_algorithm = "LB_ALGORITHM_ROUND_ROBIN"
+      },
+      {
+        name = "pool2-avi-vmc"
+        application_persistence_profile_ref = "System-Persistence-Client-IP"
+        default_server_port = 8080
+      }
+    ]
     virtualservices = {
       http = [
         {
-          name = "app1"
-          pool_ref = "pool1"
+          name = "app1-content-switching-vmc"
+          pool_ref = "pool2-avi-vmc"
+          http_policies = [
+            {
+              http_policy_set_ref = "/api/httppolicyset?name=http-request-policy-app1-content-switching-vmc"
+              index = 11
+            }
+          ]
           services: [
             {
               port = 80
@@ -202,20 +278,6 @@ variable "vmc" {
             }
           ]
         },
-        {
-          name = "opencart"
-          pool_ref = "pool2-opencart"
-          services: [
-            {
-              port = 80
-              enable_ssl = "false"
-            },
-            {
-              port = 443
-              enable_ssl = "true"
-            }
-          ]
-        }
       ]
       dns = [
         {
@@ -226,15 +288,6 @@ variable "vmc" {
             }
           ]
         },
-        {
-          name = "gslb"
-          services: [
-            {
-              port = 53
-            }
-          ]
-          se_group_ref: "seGroupGslb"
-        }
       ]
     }
   }
