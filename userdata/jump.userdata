@@ -14,7 +14,6 @@ packages:
   - python-pip
   - python-jmespath
   - sshpass
-  - gunzip
 
 write_files:
   - content: |
