@@ -55,7 +55,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.52"
+    aviConfigureTag = "v4.53"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
     directory = "ansible"
