@@ -154,7 +154,7 @@ variable "no_access_vcenter" {
       {
         name = "Default-Group"
         numberOfSe = 2
-        folder = "Avi - SE - Default-Group"
+        folder = "Avi-SE-Default-Group"
         dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
@@ -168,7 +168,7 @@ variable "no_access_vcenter" {
       {
         name = "seGroupGslb"
         numberOfSe = 1
-        folder = "Avi - SE - GSLB"
+        folder = "Avi-SE-GSLB"
         dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
@@ -260,7 +260,7 @@ variable "no_access_vcenter" {
       http = [
         {
           name = "app1-content-switching-vmc"
-          pool_ref = "pool2-avi-vmc"
+          pool_ref = "pool1-hello-vmc"
           http_policies = [
             {
               http_policy_set_ref = "/api/httppolicyset?name=http-request-policy-app1-content-switching-vmc"
