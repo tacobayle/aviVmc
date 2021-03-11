@@ -55,7 +55,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.56"
+    aviConfigureTag = "v4.57"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
     directory = "ansible"
@@ -114,6 +114,7 @@ variable "backend" {
 variable "no_access_vcenter" {
   default = {
     name = "cloudVmc"
+    environment = "vmc"
     dhcp_enabled = true
     vcenter = {
       dc = "SDDC-Datacenter"
