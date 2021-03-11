@@ -153,7 +153,7 @@ variable "no_access_vcenter" {
     serviceEngineGroup = [
       {
         name = "Default-Group"
-        numberOfSe = 2
+        numberOfSe = 1
         folder = "Avi-SE-Default-Group"
         dhcp = true
         ha_mode = "HA_MODE_SHARED"
