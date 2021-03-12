@@ -10,8 +10,8 @@ variable "vmc_sddc_id" {}
 
 variable "contentLibrary" {
   default = {
-    name = "Avi Content Library"
-    description = "Avi Content Library"
+    name = "Easy-Avi-CL-Build"
+    description = "Easy-Avi-CL-Build"
     files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
   }
 }
@@ -37,7 +37,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.63"
+    aviConfigureTag = "v4.64"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
     directory = "ansible"
