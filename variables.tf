@@ -55,7 +55,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.61"
+    aviConfigureTag = "v4.62"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
     directory = "ansible"
@@ -155,7 +155,6 @@ variable "no_access_vcenter" {
       {
         name = "Default-Group"
         numberOfSe = 1
-        folder = "Avi-SE-Default-Group"
         dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
@@ -167,9 +166,8 @@ variable "no_access_vcenter" {
         extra_shared_config_memory = "0"
       },
       {
-        name = "seGroupGslb"
+        name = "GSLB"
         numberOfSe = 1
-        folder = "Avi-SE-GSLB"
         dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"
