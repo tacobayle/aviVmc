@@ -1,8 +1,3 @@
-resource "vsphere_tag" "ansible_group_jump" {
-  name             = "jump"
-  category_id      = vsphere_tag_category.ansible_group_jump.id
-}
-
 data "template_file" "jumpbox_userdata" {
   template = file("${path.module}/userdata/jump.userdata")
   vars = {
@@ -44,10 +39,6 @@ resource "vsphere_virtual_machine" "jump" {
   clone {
     template_uuid = vsphere_content_library_item.files[1].id
   }
-
-  tags = [
-        vsphere_tag.ansible_group_jump.id,
-  ]
 
   vapp {
     properties = {

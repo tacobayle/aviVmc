@@ -71,13 +71,13 @@ resource "vsphere_tag_category" "ansible_group_controller" {
   ]
 }
 
-resource "vsphere_tag_category" "ansible_group_jump" {
-  name = "ansible_group_jump"
-  cardinality = "SINGLE"
-  associable_types = [
-    "VirtualMachine",
-  ]
-}
+//resource "vsphere_tag_category" "ansible_group_jump" {
+//  name = "ansible_group_jump"
+//  cardinality = "SINGLE"
+//  associable_types = [
+//    "VirtualMachine",
+//  ]
+//}
 
 //resource "vsphere_tag_category" "ansible_group_mysql" {
 //  name = "ansible_group_mysql"
