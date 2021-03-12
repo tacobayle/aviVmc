@@ -92,24 +92,24 @@ variable "backend" {
 //  }
 //}
 
-variable "controller" {
-  default = {
-    cpu = 8 // 16 or 24
-    memory = 24768 // 32768 or 49152
-    disk = 128 //  256 or 512
-    count = "1"
-    wait_for_guest_net_timeout = 2
-    environment = "VMWARE"
-    dns =  ["8.8.8.8", "8.8.4.4"]
-    ntp = ["95.81.173.155", "188.165.236.162"]
-    floatingIp = "1.1.1.1"
-    from_email = "avicontroller@avidemo.fr"
-    se_in_provider_context = "false"
-    tenant_access_to_provider_se = "true"
-    tenant_vrf = "false"
-    public_ip = true
-  }
-}
+//variable "controller" {
+//  default = {
+//    cpu = 8 // 16 or 24
+//    memory = 24768 // 32768 or 49152
+//    disk = 128 //  256 or 512
+//    count = "1"
+//    wait_for_guest_net_timeout = 2
+//    environment = "VMWARE"
+//    dns =  ["8.8.8.8", "8.8.4.4"]
+//    ntp = ["95.81.173.155", "188.165.236.162"]
+//    floatingIp = "1.1.1.1"
+//    from_email = "avicontroller@avidemo.fr"
+//    se_in_provider_context = "false"
+//    tenant_access_to_provider_se = "true"
+//    tenant_vrf = "false"
+//    public_ip = true
+//  }
+//}
 
 variable "no_access_vcenter" {
   default = {
