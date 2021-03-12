@@ -1,9 +1,9 @@
 
 
-resource "vsphere_tag" "ansible_group_backend" {
-  name             = "backend"
-  category_id      = vsphere_tag_category.ansible_group_backend.id
-}
+//resource "vsphere_tag" "ansible_group_backend" {
+//  name             = "backend"
+//  category_id      = vsphere_tag_category.ansible_group_backend.id
+//}
 
 
 data "template_file" "backend_userdata" {
@@ -47,9 +47,9 @@ resource "vsphere_virtual_machine" "backend" {
     template_uuid = vsphere_content_library_item.files[1].id
   }
 
-  tags = [
-        vsphere_tag.ansible_group_backend.id,
-  ]
+//  tags = [
+//        vsphere_tag.ansible_group_backend.id,
+//  ]
 
   vapp {
     properties = {
