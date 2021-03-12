@@ -310,34 +310,34 @@ resource "null_resource" "cgw_controller_https_create" {
   }
 }
 
-resource "null_resource" "cgw_controller_https_remove" {
-  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_avi_controller"
-  }
-}
-
-resource "null_resource" "cgw_vsHttp_remove" {
-  count = length(var.no_access_vcenter.virtualservices.http)
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
-  }
-}
-
-resource "null_resource" "cgw_vsHttps_remove" {
-  count = length(var.no_access_vcenter.virtualservices.http)
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttps"
-  }
-}
-
-resource "null_resource" "cgw_vsDns_remove" {
-  count = length(var.no_access_vcenter.virtualservices.dns)
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
-  }
-}
+//resource "null_resource" "cgw_controller_https_remove" {
+//  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
+//  provisioner "local-exec" {
+//    when    = destroy
+//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_avi_controller"
+//  }
+//}
+//
+//resource "null_resource" "cgw_vsHttp_remove" {
+//  count = length(var.no_access_vcenter.virtualservices.http)
+//  provisioner "local-exec" {
+//    when    = destroy
+//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
+//  }
+//}
+//
+//resource "null_resource" "cgw_vsHttps_remove" {
+//  count = length(var.no_access_vcenter.virtualservices.http)
+//  provisioner "local-exec" {
+//    when    = destroy
+//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttps"
+//  }
+//}
+//
+//resource "null_resource" "cgw_vsDns_remove" {
+//  count = length(var.no_access_vcenter.virtualservices.dns)
+//  provisioner "local-exec" {
+//    when    = destroy
+//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
+//  }
+//}
