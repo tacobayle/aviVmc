@@ -16,25 +16,6 @@ variable "contentLibrary" {
   }
 }
 
-variable "controller" {
-  default = {
-    cpu = 8
-    memory = 24768
-    disk = 128
-    count = "1"
-    wait_for_guest_net_timeout = 2
-    environment = "VMWARE"
-    dns =  ["8.8.8.8", "8.8.4.4"]
-    ntp = ["95.81.173.155", "188.165.236.162"]
-    floatingIp = "1.1.1.1"
-    from_email = "avicontroller@avidemo.fr"
-    se_in_provider_context = "false"
-    tenant_access_to_provider_se = "true"
-    tenant_vrf = "false"
-    aviCredsJsonFile = "~/.creds.json"
-  }
-}
-
 variable "jump" {
   type = map
   default = {
@@ -69,7 +50,6 @@ variable "backend" {
     cpu = 2
     memory = 4096
     disk = 20
-    count = 2
     wait_for_guest_net_routable = "false"
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
     url_demovip_server = "https://github.com/tacobayle/demovip_server"
@@ -112,11 +92,33 @@ variable "backend" {
 //  }
 //}
 
+variable "controller" {
+  default = {
+    cpu = 8 // 16 or 24
+    memory = 24768 // 32768 or 49152
+    disk = 128 //  256 or 512
+    count = "1"
+    wait_for_guest_net_timeout = 2
+    environment = "VMWARE"
+    dns =  ["8.8.8.8", "8.8.4.4"]
+    ntp = ["95.81.173.155", "188.165.236.162"]
+    floatingIp = "1.1.1.1"
+    from_email = "avicontroller@avidemo.fr"
+    se_in_provider_context = "false"
+    tenant_access_to_provider_se = "true"
+    tenant_vrf = "false"
+    public_ip = true
+  }
+}
+
 variable "no_access_vcenter" {
   default = {
     name = "cloudVmc"
     environment = "vmc"
     dhcp_enabled = true
+    application = true
+    public_ip = true
+    dfw_rules = true
     vcenter = {
       dc = "SDDC-Datacenter"
       cluster = "Cluster-1"
@@ -124,6 +126,22 @@ variable "no_access_vcenter" {
       resource_pool = "Cluster-1/Resources"
       folderApps = "Avi-Apps"
       folderAvi = "Avi-Controllers"
+    }
+    controller = {
+      cpu = 8 // 16 or 24 (S, M or L)
+      memory = 24768 // 32768 or 49152 (S, M or L)
+      disk = 128 //  256 or 512 (S, M or L)
+      count = "1"
+      wait_for_guest_net_timeout = 2
+      environment = "VMWARE"
+      dns =  ["8.8.8.8", "8.8.4.4"]
+      ntp = ["95.81.173.155", "188.165.236.162"]
+      floatingIp = "1.1.1.1"
+      from_email = "avicontroller@avidemo.fr"
+      se_in_provider_context = "false"
+      tenant_access_to_provider_se = "true"
+      tenant_vrf = "false"
+      public_ip = true
     }
     domains = [
       {
@@ -155,7 +173,7 @@ variable "no_access_vcenter" {
     serviceEngineGroup = [
       {
         name = "Default-Group"
-        numberOfSe = 1
+        numberOfSe = 2
         dhcp = true
         ha_mode = "HA_MODE_SHARED"
         min_scaleout_per_vs = "1"

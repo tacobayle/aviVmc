@@ -7,7 +7,7 @@ resource "vsphere_tag" "ansible_group_backend" {
 
 
 data "template_file" "backend_userdata" {
-  count = var.backend["count"]
+  count = (var.no_access_vcenter.application == true ? 2 : 0)
   template = file("${path.module}/userdata/backend.userdata")
   vars = {
     pubkey       = file(var.jump["public_key_path"])
@@ -17,7 +17,7 @@ data "template_file" "backend_userdata" {
 }
 
 resource "vsphere_virtual_machine" "backend" {
-  count            = var.backend["count"]
+  count = (var.no_access_vcenter.application == true ? 2 : 0)
   name             = "backend-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id

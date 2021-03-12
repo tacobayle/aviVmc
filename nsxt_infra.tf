@@ -44,7 +44,7 @@ resource "time_sleep" "wait_60_seconds" {
 }
 
 resource "nsxt_policy_nat_rule" "dnat_controller" {
-  count = var.controller["count"]
+  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
   display_name         = "dnat_avicontroller"
   action               = "DNAT"
   source_networks      = []
@@ -103,7 +103,7 @@ resource "nsxt_policy_group" "avi_networks" {
 }
 
 resource "nsxt_policy_group" "controller" {
-  count = var.controller["count"]
+  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
   display_name = "controller${count.index}"
   domain       = "cgw"
   description  = "Avi Controller${count.index} Public and Private IPs"
@@ -304,7 +304,7 @@ resource "null_resource" "cgw_outbound_create" {
 //}
 
 resource "null_resource" "cgw_controller_https_create" {
-  count = var.controller["count"]
+  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller[count.index].id} HTTPS ALLOW public 0"
   }

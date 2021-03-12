@@ -1,6 +1,6 @@
 
 resource "vmc_public_ip" "public_ip_controller" {
-  count = var.controller["count"]
+  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
   nsxt_reverse_proxy_url = var.vmc_nsx_server
   display_name = "controller${count.index}"
 }
