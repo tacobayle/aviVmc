@@ -222,12 +222,10 @@ resource "null_resource" "cgw_vsHttp_create" {
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTP ALLOW public 0"
   }
-  resource "null_resource" "cgw_vsHttp_remove" {
-    count = length(var.no_access_vcenter.virtualservices.http)
-    provisioner "local-exec" {
-      when    = destroy
-      command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
-    }
+  provisioner "local-exec" {
+    when    = destroy
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
+  }
 }
 
 resource "null_resource" "cgw_vsHttps_create" {
@@ -266,10 +264,10 @@ resource "null_resource" "cgw_vsDns_create" {
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsDns any ${nsxt_policy_group.vsDns[count.index].id} DNS ALLOW public 0"
   }
-    provisioner "local-exec" {
-      when    = destroy
-      command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
-    }
+  provisioner "local-exec" {
+    when    = destroy
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
+  }
 }
 
 //resource "nsxt_policy_predefined_gateway_policy" "cgw_outbound" {
