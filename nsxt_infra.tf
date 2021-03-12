@@ -305,7 +305,8 @@ resource "null_resource" "cgw_outbound_create" {
 
 resource "null_resource" "cgw_controller_https_create" {
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller.id} HTTPS ALLOW public 0"
+    count = var.controller["count"]
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller[count.index].id} HTTPS ALLOW public 0"
   }
 }
 
