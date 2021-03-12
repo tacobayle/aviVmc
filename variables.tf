@@ -6,7 +6,7 @@ variable "vmc_vsphere_server" {}
 variable "vmc_nsx_server" {}
 variable "vmc_nsx_token" {}
 variable "vmc_org_id" {}
-variable "vmc_ssdc_id" {}
+variable "vmc_sddc_id" {}
 
 variable "contentLibrary" {
   default = {
