@@ -222,20 +222,12 @@ resource "null_resource" "cgw_vsHttp_create" {
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTP ALLOW public 0"
   }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
-  }
 }
 
 resource "null_resource" "cgw_vsHttps_create" {
   count = length(var.no_access_vcenter.virtualservices.http)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttps any ${nsxt_policy_group.vsHttp[count.index].id} HTTPS ALLOW public 0"
-  }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_avi_controller"
   }
 }
 
@@ -263,10 +255,6 @@ resource "null_resource" "cgw_vsDns_create" {
   count = length(var.no_access_vcenter.virtualservices.dns)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsDns any ${nsxt_policy_group.vsDns[count.index].id} DNS ALLOW public 0"
-  }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
   }
 }
 
@@ -319,10 +307,6 @@ resource "null_resource" "cgw_controller_https_create" {
   count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller[count.index].id} HTTPS ALLOW public 0"
-  }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_avi_controller"
   }
 }
 
