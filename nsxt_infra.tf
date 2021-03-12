@@ -150,122 +150,162 @@ resource "nsxt_policy_group" "vsDns" {
   }
 }
 
-resource "nsxt_policy_service" "serviceHttp" {
-  description = "Avi HTTP VS provisioned by Terraform"
-  display_name = "Avi HTTP VS provisioned by Terraform"
-  l4_port_set_entry {
-    display_name = "TCP80-8080 and TCP443"
-    description = "TCP80-8080 and TCP443"
-    protocol = "TCP"
-    destination_ports = ["80", "8080", "443"]
+//resource "nsxt_policy_service" "serviceHttp" {
+//  description = "Avi HTTP VS provisioned by Terraform"
+//  display_name = "Avi HTTP VS provisioned by Terraform"
+//  l4_port_set_entry {
+//    display_name = "TCP80-8080 and TCP443"
+//    description = "TCP80-8080 and TCP443"
+//    protocol = "TCP"
+//    destination_ports = ["80", "8080", "443"]
+//  }
+//}
+//
+//resource "nsxt_policy_service" "serviceDns" {
+//  description = "Avi DNS VS provisioned by Terraform"
+//  display_name = "Avi DNS VS provisioned by Terraform"
+//  l4_port_set_entry {
+//    display_name = "DNS53"
+//    description = "DNS53"
+//    protocol = "UDP"
+//    destination_ports = ["53"]
+//  }
+//}
+
+//resource "nsxt_policy_predefined_gateway_policy" "cgw_jump" {
+//  path = "/infra/domains/cgw/gateway-policies/default"
+//  rule {
+//    action = "ALLOW"
+//    destination_groups    = [nsxt_policy_group.jump.path]
+//    destinations_excluded = false
+//    direction             = "IN_OUT"
+//    disabled              = false
+//    display_name          = "jump"
+//    ip_version            = "IPV4_IPV6"
+//    logged                = false
+//    profiles              = []
+//    scope                 = ["/infra/labels/cgw-public"]
+//    services              = []
+//    source_groups         = []
+//    sources_excluded      = false
+//  }
+//}
+
+resource "null_resource" "cgw_jump_create" {
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} new-cgw-rule easyavi_inbound_jump any ${nsxt_policy_group.jump.id} SSH ALLOW public 0"
   }
 }
 
-resource "nsxt_policy_service" "serviceDns" {
-  description = "Avi DNS VS provisioned by Terraform"
-  display_name = "Avi DNS VS provisioned by Terraform"
-  l4_port_set_entry {
-    display_name = "DNS53"
-    description = "DNS53"
-    protocol = "UDP"
-    destination_ports = ["53"]
-  }
-}
+//resource "nsxt_policy_predefined_gateway_policy" "cgw_vsHttp" {
+//  path = "/infra/domains/cgw/gateway-policies/default"
+//  count = length(var.no_access_vcenter.virtualservices.http)
+//  rule {
+//    action = "ALLOW"
+//    destination_groups    = [nsxt_policy_group.vsHttp[count.index].path]
+//    destinations_excluded = false
+//    direction             = "IN_OUT"
+//    disabled              = false
+//    display_name          = "HTTP VS - ${count.index}"
+//    ip_version            = "IPV4_IPV6"
+//    logged                = false
+//    profiles              = []
+//    scope                 = ["/infra/labels/cgw-public"]
+//    services              = [nsxt_policy_service.serviceHttp.path]
+//    source_groups         = []
+//    sources_excluded      = false
+//  }
+//}
 
-resource "nsxt_policy_predefined_gateway_policy" "cgw_vsHttp" {
-  path = "/infra/domains/cgw/gateway-policies/default"
+resource "null_resource" "cgw_vsHttp_create" {
   count = length(var.no_access_vcenter.virtualservices.http)
-  rule {
-    action = "ALLOW"
-    destination_groups    = [nsxt_policy_group.vsHttp[count.index].path]
-    destinations_excluded = false
-    direction             = "IN_OUT"
-    disabled              = false
-    display_name          = "HTTP VS - ${count.index}"
-    ip_version            = "IPV4_IPV6"
-    logged                = false
-    profiles              = []
-    scope                 = ["/infra/labels/cgw-public"]
-    services              = [nsxt_policy_service.serviceHttp.path]
-    source_groups         = []
-    sources_excluded      = false
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTP ALLOW public 0"
   }
 }
 
-resource "nsxt_policy_predefined_gateway_policy" "cgw_vsDns" {
-  path = "/infra/domains/cgw/gateway-policies/default"
+resource "null_resource" "cgw_vsHttps_create" {
+  count = length(var.no_access_vcenter.virtualservices.http)
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTPS ALLOW public 0"
+  }
+}
+
+//resource "nsxt_policy_predefined_gateway_policy" "cgw_vsDns" {
+//  path = "/infra/domains/cgw/gateway-policies/default"
+//  count = length(var.no_access_vcenter.virtualservices.dns)
+//  rule {
+//    action = "ALLOW"
+//    destination_groups    = [nsxt_policy_group.vsDns[count.index].path]
+//    destinations_excluded = false
+//    direction             = "IN_OUT"
+//    disabled              = false
+//    display_name          = "DNS VS - ${count.index}"
+//    ip_version            = "IPV4_IPV6"
+//    logged                = false
+//    profiles              = []
+//    scope                 = ["/infra/labels/cgw-public"]
+//    services              = [nsxt_policy_service.serviceDns.path]
+//    source_groups         = []
+//    sources_excluded      = false
+//  }
+//}
+
+resource "null_resource" "cgw_vsDns_create" {
   count = length(var.no_access_vcenter.virtualservices.dns)
-  rule {
-    action = "ALLOW"
-    destination_groups    = [nsxt_policy_group.vsDns[count.index].path]
-    destinations_excluded = false
-    direction             = "IN_OUT"
-    disabled              = false
-    display_name          = "DNS VS - ${count.index}"
-    ip_version            = "IPV4_IPV6"
-    logged                = false
-    profiles              = []
-    scope                 = ["/infra/labels/cgw-public"]
-    services              = [nsxt_policy_service.serviceDns.path]
-    source_groups         = []
-    sources_excluded      = false
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} new-cgw-rule easyavi_inbound_vsDns any ${nsxt_policy_group.vsDns[count.index].id} DNS ALLOW public 0"
   }
 }
 
-resource "nsxt_policy_predefined_gateway_policy" "cgw_outbound" {
-  path = "/infra/domains/cgw/gateway-policies/default"
-  rule {
-    action = "ALLOW"
-    destination_groups    = []
-    destinations_excluded = false
-    direction             = "IN_OUT"
-    disabled              = false
-    display_name          = "Outbound Internet"
-    ip_version            = "IPV4_IPV6"
-    logged                = false
-    profiles              = []
-    scope                 = ["/infra/labels/cgw-public"]
-    services              = []
-    source_groups         = [nsxt_policy_group.avi_networks.path]
-    sources_excluded      = false
+//resource "nsxt_policy_predefined_gateway_policy" "cgw_outbound" {
+//  path = "/infra/domains/cgw/gateway-policies/default"
+//  rule {
+//    action = "ALLOW"
+//    destination_groups    = []
+//    destinations_excluded = false
+//    direction             = "IN_OUT"
+//    disabled              = false
+//    display_name          = "Outbound Internet"
+//    ip_version            = "IPV4_IPV6"
+//    logged                = false
+//    profiles              = []
+//    scope                 = ["/infra/labels/cgw-public"]
+//    services              = []
+//    source_groups         = [nsxt_policy_group.avi_networks.path]
+//    sources_excluded      = false
+//  }
+//}
+
+resource "null_resource" "cgw_outbound_create" {
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} new-cgw-rule easyavi_outbound ${nsxt_policy_group.avi_networks.id} any any ALLOW public 0"
   }
 }
 
-resource "nsxt_policy_predefined_gateway_policy" "cgw_controller" {
-  path = "/infra/domains/cgw/gateway-policies/default"
-  count = var.controller["count"]
-  rule {
-    action = "ALLOW"
-    destination_groups    = [nsxt_policy_group.controller[count.index].path]
-    destinations_excluded = false
-    direction             = "IN_OUT"
-    disabled              = false
-    display_name          = "controller${count.index}"
-    ip_version            = "IPV4_IPV6"
-    logged                = false
-    profiles              = []
-    scope                 = ["/infra/labels/cgw-public"]
-    services              = []
-    source_groups         = []
-    sources_excluded      = false
+//resource "nsxt_policy_predefined_gateway_policy" "cgw_controller" {
+//  path = "/infra/domains/cgw/gateway-policies/default"
+//  count = var.controller["count"]
+//  rule {
+//    action = "ALLOW"
+//    destination_groups    = [nsxt_policy_group.controller[count.index].path]
+//    destinations_excluded = false
+//    direction             = "IN_OUT"
+//    disabled              = false
+//    display_name          = "controller${count.index}"
+//    ip_version            = "IPV4_IPV6"
+//    logged                = false
+//    profiles              = []
+//    scope                 = ["/infra/labels/cgw-public"]
+//    services              = []
+//    source_groups         = []
+//    sources_excluded      = false
+//  }
+//}
+
+resource "null_resource" "cgw_controller_https_create" {
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller.id} HTTPS ALLOW public 0"
   }
 }
 
-resource "nsxt_policy_predefined_gateway_policy" "cgw_jump" {
-  path = "/infra/domains/cgw/gateway-policies/default"
-  rule {
-    action = "ALLOW"
-    destination_groups    = [nsxt_policy_group.jump.path]
-    destinations_excluded = false
-    direction             = "IN_OUT"
-    disabled              = false
-    display_name          = "jump"
-    ip_version            = "IPV4_IPV6"
-    logged                = false
-    profiles              = []
-    scope                 = ["/infra/labels/cgw-public"]
-    services              = []
-    source_groups         = []
-    sources_excluded      = false
-  }
-}

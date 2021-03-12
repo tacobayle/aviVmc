@@ -15,3 +15,11 @@ output "httpVsPublicIP" {
 output "dnsVsPublicIP" {
   value = vmc_public_ip.public_ip_vsDns.*.ip
 }
+
+output "aviUsername" {
+  value = var.avi_username
+}
+
+output "aviPassword" {
+  value = var.avi_password
+}

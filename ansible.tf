@@ -26,7 +26,7 @@
 
 
 resource "null_resource" "foo" {
-  depends_on = [nsxt_policy_predefined_gateway_policy.cgw_jump]
+  depends_on = [null_resource.cgw_jump_create]
   connection {
    host        = vmc_public_ip.public_ip_jump.ip
    type        = "ssh"
@@ -60,8 +60,22 @@ resource "null_resource" "foo" {
   }
 }
 
+resource "null_resource" "cgw_jump_remove" {
+  depends_on = [null_resource.foo]
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} remove-cgw-rule jump"
+  }
+}
+
+resource "null_resource" "cgw_outbound_remove" {
+  depends_on = [null_resource.foo]
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_ssdc_id} remove-cgw-rule"
+  }
+}
+
 resource "null_resource" "local_file" {
   provisioner "local-exec" {
-    command = "touch ${var.vmc_vsphere_server}.ran"
+    command = "touch easyavi.ran"
   }
 }

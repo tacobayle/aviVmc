@@ -6,6 +6,7 @@ variable "vmc_vsphere_server" {}
 variable "vmc_nsx_server" {}
 variable "vmc_nsx_token" {}
 variable "vmc_org_id" {}
+variable "vmc_ssdc_id" {}
 
 variable "contentLibrary" {
   default = {
@@ -55,7 +56,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.62"
+    aviConfigureTag = "v4.63"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
     directory = "ansible"
