@@ -98,7 +98,7 @@ resource "nsxt_policy_group" "management" {
   description  = "Easy Avi Management"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway}"]
+      ip_addresses = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway)}"]
     }
   }
 }
@@ -110,7 +110,7 @@ resource "nsxt_policy_group" "backend" {
   description  = "Easy Avi backend"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${cidrhost(var.no_access_vcenter.backend.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway}"]
+      ip_addresses = ["${cidrhost(var.no_access_vcenter.backend.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway)}"]
     }
   }
 }
