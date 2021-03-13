@@ -117,8 +117,8 @@ variable "no_access_vcenter" {
     environment = "vmc" # static
     dhcp_enabled = true # static
     application = false # dynamic, from WebUI - if application is enabled
-    public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
-    dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
+    public_ip = false # dynamic, from WebUI - if application is enabled and public_ip is enabled
+    dfw_rules = false # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
     vcenter = {
       dc = "SDDC-Datacenter" # static
       cluster = "Cluster-1" # static
