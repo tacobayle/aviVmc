@@ -9,20 +9,21 @@ resource "nsxt_policy_segment" "networkMgmt" {
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = "${cidrhost(var.no_access_vcenter.network_management.cidr, 1)}/${split("/", var.no_access_vcenter.network_management.cidr)[1]}"
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_management.cidr, var.no_access_vcenter.network_management.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_management.cidr, var.no_access_vcenter.network_management.networkRangeEnd)}"]
+    cidr        = var.no_access_vcenter.network_management.defaultGateway
+    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.networkRangeEnd)}"]
   }
 }
 
 resource "nsxt_policy_segment" "networkBackend" {
+  count = (var.no_access_vcenter.application == true ? 1 : 0)
   display_name        = var.no_access_vcenter.network_backend.name
   connectivity_path   = "/infra/tier-1s/cgw"
   transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = "${cidrhost(var.no_access_vcenter.network_backend.cidr, 1)}/${split("/", var.no_access_vcenter.network_backend.cidr)[1]}"
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_backend.cidr, var.no_access_vcenter.network_backend.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_backend.cidr, var.no_access_vcenter.network_backend.networkRangeEnd)}"]
+    cidr        = var.no_access_vcenter.network_backend.defaultGateway
+    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, var.no_access_vcenter.network_backend.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, var.no_access_vcenter.network_backend.networkRangeEnd)}"]
   }
 }
 
@@ -33,8 +34,8 @@ resource "nsxt_policy_segment" "networkVip" {
   #domain_name         = "runvmc.local"
   description         = "Network Segment built by Terraform for Avi"
   subnet {
-    cidr        = "${cidrhost(var.no_access_vcenter.network_vip.cidr, 1)}/${split("/", var.no_access_vcenter.network_vip.cidr)[1]}"
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_vip.cidr, var.no_access_vcenter.network_vip.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_vip.cidr, var.no_access_vcenter.network_vip.networkRangeEnd)}"]
+    cidr        = var.no_access_vcenter.network_vip.defaultGateway
+    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.networkRangeEnd)}"]
   }
 }
 
@@ -67,12 +68,12 @@ resource "nsxt_policy_nat_rule" "dnat_jump" {
 }
 
 resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
-  count = length(var.no_access_vcenter.virtualservices.http)
+  count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
   display_name         = "dnat_VS-HTTP-${count.index}"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_vsHttp[count.index].ip]
-  translated_networks  = [cidrhost(var.no_access_vcenter.network_vip.cidr, var.no_access_vcenter.network_vip.ipStartPool + count.index)]
+  translated_networks  = [cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + count.index)]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
@@ -80,24 +81,36 @@ resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
 
 resource "nsxt_policy_nat_rule" "dnat_vsDns" {
   depends_on = [nsxt_policy_nat_rule.dnat_vsHttp]
-  count = length(var.no_access_vcenter.virtualservices.dns)
+  count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
   display_name         = "dnat_VS-DNS-${count.index}"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_vsDns[count.index].ip]
-  translated_networks  = [cidrhost(var.no_access_vcenter.network_vip.cidr, var.no_access_vcenter.network_vip.ipStartPool + length(var.no_access_vcenter.virtualservices.http) + count.index)]
+  translated_networks  = [cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + length(var.no_access_vcenter.virtualservices.http) + count.index)]
   gateway_path         = "/infra/tier-1s/cgw"
   logging              = false
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
 }
 
-resource "nsxt_policy_group" "avi_networks" {
-  display_name = "all Avi Networks"
+resource "nsxt_policy_group" "management" {
+  display_name = "Easy Avi Management"
   domain       = "cgw"
-  description  = "all Avi Networks"
+  description  = "Easy Avi Management"
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.no_access_vcenter.network_management.cidr, var.no_access_vcenter.network_backend.cidr]
+      ip_addresses = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway}"]
+    }
+  }
+}
+
+resource "nsxt_policy_group" "backend" {
+  count = (var.no_access_vcenter.application == true ? 1 : 0)
+  display_name = "Easy Avi backend"
+  domain       = "cgw"
+  description  = "Easy Avi backend"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = ["${cidrhost(var.no_access_vcenter.backend.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway}"]
     }
   }
 }
@@ -126,26 +139,26 @@ resource "nsxt_policy_group" "jump" {
 }
 
 resource "nsxt_policy_group" "vsHttp" {
-  count = length(var.no_access_vcenter.virtualservices.http)
+  count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   display_name = "group-VS-Http-${count.index}"
   domain       = "cgw"
   description  = "group-VS-Http-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = [vmc_public_ip.public_ip_vsHttp[count.index].ip, cidrhost(var.no_access_vcenter.network_vip.cidr, var.no_access_vcenter.network_vip.ipStartPool + count.index)]
+      ip_addresses = [vmc_public_ip.public_ip_vsHttp[count.index].ip, cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + count.index)]
     }
   }
 }
 
 resource "nsxt_policy_group" "vsDns" {
-  count = length(var.no_access_vcenter.virtualservices.dns)
+  count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   depends_on = [nsxt_policy_group.vsHttp]
   display_name = "group-VS-Dns-${count.index}"
   domain       = "cgw"
   description  = "group-VS-Dns-${count.index}"
   criteria {
     ipaddress_expression {
-      ip_addresses = [vmc_public_ip.public_ip_vsDns[count.index].ip, cidrhost(var.no_access_vcenter.network_vip.cidr, var.no_access_vcenter.network_vip.ipStartPool + length(var.no_access_vcenter.virtualservices.http) + count.index)]
+      ip_addresses = [vmc_public_ip.public_ip_vsDns[count.index].ip, cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + length(var.no_access_vcenter.virtualservices.http) + count.index)]
     }
   }
 }
@@ -218,14 +231,14 @@ resource "null_resource" "cgw_jump_create" {
 //}
 
 resource "null_resource" "cgw_vsHttp_create" {
-  count = length(var.no_access_vcenter.virtualservices.http)
+  count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTP ALLOW public 0"
   }
 }
 
 resource "null_resource" "cgw_vsHttps_create" {
-  count = length(var.no_access_vcenter.virtualservices.http)
+  count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttps any ${nsxt_policy_group.vsHttp[count.index].id} HTTPS ALLOW public 0"
   }
@@ -252,7 +265,7 @@ resource "null_resource" "cgw_vsHttps_create" {
 //}
 
 resource "null_resource" "cgw_vsDns_create" {
-  count = length(var.no_access_vcenter.virtualservices.dns)
+  count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsDns any ${nsxt_policy_group.vsDns[count.index].id} DNS ALLOW public 0"
   }
@@ -277,9 +290,16 @@ resource "null_resource" "cgw_vsDns_create" {
 //  }
 //}
 
-resource "null_resource" "cgw_outbound_create" {
+resource "null_resource" "cgw_outbound_management_create" {
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_outbound ${nsxt_policy_group.avi_networks.id} any any ALLOW public 0"
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_management_outbound ${nsxt_policy_group.management.id} any any ALLOW public 0"
+  }
+}
+
+resource "null_resource" "cgw_outbound_backend_create" {
+  count = (var.no_access_vcenter.application == true ? 1 : 0)
+  provisioner "local-exec" {
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_backend_outbound ${nsxt_policy_group.backend[0].id} any any ALLOW public 0"
   }
 }
 
