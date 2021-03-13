@@ -92,7 +92,7 @@ Terraform v0.13.0
 ## Run the terraform:
 - build:
 ```
-cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; terraform init ; terraform apply -var-file=sddc.json -auto-approve
+cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; /bin/bash ./getMypublic.sh ; terraform init ; terraform apply -var-file=sddc.json -auto-approve
 ```
 - destroy:
 ```
