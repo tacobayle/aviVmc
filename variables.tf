@@ -116,7 +116,7 @@ variable "no_access_vcenter" {
     name = "cloudVmc" # static
     environment = "vmc" # static
     dhcp_enabled = true # static
-    application = true # dynamic, from WebUI - if application is enabled
+    application = false # dynamic, from WebUI - if application is enabled
     public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
     dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
     vcenter = {
@@ -177,7 +177,7 @@ variable "no_access_vcenter" {
     serviceEngineGroup = [
       {
         name = "Default-Group" # dynamic, from WebUI
-        numberOfSe = 2 # dynamic, from WebUI
+        numberOfSe = 1 # dynamic, from WebUI
         dhcp = true # static
         se_tunnel_mode = 1 # static
         ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
@@ -189,20 +189,20 @@ variable "no_access_vcenter" {
         mem_reserve = "true" # static
         extra_shared_config_memory = "0" # dynamic, from WebUI
       },
-      {
-        name = "GSLB" # dynamic, from WebUI
-        numberOfSe = 1 # dynamic, from WebUI
-        dhcp = true # static
-        se_tunnel_mode = 1 # static
-        ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
-        min_scaleout_per_vs = "1" # static
-        disk_per_se = "25" # dynamic, from WebUI
-        vcpus_per_se = "2" # dynamic, from WebUI
-        cpu_reserve = "true" # static
-        memory_per_se = "8192"  # dynamic, from WebUI
-        mem_reserve = "true" # static
-        extra_shared_config_memory = "2000" # dynamic, from WebUI
-      }
+//      {
+//        name = "GSLB" # dynamic, from WebUI
+//        numberOfSe = 1 # dynamic, from WebUI
+//        dhcp = true # static
+//        se_tunnel_mode = 1 # static
+//        ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
+//        min_scaleout_per_vs = "1" # static
+//        disk_per_se = "25" # dynamic, from WebUI
+//        vcpus_per_se = "2" # dynamic, from WebUI
+//        cpu_reserve = "true" # static
+//        memory_per_se = "8192"  # dynamic, from WebUI
+//        mem_reserve = "true" # static
+//        extra_shared_config_memory = "2000" # dynamic, from WebUI
+//      }
     ]
     httppolicyset = [
       {
