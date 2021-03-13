@@ -29,7 +29,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.66"
+    aviConfigureTag = "v4.67"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
@@ -168,7 +168,7 @@ variable "no_access_vcenter" {
       dhcp_enabled = "no" # for Avi
       ipStartPool = "100" # for Avi IPAM
       ipEndPool = "119" # for Avi IPAM
-      defaultGateway = 1
+      defaultGateway = "10.1.3.1/24"
     }
     network_backend = {
       name = "avi-backend"

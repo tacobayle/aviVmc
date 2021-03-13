@@ -16,18 +16,26 @@ vmc_org_id=blablabla
 vmc_sddc_name=blablabla
 TF_VAR_avi_password=blablabla
 ```
-- The following ova needs to be available in the TF host and defined in var.contentLibrary.files:
+- The following ova needs to be available in the TF host and path needs to be defined in var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile:
+```
+- controller-20.1.4-9087.ova
+...
+      contentLibrary = {
+        name = "Easy-Avi-CL-Build"
+        description = "Easy-Avi-CL-Build"
+        aviOvaFile = "/home/ubuntu/controller-20.1.4-9087.ova"
+...
+```
+
+- The following ova needs to be available in the TF host and path needs to be defined in var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile:
 ```
 - bionic-server-cloudimg-amd64.ova
-- controller-20.1.4-9087.ova
-like:
-variable "contentLibrary" {
-  default = {
-    name = "Avi Content Library"
-    description = "Avi Content Library"
-    files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"]
-  }
-}
+...
+      contentLibrary = {
+        name = "Easy-Avi-CL-Build"
+        description = "Easy-Avi-CL-Build"
+        ubuntuOvaFile = "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
+...
 ```
 
 - Ubuntu image can be found here: https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
@@ -40,7 +48,6 @@ variable "jump" {
     public_key_path = "~/.ssh/cloudKey.pub"
     private_key_path = "~/.ssh/cloudKey"
 ```
-  
 
 ## Environment:
 
@@ -68,19 +75,17 @@ Terraform v0.13.0
 1. All the parameters/variables defined in variables.tf
 
 ## Use the terraform script to:
-- Create new folder(s) within v-center - one for the Avi Apps - one for the Avi controller
+- Create new folder within v-center:
+    - one for the Avi Apps
+    - one for the Avi controller
 - Create NSX-T segment(s)
-- Create Content Library and populate it with the ova mentioned above 
+- Create Content Library and populate it with the OVA(s) mentioned above 
 - Spin up 1 Avi Controller VM(s) - Clone from Content Library
 - Spin up 2 backend VM(s) - Clone from Content Library
-- Spin up 2 web opencart VM(s) - Clone from Content Library
-- Spin up 1 mysql VM(s) - Clone from Content Library
-- Spin up 1 client VM(s) - Clone from Content Library
 - Spin up 1 jump VM with ansible installed  - Clone from Content Library - userdata to install packages
 - Request Public IP(s) for Jump host, Controller and Virtual Services
 - Create NSX-T NAT Rule(s) for Jump host, Controller and Virtual Services
 - Create NSX-T policy Group for Jump host, Controller and Virtual Services
-- Create NSX-T Service for Virtual Services (only HTTP (tcp/80 and tcp/443) and DNS (udp/53))
 - Create NSX-T Gateway Policies for Jump host, Controller and Virtual Services
 - Call ansible to do the Avi configuration (git clone)
 
@@ -91,6 +96,6 @@ cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 pytho
 ```
 - destroy:
 ```
-manually remove firewall rules (Gateway Firewall/Compute gateway, first)
+manually remove firewall rules (Gateway Firewall/Compute gateway)
 terraform destroy -var-file=sddc.json -auto-approve
 ```
