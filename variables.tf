@@ -29,7 +29,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.71"
+    aviConfigureTag = "v4.72"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
@@ -116,9 +116,9 @@ variable "no_access_vcenter" {
     name = "cloudVmc" # static
     environment = "vmc" # static
     dhcp_enabled = true # static
-    application = true # if application is enabled
-    public_ip = true # if application is enabled and public_ip is enabled
-    dfw_rules = true # if application is enabled and dfw_rules is enabled
+    application = true # dynamic, from WebUI - if application is enabled
+    public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
+    dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
     vcenter = {
       dc = "SDDC-Datacenter" # static
       cluster = "Cluster-1" # static
@@ -129,14 +129,14 @@ variable "no_access_vcenter" {
       contentLibrary = {
         name = "Easy-Avi-CL-Build"  # static
         description = "Easy-Avi-CL-Build"  # static
-        aviOvaFile = "/home/ubuntu/controller-20.1.4-9087.ova" # this path needs to be populated following the download from myvmware.com (avi_version.json defines compatible versions)
+        aviOvaFile = "/home/ubuntu/controller-20.1.4-9087.ova" # dynamic, from WebUI - this path needs to be populated following the download from myvmware.com (avi_version.json defines compatible versions)
         ubuntuOvaFile = "/home/ubuntu/bionic-server-cloudimg-amd64.ova"  # static
       }
     }
     controller = {
-      cpu = 8 // 16 or 24 (S, M or L)
-      memory = 24768 // 32768 or 49152 (S, M or L)
-      disk = 128 //  256 or 512 (S, M or L)
+      cpu = 8 # dynamic, from WebUI - 8, 16 or 24 (S, M or L)
+      memory = 24768 # dynamic, from WebUI -  24768, 32768 or 49152 (S, M or L)
+      disk = 128 # dynamic, from WebUI - 128, 256 or 512 (S, M or L)
       count = "1" # static
       wait_for_guest_net_timeout = 2 # static
       environment = "VMWARE" # static
@@ -147,32 +147,32 @@ variable "no_access_vcenter" {
       se_in_provider_context = "false" # static
       tenant_access_to_provider_se = "true" # static
       tenant_vrf = "false" # static
-      public_ip = true # if public IP has been requested in the form
+      public_ip = true # dynamic, from WebUI - if public IP for controller has been enabled
     }
     domains = [
       {
-        name = "vmc.local" # if application is enabled, value from the form
+        name = "vmc.local" # dynamic, from WebUI - if application is enabled
       }
     ]
     network_management = {
-      name = "avi-mgmt" # from NSX-T GO API
+      name = "avi-mgmt" # dynamic from NSX-T API
       networkRangeBegin = "11" # Not needed in Easy Avi
       networkRangeEnd = "50" # Not needed in Easy Avi
-      defaultGateway = "10.1.1.1/24" # from NSX-T GO API
+      defaultGateway = "10.1.1.1/24" # dynamic from NSX-T API
     }
     network_vip = {
-      name = "avi-vip" # dynamic, from NSX-T GO API
+      name = "avi-vip" # dynamic from NSX-T API
       networkRangeBegin = "11" # Not needed in Easy Avi
       networkRangeEnd = "50" # Not needed in Easy Avi
-      ipStartPool = "100" # for Avi IPAM
-      ipEndPool = "119" # for Avi IPAM
-      defaultGateway = "10.1.3.1/24" # dynamic, from NSX-T GO API
+      ipStartPool = "100" # dynamic, from WebUI - if application is enabled
+      ipEndPool = "119" # dynamic, from WebUI - if application is enabled
+      defaultGateway = "10.1.3.1/24" # dynamic from NSX-T API
     }
     network_backend = {
-      name = "avi-backend" # dynamic, from NSX-T GO API
+      name = "avi-backend" # dynamic from NSX-T API
       networkRangeBegin = "11" # Not needed in Easy Avi
       networkRangeEnd = "50" # Not needed in Easy Avi
-      defaultGateway = "10.1.2.1/24" # dynamic, from NSX-T GO API
+      defaultGateway = "10.1.2.1/24" # dynamic from NSX-T API
     }
     serviceEngineGroup = [
       {
