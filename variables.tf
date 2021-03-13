@@ -166,7 +166,6 @@ variable "no_access_vcenter" {
 //      cidr = "10.1.3.0/24" # for NSX-T segment
       networkRangeBegin = "11" # for NSX-T segment
       networkRangeEnd = "50" # for NSX-T segment
-      dhcp_enabled = "no" # for Avi
       ipStartPool = "100" # for Avi IPAM
       ipEndPool = "119" # for Avi IPAM
       defaultGateway = "10.1.3.1/24" # for NSX-T segment and Avi
