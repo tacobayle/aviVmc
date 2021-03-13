@@ -5,12 +5,9 @@ Spin up a full Avi environment (through Terraform) in VMC
 
 ## Prerequisites:
 - Terraform installed in the orchestrator VM (TF host)
-
-
-- The following firewall Gateway rules need to be defined:
+- The following firewall Gateway rule need to be defined:
 
 ![](.README_images/8577c0fb.png)
-
 
 - The following environment variables need to be defined:
 ```
@@ -22,19 +19,19 @@ TF_VAR_avi_password=blablabla
 - The following ova needs to be available in the TF host and defined in var.contentLibrary.files:
 ```
 - bionic-server-cloudimg-amd64.ova
-- controller-20.1.2-9171.ova (or any other version)
+- controller-20.1.4-9087.ova
 like:
 variable "contentLibrary" {
   default = {
     name = "Avi Content Library"
     description = "Avi Content Library"
-    files = ["/home/ubuntu/controller-20.1.2-9171.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"]
+    files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"]
   }
 }
 ```
 
 - Ubuntu image can be found here: https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.ova
-- Avi Networks OVA can be found here: https://portal.avinetworks.com/
+- Avi Networks OVA can be found here: https://myvmware.com
 - The following ssh key needs to exist:
 ```
 variable "jump" {
@@ -62,19 +59,13 @@ Terraform v0.13.0
 + provider registry.terraform.io/terraform-providers/vmc v1.4.0
 ```
 
-### Avi version
-```
-Avi 20.1.2 with one controller node
-DNS VS and/or HTTP VS only
-```
-
 ### VMC:
 ```
 - 1 node
 ```
 
 ## Input/Parameters:
-1. All the parameters/variables defined in variables.tf and ansible.tf
+1. All the parameters/variables defined in variables.tf
 
 ## Use the terraform script to:
 - Create new folder(s) within v-center - one for the Avi Apps - one for the Avi controller
@@ -91,8 +82,6 @@ DNS VS and/or HTTP VS only
 - Create NSX-T policy Group for Jump host, Controller and Virtual Services
 - Create NSX-T Service for Virtual Services (only HTTP (tcp/80 and tcp/443) and DNS (udp/53))
 - Create NSX-T Gateway Policies for Jump host, Controller and Virtual Services
-- Create a yaml variable file - in the jump server
-- Call ansible to run the opencart config (git clone)
 - Call ansible to do the Avi configuration (git clone)
 
 ## Run the terraform:
@@ -102,9 +91,6 @@ cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 pytho
 ```
 - destroy:
 ```
+manually remove firewall rules (Gateway Firewall/Compute gateway, first)
 terraform destroy -var-file=sddc.json -auto-approve
 ```
-
-## Improvement:
-
-### future development:

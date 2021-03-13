@@ -44,7 +44,7 @@ resource "vsphere_virtual_machine" "backend" {
   }
 
   clone {
-    template_uuid = vsphere_content_library_item.files[1].id
+    template_uuid = vsphere_content_library_item.ubuntu.id
   }
 
 //  tags = [

@@ -8,14 +8,6 @@ variable "vmc_nsx_token" {}
 variable "vmc_org_id" {}
 variable "vmc_sddc_id" {}
 
-variable "contentLibrary" {
-  default = {
-    name = "Easy-Avi-CL-Build"
-    description = "Easy-Avi-CL-Build"
-    files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
-  }
-}
-
 variable "jump" {
   type = map
   default = {
@@ -40,7 +32,7 @@ variable "ansible" {
     aviConfigureTag = "v4.65"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
-    directory = "ansible"
+//    directory = "ansible"
   }
 }
 
@@ -111,6 +103,14 @@ variable "backend" {
 //  }
 //}
 
+//variable "contentLibrary" {
+//  default = {
+//    name = "Easy-Avi-CL-Build"
+//    description = "Easy-Avi-CL-Build"
+//    files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
+//  }
+//}
+
 variable "no_access_vcenter" {
   default = {
     name = "cloudVmc"
@@ -126,6 +126,12 @@ variable "no_access_vcenter" {
       resource_pool = "Cluster-1/Resources"
       folderApps = "Avi-Apps"
       folderAvi = "Avi-Controllers"
+      contentLibrary = {
+        name = "Easy-Avi-CL-Build"
+        description = "Easy-Avi-CL-Build"
+        aviOvaFile = "/home/ubuntu/controller-20.1.4-9087.ova"
+        ubuntuOvaFile = "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
+      }
     }
     controller = {
       cpu = 8 // 16 or 24 (S, M or L)
@@ -312,4 +318,3 @@ variable "no_access_vcenter" {
     }
   }
 }
-
