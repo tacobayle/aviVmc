@@ -5,7 +5,7 @@ resource "vsphere_tag" "ansible_group_controller" {
 
 resource "vsphere_virtual_machine" "controller" {
   count            = var.no_access_vcenter.controller.count
-  name             = "${split(".ova", basename(var.contentLibrary.files[0]))[0]}-${count.index}"
+  name             = "${split(".ova", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[0]}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = vsphere_folder.folderController.path
@@ -16,12 +16,12 @@ resource "vsphere_virtual_machine" "controller" {
   num_cpus = var.no_access_vcenter.controller.cpu
   memory = var.no_access_vcenter.controller.memory
   wait_for_guest_net_timeout = var.no_access_vcenter.controller.wait_for_guest_net_timeout
-  guest_id = "guestid-${split(".ova", basename(var.contentLibrary.files[0]))[0]}-${count.index}"
+  guest_id = "guestid-${split(".ova", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[0]}-${count.index}"
 
 
   disk {
     size             = var.no_access_vcenter.controller.disk
-    label            = "controller-${split(".ova", basename(var.contentLibrary.files[0]))[0]}-${count.index}.lab_vmdk"
+    label            = "controller-${split(".ova", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[0]}-${count.index}.lab_vmdk"
     thin_provisioned = true
   }
 
