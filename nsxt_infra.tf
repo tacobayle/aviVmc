@@ -110,7 +110,7 @@ resource "nsxt_policy_group" "backend" {
   description  = "Easy Avi backend"
   criteria {
     ipaddress_expression {
-      ip_addresses = ["${cidrhost(var.no_access_vcenter.backend.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway)[1]}"]
+      ip_addresses = ["${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_backend.defaultGateway)[1]}"]
     }
   }
 }
