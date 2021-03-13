@@ -11,13 +11,13 @@ resource "vmc_public_ip" "public_ip_jump" {
 }
 
 resource "vmc_public_ip" "public_ip_vsHttp" {
-  count = length(var.no_access_vcenter.virtualservices.http)
+  count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
   nsxt_reverse_proxy_url = var.vmc_nsx_server
   display_name = "Avi-VS-HTTP-${count.index}"
 }
 
 resource "vmc_public_ip" "public_ip_vsDns" {
-  count = length(var.no_access_vcenter.virtualservices.dns)
+  count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
   nsxt_reverse_proxy_url = var.vmc_nsx_server
   display_name = "Avi-VS-DNS-${count.index}"
 }

@@ -153,7 +153,7 @@ variable "no_access_vcenter" {
     }
     domains = [
       {
-        name = "vmc.local" # dynamic, from WebUI - if application is enabled
+        name = "vmc.local" # dynamic, from WebUI - if application is enabled - keep a default value anyway
       }
     ]
     network_management = {
