@@ -7,6 +7,8 @@ variable "vmc_nsx_server" {}
 variable "vmc_nsx_token" {}
 variable "vmc_org_id" {}
 variable "vmc_sddc_id" {}
+variable "my_private_ip" {}
+variable "my_public_ip" {}
 
 variable "jump" {
   type = map

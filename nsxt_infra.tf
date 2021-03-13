@@ -127,6 +127,17 @@ resource "nsxt_policy_group" "controller" {
   }
 }
 
+resource "nsxt_policy_group" "terraform" {
+  display_name = "Easy Avi Appliance"
+  domain       = "cgw"
+  description  = "Easy Avi Appliance"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = [var.my_private_ip, var.my_public_ip]
+    }
+  }
+}
+
 resource "nsxt_policy_group" "jump" {
   display_name = "jump"
   domain       = "cgw"
@@ -206,7 +217,7 @@ resource "nsxt_policy_group" "vsDns" {
 
 resource "null_resource" "cgw_jump_create" {
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump any ${nsxt_policy_group.jump.id} SSH ALLOW public 0"
+    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump ${nsxt_policy_group.terraform.id} ${nsxt_policy_group.jump.id} SSH ALLOW public 0"
   }
 }
 
