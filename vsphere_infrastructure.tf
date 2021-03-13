@@ -25,6 +25,7 @@ data "vsphere_network" "networkMgmt" {
 
 data "vsphere_network" "networkBackend" {
   depends_on = [time_sleep.wait_60_seconds]
+  count = (var.no_access_vcenter.application == true ? 1 : 0)
   name = var.no_access_vcenter.network_backend.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -42,6 +43,7 @@ resource "vsphere_folder" "folderController" {
 }
 
 resource "vsphere_folder" "folderApp" {
+  count = (var.no_access_vcenter.application == true ? 1 : 0)
   path          = var.no_access_vcenter.vcenter.folderApps
   type          = "vm"
   datacenter_id = data.vsphere_datacenter.dc.id
