@@ -63,7 +63,7 @@ resource "null_resource" "cgw_jump_remove" {
 }
 
 resource "null_resource" "cgw_outbound_management_remove" {
-  depends_on = [null_resource.foo]
+  depends_on = [null_resource.cgw_jump_remove]
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_management_outbound"
   }
@@ -71,7 +71,7 @@ resource "null_resource" "cgw_outbound_management_remove" {
 
 resource "null_resource" "cgw_outbound_backend_remove" {
   count = (var.no_access_vcenter.application == true ? 1 : 0)
-  depends_on = [null_resource.foo]
+  depends_on = [null_resource.cgw_outbound_backend_remove]
   provisioner "local-exec" {
     command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_backend_outbound"
   }
