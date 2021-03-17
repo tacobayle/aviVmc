@@ -217,7 +217,7 @@ resource "nsxt_policy_group" "vsDns" {
 
 resource "null_resource" "cgw_jump_create" {
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump ${nsxt_policy_group.terraform.id} ${nsxt_policy_group.jump.id} SSH ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump ${nsxt_policy_group.terraform.id} ${nsxt_policy_group.jump.id} SSH ALLOW public 0"
   }
 }
 
@@ -244,14 +244,14 @@ resource "null_resource" "cgw_jump_create" {
 resource "null_resource" "cgw_vsHttp_create" {
   count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTP ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttp any ${nsxt_policy_group.vsHttp[count.index].id} HTTP ALLOW public 0"
   }
 }
 
 resource "null_resource" "cgw_vsHttps_create" {
   count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttps any ${nsxt_policy_group.vsHttp[count.index].id} HTTPS ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsHttps any ${nsxt_policy_group.vsHttp[count.index].id} HTTPS ALLOW public 0"
   }
 }
 
@@ -278,7 +278,7 @@ resource "null_resource" "cgw_vsHttps_create" {
 resource "null_resource" "cgw_vsDns_create" {
   count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsDns any ${nsxt_policy_group.vsDns[count.index].id} DNS ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_vsDns any ${nsxt_policy_group.vsDns[count.index].id} DNS ALLOW public 0"
   }
 }
 
@@ -303,14 +303,14 @@ resource "null_resource" "cgw_vsDns_create" {
 
 resource "null_resource" "cgw_outbound_management_create" {
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_management_outbound ${nsxt_policy_group.management.id} any any ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_management_outbound ${nsxt_policy_group.management.id} any any ALLOW public 0"
   }
 }
 
 resource "null_resource" "cgw_outbound_backend_create" {
   count = (var.no_access_vcenter.application == true ? 1 : 0)
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_backend_outbound ${nsxt_policy_group.backend[0].id} any any ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_backend_outbound ${nsxt_policy_group.backend[0].id} any any ALLOW public 0"
   }
 }
 
@@ -337,7 +337,7 @@ resource "null_resource" "cgw_outbound_backend_create" {
 resource "null_resource" "cgw_controller_https_create" {
   count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller[count.index].id} HTTPS ALLOW public 0"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_avi_controller any ${nsxt_policy_group.controller[count.index].id} HTTPS ALLOW public 0"
   }
 }
 
@@ -345,7 +345,7 @@ resource "null_resource" "cgw_controller_https_create" {
 //  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
 //  provisioner "local-exec" {
 //    when    = destroy
-//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_avi_controller"
+//    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_avi_controller"
 //  }
 //}
 //
@@ -353,7 +353,7 @@ resource "null_resource" "cgw_controller_https_create" {
 //  count = length(var.no_access_vcenter.virtualservices.http)
 //  provisioner "local-exec" {
 //    when    = destroy
-//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
+//    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttp"
 //  }
 //}
 //
@@ -361,7 +361,7 @@ resource "null_resource" "cgw_controller_https_create" {
 //  count = length(var.no_access_vcenter.virtualservices.http)
 //  provisioner "local-exec" {
 //    when    = destroy
-//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttps"
+//    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsHttps"
 //  }
 //}
 //
@@ -369,6 +369,6 @@ resource "null_resource" "cgw_controller_https_create" {
 //  count = length(var.no_access_vcenter.virtualservices.dns)
 //  provisioner "local-exec" {
 //    when    = destroy
-//    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
+//    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
 //  }
 //}

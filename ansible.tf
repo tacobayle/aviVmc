@@ -58,14 +58,14 @@ resource "null_resource" "foo" {
 resource "null_resource" "cgw_jump_remove" {
   depends_on = [null_resource.foo]
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_jump"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_jump"
   }
 }
 
 resource "null_resource" "cgw_outbound_management_remove" {
   depends_on = [null_resource.cgw_jump_remove]
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_management_outbound"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_management_outbound"
   }
 }
 
@@ -73,7 +73,7 @@ resource "null_resource" "cgw_outbound_backend_remove" {
   count = (var.no_access_vcenter.application == true ? 1 : 0)
   depends_on = [null_resource.cgw_outbound_backend_remove]
   provisioner "local-exec" {
-    command = "python3 pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_backend_outbound"
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_backend_outbound"
   }
 }
 
