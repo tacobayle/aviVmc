@@ -118,9 +118,9 @@ variable "no_access_vcenter" {
     name = "cloudVmc" # static
     environment = "vmc" # static
     dhcp_enabled = true # static
-    application = false # dynamic, from WebUI - if application is enabled
-    public_ip = false # dynamic, from WebUI - if application is enabled and public_ip is enabled
-    dfw_rules = false # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
+    application = true # dynamic, from WebUI - if application is enabled
+    public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
+    dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
     vcenter = {
       dc = "SDDC-Datacenter" # static
       cluster = "Cluster-1" # static
@@ -179,7 +179,7 @@ variable "no_access_vcenter" {
     serviceEngineGroup = [
       {
         name = "Default-Group" # dynamic, from WebUI
-        numberOfSe = 1 # dynamic, from WebUI
+        numberOfSe = 2 # dynamic, from WebUI
         dhcp = true # static
         se_tunnel_mode = 1 # static
         ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
