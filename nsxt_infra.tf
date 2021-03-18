@@ -107,7 +107,7 @@ resource "nsxt_policy_group" "se" {
   }
 }
 
-resource "null_resource" "cgw_vsDns_create" {
+resource "null_resource" "se_exclusion_list" {
   count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
   provisioner "local-exec" {
     command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.se[count.index].path}"
