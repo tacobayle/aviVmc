@@ -1,9 +1,7 @@
 variable "avi_password" {}
 variable "avi_username" {}
 variable "vmc_vsphere_username" {}
-variable "vmc_vsphere_password" {
-  sensitive = true
-}
+variable "vmc_vsphere_password" {}
 variable "vmc_vsphere_server" {}
 variable "vmc_nsx_server" {}
 variable "vmc_nsx_token" {
@@ -122,7 +120,6 @@ variable "backend" {
 //}
 
 variable "no_access_vcenter" {
-  sensitive = true
   default = {
     name = "cloudVmc" # static
     environment = "vmc" # static

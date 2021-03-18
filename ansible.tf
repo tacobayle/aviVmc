@@ -25,7 +25,7 @@
 //}
 
 
-resource "null_resource" "foo" {
+resource "null_resource" "ansible" {
   depends_on = [null_resource.cgw_jump_create]
   connection {
    host        = vmc_public_ip.public_ip_jump.ip
@@ -56,7 +56,7 @@ resource "null_resource" "foo" {
 }
 
 resource "null_resource" "cgw_jump_remove" {
-  depends_on = [null_resource.foo]
+  depends_on = [null_resource.ansible]
   provisioner "local-exec" {
     command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_jump"
   }
