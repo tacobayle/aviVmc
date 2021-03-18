@@ -1,6 +1,4 @@
-variable "avi_password" {
-  sensitive = true
-}
+variable "avi_password" {}
 variable "avi_username" {}
 variable "vmc_vsphere_username" {}
 variable "vmc_vsphere_password" {
