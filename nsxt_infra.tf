@@ -92,6 +92,28 @@ resource "nsxt_policy_nat_rule" "dnat_vsDns" {
   firewall_match       = "MATCH_INTERNAL_ADDRESS"
 }
 
+resource "nsxt_policy_group" "se" {
+  count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
+  display_name = "EasyAvi-SE"
+  domain       = "cgw"
+  description  = "EasyAvi-SE"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key = "Name"
+      operator = "STARTSWITH"
+      value = "EasyAvi-"
+    }
+  }
+}
+
+resource "null_resource" "cgw_vsDns_create" {
+  count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
+  provisioner "local-exec" {
+    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.se[count.index].path}"
+  }
+}
+
 resource "nsxt_policy_group" "management" {
   display_name = "Easy Avi Management"
   domain       = "cgw"

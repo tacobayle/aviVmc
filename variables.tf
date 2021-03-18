@@ -37,7 +37,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.78"
+    aviConfigureTag = "v4.91"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
@@ -127,6 +127,7 @@ variable "no_access_vcenter" {
     application = true # dynamic, from WebUI - if application is enabled
     public_ip = false # dynamic, from WebUI - if application is enabled and public_ip is enabled
     dfw_rules = false # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
+    nsxt_exclusion_list = true # dynamic, from WebUI - based of nsx_exclusion or Tunnel mode
     vcenter = {
       dc = "SDDC-Datacenter" # static
       cluster = "Cluster-1" # static
@@ -185,9 +186,8 @@ variable "no_access_vcenter" {
     serviceEngineGroup = [
       {
         name = "Default-Group" # dynamic, from WebUI
-        numberOfSe = 2 # dynamic, from WebUI
+        numberOfSe = 1 # dynamic, from WebUI
         dhcp = true # static
-        se_tunnel_mode = 1 # dynamic, from WebUI
         ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
         min_scaleout_per_vs = "1" # static
         disk_per_se = "25" # dynamic, from WebUI
@@ -201,7 +201,6 @@ variable "no_access_vcenter" {
         name = "GSLB" # dynamic, from WebUI
         numberOfSe = 1 # dynamic, from WebUI
         dhcp = true # static
-        se_tunnel_mode = 1 # dynamic, from WebUI
         ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
         min_scaleout_per_vs = "1" # static
         disk_per_se = "25" # dynamic, from WebUI
