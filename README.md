@@ -55,15 +55,17 @@ Terraform Plan has been tested against:
 
 ### terraform
 ```
-Your version of Terraform is out of date! The latest version
-is 0.13.5. You can update by downloading from https://www.terraform.io/downloads.html
-Terraform v0.13.0
-+ provider registry.terraform.io/hashicorp/null v3.0.0
+Terraform v0.13.5
++ provider registry.terraform.io/hashicorp/null v3.1.0
 + provider registry.terraform.io/hashicorp/template v2.2.0
-+ provider registry.terraform.io/hashicorp/time v0.6.0
-+ provider registry.terraform.io/hashicorp/vsphere v1.24.2
-+ provider registry.terraform.io/terraform-providers/nsxt v3.1.0
-+ provider registry.terraform.io/terraform-providers/vmc v1.4.0
++ provider registry.terraform.io/hashicorp/time v0.7.0
++ provider registry.terraform.io/hashicorp/vsphere v1.24.3
++ provider registry.terraform.io/terraform-providers/nsxt v3.1.1
++ provider registry.terraform.io/terraform-providers/vmc v1.5.1
+
+Your version of Terraform is out of date! The latest version
+is 0.14.8. You can update by downloading from https://www.terraform.io/downloads.html
+ubuntu@nic-jump-sofia:~/aviVmc$
 ```
 
 ### VMC:

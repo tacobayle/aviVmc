@@ -1,12 +1,22 @@
-variable "avi_password" {}
+variable "avi_password" {
+  sensitive = true
+}
 variable "avi_username" {}
 variable "vmc_vsphere_username" {}
-variable "vmc_vsphere_password" {}
+variable "vmc_vsphere_password" {
+  sensitive = true
+}
 variable "vmc_vsphere_server" {}
 variable "vmc_nsx_server" {}
-variable "vmc_nsx_token" {}
-variable "vmc_org_id" {}
-variable "vmc_sddc_id" {}
+variable "vmc_nsx_token" {
+  sensitive = true
+}
+variable "vmc_org_id" {
+  sensitive = true
+}
+variable "vmc_sddc_id" {
+  sensitive = true
+}
 variable "my_private_ip" {}
 variable "my_public_ip" {}
 
@@ -114,6 +124,7 @@ variable "backend" {
 //}
 
 variable "no_access_vcenter" {
+  sensitive = true
   default = {
     name = "cloudVmc" # static
     environment = "vmc" # static
@@ -181,7 +192,7 @@ variable "no_access_vcenter" {
         name = "Default-Group" # dynamic, from WebUI
         numberOfSe = 2 # dynamic, from WebUI
         dhcp = true # static
-        se_tunnel_mode = 1 # static
+        se_tunnel_mode = 1 # dynamic, from WebUI
         ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
         min_scaleout_per_vs = "1" # static
         disk_per_se = "25" # dynamic, from WebUI
@@ -195,7 +206,7 @@ variable "no_access_vcenter" {
         name = "GSLB" # dynamic, from WebUI
         numberOfSe = 1 # dynamic, from WebUI
         dhcp = true # static
-        se_tunnel_mode = 1 # static
+        se_tunnel_mode = 1 # dynamic, from WebUI
         ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
         min_scaleout_per_vs = "1" # static
         disk_per_se = "25" # dynamic, from WebUI
