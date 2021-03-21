@@ -210,7 +210,7 @@ variable "no_access_vcenter" {
           {
             name = "avi-vip"
             ips = [
-              "10.1.3.100",
+              "10.1.3.100/24",
             ]
             dhcp = false
           },
