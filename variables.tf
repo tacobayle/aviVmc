@@ -37,7 +37,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.91"
+    aviConfigureTag = "v4.93"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
@@ -188,31 +188,34 @@ variable "no_access_vcenter" {
     }
     serviceEngineGroup = [
       {
-        name = "Default-Group" # dynamic, from WebUI
-        numberOfSe = 1 # dynamic, from WebUI
-        dhcp = true # static
-        ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
-        min_scaleout_per_vs = "1" # static
-        disk_per_se = "25" # dynamic, from WebUI
-        vcpus_per_se = "2" # dynamic, from WebUI
-        cpu_reserve = "true" # static
-        memory_per_se = "4096" # dynamic, from WebUI
-        mem_reserve = "true" # static
-        extra_shared_config_memory = "0" # dynamic, from WebUI
+        name = "Default-Group"
+        numberOfSe = 1
+        dhcp = false # only for management
+        ha_mode = "HA_MODE_SHARED"
+        min_scaleout_per_vs = "1"
+        disk_per_se = "25"
+        vcpus_per_se = "1"
+        cpu_reserve = "false"
+        memory_per_se = "1024"
+        mem_reserve = "false"
+        extra_shared_config_memory = "0"
+        management_network = {
+          name = "avi-mgmt"
+          defaultGateway = "10.1.1.1/24"
+          ips = [
+            "10.1.1.100"
+          ]
+        }
+        data_networks = [
+          {
+            name = "avi-vip"
+            ips = [
+              "10.1.3.100",
+            ]
+            dhcp = false
+          },
+        ]
       },
-//      {
-//        name = "GSLB" # dynamic, from WebUI
-//        numberOfSe = 1 # dynamic, from WebUI
-//        dhcp = true # static
-//        ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
-//        min_scaleout_per_vs = "1" # static
-//        disk_per_se = "25" # dynamic, from WebUI
-//        vcpus_per_se = "2" # dynamic, from WebUI
-//        cpu_reserve = "true" # static
-//        memory_per_se = "8192"  # dynamic, from WebUI
-//        mem_reserve = "true" # static
-//        extra_shared_config_memory = "2000" # dynamic, from WebUI
-//      }
     ]
     httppolicyset = [
       {
