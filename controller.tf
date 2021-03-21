@@ -4,7 +4,7 @@ resource "vsphere_tag" "ansible_group_controller" {
 }
 
 resource "vsphere_virtual_machine" "controller" {
-  count            = var.no_access_vcenter.controller.count
+  count            = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
   name             = "${split(".ova", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[0]}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -27,6 +27,14 @@ resource "vsphere_virtual_machine" "controller" {
 
   clone {
     template_uuid = vsphere_content_library_item.avi.id
+  }
+
+  vapp {
+    properties = {
+      "mgmt-ip"     = var.no_access_vcenter.controller.ips[count.index]
+      "mgmt-mask"   = var.no_access_vcenter.controller.mgmt_mask
+      "default-gw"  = var.no_access_vcenter.controller.default_gw
+    }
   }
 
   tags = [

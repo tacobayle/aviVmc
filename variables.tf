@@ -146,7 +146,10 @@ variable "no_access_vcenter" {
       cpu = 8 # dynamic, from WebUI - 8, 16 or 24 (S, M or L)
       memory = 24768 # dynamic, from WebUI -  24768, 32768 or 49152 (S, M or L)
       disk = 128 # dynamic, from WebUI - 128, 256 or 512 (S, M or L)
-      count = "1" # static
+      cluster = false # dynamic, from WebUI
+      ips = [""]
+      mgmt_mask = ""
+      default_gw = ""
       wait_for_guest_net_timeout = 2 # static
       environment = "VMWARE" # static
       dns =  ["8.8.8.8", "8.8.4.4"] # static
@@ -197,19 +200,19 @@ variable "no_access_vcenter" {
         mem_reserve = "true" # static
         extra_shared_config_memory = "0" # dynamic, from WebUI
       },
-      {
-        name = "GSLB" # dynamic, from WebUI
-        numberOfSe = 1 # dynamic, from WebUI
-        dhcp = true # static
-        ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
-        min_scaleout_per_vs = "1" # static
-        disk_per_se = "25" # dynamic, from WebUI
-        vcpus_per_se = "2" # dynamic, from WebUI
-        cpu_reserve = "true" # static
-        memory_per_se = "8192"  # dynamic, from WebUI
-        mem_reserve = "true" # static
-        extra_shared_config_memory = "2000" # dynamic, from WebUI
-      }
+//      {
+//        name = "GSLB" # dynamic, from WebUI
+//        numberOfSe = 1 # dynamic, from WebUI
+//        dhcp = true # static
+//        ha_mode = "HA_MODE_SHARED" # dynamic, from WebUI
+//        min_scaleout_per_vs = "1" # static
+//        disk_per_se = "25" # dynamic, from WebUI
+//        vcpus_per_se = "2" # dynamic, from WebUI
+//        cpu_reserve = "true" # static
+//        memory_per_se = "8192"  # dynamic, from WebUI
+//        mem_reserve = "true" # static
+//        extra_shared_config_memory = "2000" # dynamic, from WebUI
+//      }
     ]
     httppolicyset = [
       {

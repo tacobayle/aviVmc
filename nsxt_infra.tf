@@ -46,7 +46,7 @@ resource "time_sleep" "wait_60_seconds" {
 
 resource "nsxt_policy_nat_rule" "dnat_controller" {
   count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
-  display_name         = "dnat_avicontroller"
+  display_name         = "EasyAvi-dnat-controller"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_controller[count.index].ip]
@@ -57,7 +57,7 @@ resource "nsxt_policy_nat_rule" "dnat_controller" {
 }
 
 resource "nsxt_policy_nat_rule" "dnat_jump" {
-  display_name         = "dnat_jump"
+  display_name         = "EasyAvi-dnat-jump"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_jump.ip]
@@ -69,7 +69,7 @@ resource "nsxt_policy_nat_rule" "dnat_jump" {
 
 resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
   count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
-  display_name         = "dnat_VS-HTTP-${count.index}"
+  display_name         = "EasyAvi-dnat-VS-HTTP"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_vsHttp[count.index].ip]
@@ -82,7 +82,7 @@ resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
 resource "nsxt_policy_nat_rule" "dnat_vsDns" {
   depends_on = [nsxt_policy_nat_rule.dnat_vsHttp]
   count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
-  display_name         = "dnat_VS-DNS-${count.index}"
+  display_name         = "EasyAvi-dnat-VS-DNS"
   action               = "DNAT"
   source_networks      = []
   destination_networks = [vmc_public_ip.public_ip_vsDns[count.index].ip]
@@ -115,9 +115,9 @@ resource "null_resource" "se_exclusion_list" {
 }
 
 resource "nsxt_policy_group" "management" {
-  display_name = "Easy Avi Management"
+  display_name = "EasyAvi-Management-Network"
   domain       = "cgw"
-  description  = "Easy Avi Management"
+  description  = "EasyAvi-Management-Network"
   criteria {
     ipaddress_expression {
       ip_addresses = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_management.defaultGateway)[1]}"]
@@ -127,9 +127,9 @@ resource "nsxt_policy_group" "management" {
 
 resource "nsxt_policy_group" "backend" {
   count = (var.no_access_vcenter.application == true ? 1 : 0)
-  display_name = "Easy Avi backend"
+  display_name = "EasyAvi-Backend-Servers"
   domain       = "cgw"
-  description  = "Easy Avi backend"
+  description  = "EasyAvi-Backend-Servers"
   criteria {
     ipaddress_expression {
       ip_addresses = ["${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, "0")}/${split("/", var.no_access_vcenter.network_backend.defaultGateway)[1]}"]
@@ -139,9 +139,9 @@ resource "nsxt_policy_group" "backend" {
 
 resource "nsxt_policy_group" "controller" {
   count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
-  display_name = "controller${count.index}"
+  display_name = "EasyAvi-Controller"
   domain       = "cgw"
-  description  = "Avi Controller${count.index} Public and Private IPs"
+  description  = "EasyAvi-Controller"
   criteria {
     ipaddress_expression {
       ip_addresses = [vmc_public_ip.public_ip_controller[count.index].ip, vsphere_virtual_machine.controller[count.index].default_ip_address]
@@ -150,9 +150,9 @@ resource "nsxt_policy_group" "controller" {
 }
 
 resource "nsxt_policy_group" "terraform" {
-  display_name = "Easy Avi Appliance"
+  display_name = "EasyAvi-Appliance"
   domain       = "cgw"
-  description  = "Easy Avi Appliance"
+  description  = "EasyAvi-Appliance"
   criteria {
     ipaddress_expression {
       ip_addresses = [var.my_private_ip, var.my_public_ip]
@@ -161,9 +161,9 @@ resource "nsxt_policy_group" "terraform" {
 }
 
 resource "nsxt_policy_group" "jump" {
-  display_name = "jump"
+  display_name = "EasyAvi-jump"
   domain       = "cgw"
-  description  = "Jump Public and Private IPs"
+  description  = "EasyAvi-jump"
   criteria {
     ipaddress_expression {
       ip_addresses = [vmc_public_ip.public_ip_jump.ip, vsphere_virtual_machine.jump.default_ip_address]
@@ -173,9 +173,9 @@ resource "nsxt_policy_group" "jump" {
 
 resource "nsxt_policy_group" "vsHttp" {
   count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
-  display_name = "group-VS-Http-${count.index}"
+  display_name = "EasyAvi-VS-HTTP"
   domain       = "cgw"
-  description  = "group-VS-Http-${count.index}"
+  description  = "EasyAvi-VS-HTTP"
   criteria {
     ipaddress_expression {
       ip_addresses = [vmc_public_ip.public_ip_vsHttp[count.index].ip, cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + count.index)]
@@ -186,9 +186,9 @@ resource "nsxt_policy_group" "vsHttp" {
 resource "nsxt_policy_group" "vsDns" {
   count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
   depends_on = [nsxt_policy_group.vsHttp]
-  display_name = "group-VS-Dns-${count.index}"
+  display_name = "EasyAvi-VS-DNS"
   domain       = "cgw"
-  description  = "group-VS-Dns-${count.index}"
+  description  = "EasyAvi-VS-DNS"
   criteria {
     ipaddress_expression {
       ip_addresses = [vmc_public_ip.public_ip_vsDns[count.index].ip, cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + length(var.no_access_vcenter.virtualservices.http) + count.index)]
