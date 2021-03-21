@@ -176,8 +176,8 @@ variable "no_access_vcenter" {
       name = "avi-vip" # dynamic from NSX-T API
       networkRangeBegin = "11" # Not needed in Easy Avi
       networkRangeEnd = "50" # Not needed in Easy Avi
-      ipStartPool = "100" # dynamic, from WebUI - if application is enabled
-      ipEndPool = "119" # dynamic, from WebUI - if application is enabled
+      ipStartPool = "200" # dynamic, from WebUI - if application is enabled
+      ipEndPool = "219" # dynamic, from WebUI - if application is enabled
       defaultGateway = "10.1.3.1/24" # dynamic from NSX-T API
     }
     network_backend = {
