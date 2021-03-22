@@ -37,7 +37,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v4.96"
+    aviConfigureTag = "v4.97"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
@@ -124,7 +124,7 @@ variable "no_access_vcenter" {
     name = "cloudVmc" # static
     environment = "vmc" # static
     dhcp_enabled = true # static
-    application = true # dynamic, from WebUI - if application is enabled
+    application = false # dynamic, from WebUI - if application is enabled
     public_ip = false # dynamic, from WebUI - if application is enabled and public_ip is enabled
     dfw_rules = false # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
     nsxt_exclusion_list = true # dynamic, from WebUI - based of nsx_exclusion or Tunnel mode
@@ -202,15 +202,17 @@ variable "no_access_vcenter" {
           name = "avi-mgmt"
           defaultGateway = "10.1.1.1/24"
           ips = [
-            "10.1.1.100"
+            "100"
           ]
           dhcp = false
         }
         data_networks = [
           {
             name = "avi-vip"
+            defaultGateway = "10.1.3.1/24"
+            defaultGatewaySeGroup = true
             ips = [
-              "10.1.3.100/24",
+              "100"
             ]
             dhcp = false
           },
