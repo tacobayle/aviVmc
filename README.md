@@ -5,6 +5,7 @@ Spin up a full Avi environment (through Terraform) in VMC
 
 ## Prerequisites:
 - Terraform installed in the orchestrator VM (TF host)
+- GOVC installed (needed for the destroy command only)  
 - The following firewall Gateway rule need to be defined:
 
 ![](.README_images/8577c0fb.png)
@@ -94,10 +95,9 @@ ubuntu@nic-jump-sofia:~/aviVmc$
 ## Run the terraform:
 - build:
 ```
-cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; /bin/bash ./getMypublic.sh ; terraform init ; terraform apply -var-file=sddc.json -auto-approve
+cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; /bin/bash ./getMypublic.sh ; terraform init ; terraform apply -var-file=sddc.json -var-file=ip.json -auto-approve
 ```
 - destroy:
 ```
-manually remove firewall rules (Gateway Firewall/Compute gateway)
-terraform destroy -var-file=sddc.json -auto-approve
+/bin/bash destroy.sh
 ```

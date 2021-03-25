@@ -1,9 +1,5 @@
 # Outputs for Terraform
 
-output "jump" {
-  value = vmc_public_ip.public_ip_jump.ip
-}
-
 output "controllers_public" {
   value = vmc_public_ip.public_ip_controller.*.ip
 }
@@ -16,8 +12,16 @@ output "httpVsPublicIP" {
   value = vmc_public_ip.public_ip_vsHttp.*.ip
 }
 
+output "httpVsPrivateIP" {
+  value = var.no_access_vcenter.application ? [cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool)] : null
+}
+
 output "dnsVsPublicIP" {
   value = vmc_public_ip.public_ip_vsDns.*.ip
+}
+
+output "dnsVsPrivateIP" {
+  value = var.no_access_vcenter.application ? [cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.ipStartPool + length(var.no_access_vcenter.virtualservices.http))] : null
 }
 
 output "aviUsername" {
