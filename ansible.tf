@@ -34,7 +34,7 @@ resource "null_resource" "ansible_hosts_controllers_dynamic" {
   depends_on = [null_resource.ansible_hosts_static1]
   count      = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
   provisioner "local-exec" {
-    command = "echo '        ${vsphere_virtual_machine.controller[count.index].default_ip_address}:' | tee -a hosts}"
+    command = "echo '        ${vsphere_virtual_machine.controller[count.index].default_ip_address}:' | tee -a hosts"
   }
 }
 
