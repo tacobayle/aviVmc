@@ -87,7 +87,7 @@ resource "null_resource" "ansible" {
       "echo '[defaults]' | tee /etc/ansible.cfg",
       "echo 'private_key_file = /home/${var.jump.username}/.ssh/${basename(var.jump.private_key_path)}' | tee -a /etc/ansible.cfg",
       "echo 'host_key_checking = False' | tee -a /etc/ansible.cfg",
-      "echo 'host_key_auto_add = True' | tee -a /etc/ansible.cfg"
+      "echo 'host_key_auto_add = True' | tee -a /etc/ansible.cfg",
       "git clone ${var.ansible["aviConfigureUrl"]} --branch ${var.ansible["aviConfigureTag"]}"
     ]
   }
