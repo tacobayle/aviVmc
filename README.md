@@ -99,5 +99,5 @@ cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 pytho
 ```
 - destroy:
 ```
-/bin/bash destroy.sh
+cd ~/aviVmc ; /bin/bash destroy.sh
 ```
