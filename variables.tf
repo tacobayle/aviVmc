@@ -4,6 +4,8 @@ variable "vmc_vsphere_username" {}
 variable "vmc_vsphere_password" {}
 variable "vmc_vsphere_server" {}
 variable "vmc_nsx_server" {}
+variable "no_access_vcenter" {}
+
 variable "vmc_nsx_token" {
   sensitive = true
 }
