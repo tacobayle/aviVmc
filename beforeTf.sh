@@ -33,6 +33,7 @@ export GOVC_URL=$(cat data.json | jq -r .vmc_vsphere_username):$(cat data.json |
 export GOVC_INSECURE=true
 export GOVC_DATASTORE=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.datastore)
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "Attempt to create folder(s)"
 govc folder.create /$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)/vm/$(cat sddc.json | jq -r .no_access_vcenter.vcenter.folderAvi) > /dev/null 2>&1 || true
 if [[ $(cat sddc.json | jq -r .no_access_vcenter.application) == true ]]
@@ -42,6 +43,7 @@ fi
 # for folder in $(cat sddc.json | jq -r .no_access_vcenter.serviceEngineGroup[].name) ; do echo $folder ; done
 IFS=$'\n'
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "Checking for VM conflict name..."
 for vm in $(govc find / -type m)
 do
@@ -62,6 +64,7 @@ do
   fi
 done
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "Checking for Content Library conflict name..."
 for cl in $(govc library.ls)
 do
