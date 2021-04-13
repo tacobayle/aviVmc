@@ -83,5 +83,5 @@ avi_password = os.environ['TF_VAR_avi_password']
 SDDCDetails = {'vmc_org_id': ORG_ID, 'vmc_nsx_server': nsxUrl, 'vmc_nsx_token': Refresh_Token, 'vmc_vsphere_username': 'cloudadmin@vmc.local', \
                'vmc_vsphere_password': sddc_password, 'vmc_vsphere_server': sddc_url.split('//')[1][:-1], 'avi_username': 'admin', \
                'avi_password': avi_password, 'vmc_sddc_id': sddc_id}
-with open('sddc.json', 'w') as filehandle:
+with open('data.json', 'w') as filehandle:
     filehandle.write(json.dumps(SDDCDetails))
