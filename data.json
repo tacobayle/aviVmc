@@ -1,0 +1,209 @@
+{ "no_access_vcenter": {
+    "name": "cloudVmc",
+    "environment": "vmc",
+    "dhcp_enabled": true,
+    "application": true,
+    "public_ip": true,
+    "dfw_rules": true,
+    "nsxt_exclusion_list": true,
+    "vcenter": {
+      "dc": "SDDC-Datacenter",
+      "cluster": "Cluster-1",
+      "datastore": "WorkloadDatastore",
+      "resource_pool": "Cluster-1/Resources",
+      "folderApps": "Avi-Apps",
+      "folderAvi": "Avi-Controllers",
+      "contentLibrary": {
+        "name": "Easy-Avi-CL-Build",
+        "description": "Easy-Avi-CL-Build",
+        "aviOvaFile": "/home/ubuntu/controller-20.1.4-9087.ova",
+        "ubuntuOvaFile": "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
+      }
+    },
+    "controller": {
+      "cpu": 8,
+      "memory": 24768,
+      "disk": 128,
+      "cluster": false,
+      "wait_for_guest_net_timeout": 2,
+      "environment": "VMWARE",
+      "dns":  ["8.8.8.8", "8.8.4.4"],
+      "ntp": ["95.81.173.155", "188.165.236.162"],
+      "floatingIp": "1.1.1.1",
+      "from_email": "avicontroller@vmc.local",
+      "se_in_provider_context": "false",
+      "tenant_access_to_provider_se": "true",
+      "tenant_vrf": "false",
+      "public_ip": true
+    },
+    "domains": [
+      {
+        "name": "vmc.local"
+      }
+    ],
+    "network_management": {
+      "name": "avi-mgmt",
+      "networkRangeBegin": "11",
+      "networkRangeEnd": "50",
+      "defaultGateway": "10.1.1.1/24",
+      "avi_ctrl_mgmt_ips": ["", "", ""]
+    },
+    "network_vip": {
+      "name": "avi-vip",
+      "networkRangeBegin": "11",
+      "networkRangeEnd": "50",
+      "ipStartPool": "200",
+      "ipEndPool": "219",
+      "defaultGateway": "10.1.3.1/24"
+    },
+    "network_backend": {
+      "name": "avi-backend",
+      "networkRangeBegin": "11",
+      "networkRangeEnd": "50",
+      "defaultGateway": "10.1.2.1/24"
+    },
+    "serviceEngineGroup": [
+      {
+        "name": "Default-Group",
+        "numberOfSe": 1,
+        "ha_mode": "HA_MODE_SHARED",
+        "min_scaleout_per_vs": "1",
+        "disk_per_se": "25",
+        "vcpus_per_se": "1",
+        "cpu_reserve": "false",
+        "memory_per_se": "1024",
+        "mem_reserve": "false",
+        "extra_shared_config_memory": "0",
+        "management_network": {
+          "name": "avi-mgmt",
+          "defaultGateway": "10.1.1.1/24",
+          "ips": [
+            "100"
+          ],
+        "dhcp": false
+        },
+        "data_networks": [
+          {
+            "name": "avi-vip",
+            "defaultGateway": "10.1.3.1/24",
+            "defaultGatewaySeGroup": true,
+            "ips": [
+              "100"
+            ],
+            "dhcp": false
+          }
+        ]
+      }
+    ],
+    "httppolicyset": [
+      {
+        "name": "http-request-policy-app1-content-switching-vmc",
+        "http_request_policy": {
+        "rules": [
+          {
+            "name": "Rule 1",
+            "match": {
+              "path": {
+                "match_criteria": "CONTAINS",
+                "match_str": ["hello", "world"]
+              }
+            },
+            "rewrite_url_action": {
+              "path": {
+                "type": "URI_PARAM_TYPE_TOKENIZED",
+                "tokens": [
+                  {
+                    "type": "URI_TOKEN_TYPE_STRING",
+                    "str_value": "index.html"
+                  }
+                ]
+              },
+              "query": {
+                "keep_query": true
+              }
+            },
+            "switching_action": {
+              "action": "HTTP_SWITCHING_SELECT_POOL",
+              "status_code": "HTTP_LOCAL_RESPONSE_STATUS_CODE_200",
+              "pool_ref": "/api/pool?name=pool1-hello-vmc"
+            }
+          },
+          {
+            "name": "Rule 2",
+            "match": {
+              "path": {
+                  "match_criteria": "CONTAINS",
+                  "match_str": ["avi"]
+                }
+              },
+              "rewrite_url_action": {
+                "path": {
+                  "type": "URI_PARAM_TYPE_TOKENIZED",
+                  "tokens": [
+                    {
+                      "type": "URI_TOKEN_TYPE_STRING",
+                      "str_value": ""
+                    }
+                  ]
+                },
+                "query": {
+                  "keep_query": true
+                }
+              },
+              "switching_action": {
+                "action": "HTTP_SWITCHING_SELECT_POOL",
+                "status_code": "HTTP_LOCAL_RESPONSE_STATUS_CODE_200",
+                "pool_ref": "/api/pool?name=pool2-avi-vmc"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pools": [
+      {
+        "name": "pool1-hello-vmc",
+        "lb_algorithm": "LB_ALGORITHM_ROUND_ROBIN"
+      },
+      {
+        "name": "pool2-avi-vmc",
+        "application_persistence_profile_ref": "System-Persistence-Client-IP",
+        "default_server_port": 8080
+      }
+    ],
+    "virtualservices": {
+      "http": [
+        {
+          "name": "app1-content-switching-vmc",
+          "pool_ref": "pool1-hello-vmc",
+          "http_policies": [
+             {
+               "http_policy_set_ref": "/api/httppolicyset?name=http-request-policy-app1-content-switching-vmc",
+               "index": 11
+            }
+          ],
+          "services": [
+            {
+              "port": 80,
+              "enable_ssl": "false"
+            },
+            {
+              "port": 443,
+              "enable_ssl": "true"
+            }
+          ]
+        }
+      ],
+      "dns": [
+        {
+          "name": "dns",
+          "services": [
+            {
+              "port": 53
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

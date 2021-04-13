@@ -118,214 +118,214 @@ variable "backend" {
 //    files = ["/home/ubuntu/controller-20.1.4-9087.ova", "/home/ubuntu/bionic-server-cloudimg-amd64.ova"] # keep the avi image first and the ubuntu image in the second position // don't change the name of the Avi OVA file
 //  }
 //}
-
-variable "no_access_vcenter" {
-  default = {
-    name = "cloudVmc" # static
-    environment = "vmc" # static
-    dhcp_enabled = true # static
-    application = true # dynamic, from WebUI - if application is enabled
-    public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
-    dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
-    nsxt_exclusion_list = true # dynamic, from WebUI - based of nsx_exclusion or Tunnel mode
-    vcenter = {
-      dc = "SDDC-Datacenter" # static
-      cluster = "Cluster-1" # static
-      datastore = "WorkloadDatastore" # static
-      resource_pool = "Cluster-1/Resources" # static
-      folderApps = "Avi-Apps"  # static
-      folderAvi = "Avi-Controllers"  # static
-      contentLibrary = {
-        name = "Easy-Avi-CL-Build"  # static
-        description = "Easy-Avi-CL-Build"  # static
-        aviOvaFile = "/home/ubuntu/controller-20.1.4-9087.ova" # dynamic, from WebUI - this path needs to be populated following the download from myvmware.com (avi_version.json defines compatible versions)
-        ubuntuOvaFile = "/home/ubuntu/bionic-server-cloudimg-amd64.ova"  # static
-      }
-    }
-    controller = {
-      cpu = 8 # dynamic, from WebUI - 8, 16 or 24 (S, M or L)
-      memory = 24768 # dynamic, from WebUI -  24768, 32768 or 49152 (S, M or L)
-      disk = 128 # dynamic, from WebUI - 128, 256 or 512 (S, M or L)
-      cluster = false # dynamic, from WebUI, default is true
-      wait_for_guest_net_timeout = 2 # static
-      environment = "VMWARE" # static
-      dns =  ["8.8.8.8", "8.8.4.4"] # static
-      ntp = ["95.81.173.155", "188.165.236.162"] # static
-      floatingIp = "1.1.1.1" # static
-      from_email = "avicontroller@vmc.local" # static
-      se_in_provider_context = "false" # static
-      tenant_access_to_provider_se = "true" # static
-      tenant_vrf = "false" # static
-      public_ip = true # dynamic, from WebUI - if public IP for controller has been enabled
-    }
-    domains = [
-      {
-        name = "vmc.local" # dynamic, from WebUI - if application is enabled - keep a default value anyway
-      }
-    ]
-    network_management = {
-      name = "avi-mgmt" # dynamic from NSX-T API
-      networkRangeBegin = "11" # Not needed in Easy Avi
-      networkRangeEnd = "50" # Not needed in Easy Avi
-      defaultGateway = "10.1.1.1/24" # dynamic from NSX-T API
-      avi_ctrl_mgmt_ips = ["", "", ""] # dynamic, from WebUI, if dhcp is enabled then ["", "", ""], if dhcp is disabled then ["a.b.c.d", "a.b.c.e", "a.b.c.f"]
-    }
-    network_vip = {
-      name = "avi-vip" # dynamic from NSX-T API
-      networkRangeBegin = "11" # Not needed in Easy Avi
-      networkRangeEnd = "50" # Not needed in Easy Avi
-      ipStartPool = "200" # dynamic, from WebUI - if application is enabled
-      ipEndPool = "219" # dynamic, from WebUI - if application is enabled
-      defaultGateway = "10.1.3.1/24" # dynamic from NSX-T API
-    }
-    network_backend = {
-      name = "avi-backend" # dynamic from NSX-T API
-      networkRangeBegin = "11" # Not needed in Easy Avi
-      networkRangeEnd = "50" # Not needed in Easy Avi
-      defaultGateway = "10.1.2.1/24" # dynamic from NSX-T API
-    }
-    serviceEngineGroup = [
-      {
-        name = "Default-Group"
-        numberOfSe = 1
-        ha_mode = "HA_MODE_SHARED"
-        min_scaleout_per_vs = "1"
-        disk_per_se = "25"
-        vcpus_per_se = "1"
-        cpu_reserve = "false"
-        memory_per_se = "1024"
-        mem_reserve = "false"
-        extra_shared_config_memory = "0"
-        management_network = {
-          name = "avi-mgmt"
-          defaultGateway = "10.1.1.1/24"
-          ips = [
-            "100"
-          ]
-          dhcp = false
-        }
-        data_networks = [
-          {
-            name = "avi-vip"
-            defaultGateway = "10.1.3.1/24"
-            defaultGatewaySeGroup = true
-            ips = [
-              "100"
-            ]
-            dhcp = false
-          },
-        ]
-      },
-    ]
-    httppolicyset = [
-      {
-        name = "http-request-policy-app1-content-switching-vmc" # static
-        http_request_policy = {
-          rules = [
-            {
-              name = "Rule 1" # static
-              match = {
-                path = {
-                  match_criteria = "CONTAINS" # static
-                  match_str = ["hello", "world"] # static
-                }
-              }
-              rewrite_url_action = {
-                path = {
-                  type = "URI_PARAM_TYPE_TOKENIZED" # static
-                  tokens = [
-                    {
-                      type = "URI_TOKEN_TYPE_STRING" # static
-                      str_value = "index.html" # static
-                    }
-                  ]
-                }
-                query = {
-                  keep_query = true # static
-                }
-              }
-              switching_action = {
-                action = "HTTP_SWITCHING_SELECT_POOL" # static
-                status_code = "HTTP_LOCAL_RESPONSE_STATUS_CODE_200" # static
-                pool_ref = "/api/pool?name=pool1-hello-vmc" # static
-              }
-            },
-            {
-              name = "Rule 2" # static
-              match = {
-                path = {
-                  match_criteria = "CONTAINS" # static
-                  match_str = ["avi"] # static
-                }
-              }
-              rewrite_url_action = {
-                path = {
-                  type = "URI_PARAM_TYPE_TOKENIZED" # static
-                  tokens = [
-                    {
-                      type = "URI_TOKEN_TYPE_STRING" # static
-                      str_value = "" # static
-                    }
-                  ]
-                }
-                query = {
-                  keep_query = true # static
-                }
-              }
-              switching_action = {
-                action = "HTTP_SWITCHING_SELECT_POOL" # static
-                status_code = "HTTP_LOCAL_RESPONSE_STATUS_CODE_200" # static
-                pool_ref = "/api/pool?name=pool2-avi-vmc" # static
-              }
-            },
-          ]
-        }
-      }
-    ]
-    pools = [
-      {
-        name = "pool1-hello-vmc" # static
-        lb_algorithm = "LB_ALGORITHM_ROUND_ROBIN" # static
-      },
-      {
-        name = "pool2-avi-vmc" # static
-        application_persistence_profile_ref = "System-Persistence-Client-IP" # static
-        default_server_port = 8080 # static
-      }
-    ]
-    virtualservices = {
-      http = [
-        {
-          name = "app1-content-switching-vmc" # static
-          pool_ref = "pool1-hello-vmc" # static
-          http_policies = [
-            {
-              http_policy_set_ref = "/api/httppolicyset?name=http-request-policy-app1-content-switching-vmc" # static
-              index = 11 # static
-            }
-          ]
-          services: [
-            {
-              port = 80 # static
-              enable_ssl = "false" # static
-            },
-            {
-              port = 443 # static
-              enable_ssl = "true" # static
-            }
-          ]
-        },
-      ]
-      dns = [
-        {
-          name = "dns" # static
-          services: [
-            {
-              port = 53 # static
-            }
-          ]
-        },
-      ]
-    }
-  }
-}
+//
+//variable "no_access_vcenter" {
+//  default = {
+//    name = "cloudVmc" # static
+//    environment = "vmc" # static
+//    dhcp_enabled = true # static
+//    application = true # dynamic, from WebUI - if application is enabled
+//    public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
+//    dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
+//    nsxt_exclusion_list = true # dynamic, from WebUI - based of nsx_exclusion or Tunnel mode
+//    vcenter = {
+//      dc = "SDDC-Datacenter" # static
+//      cluster = "Cluster-1" # static
+//      datastore = "WorkloadDatastore" # static
+//      resource_pool = "Cluster-1/Resources" # static
+//      folderApps = "Avi-Apps"  # static
+//      folderAvi = "Avi-Controllers"  # static
+//      contentLibrary = {
+//        name = "Easy-Avi-CL-Build"  # static
+//        description = "Easy-Avi-CL-Build"  # static
+//        aviOvaFile = "/home/ubuntu/controller-20.1.4-9087.ova" # dynamic, from WebUI - this path needs to be populated following the download from myvmware.com (avi_version.json defines compatible versions)
+//        ubuntuOvaFile = "/home/ubuntu/bionic-server-cloudimg-amd64.ova"  # static
+//      }
+//    }
+//    controller = {
+//      cpu = 8 # dynamic, from WebUI - 8, 16 or 24 (S, M or L)
+//      memory = 24768 # dynamic, from WebUI -  24768, 32768 or 49152 (S, M or L)
+//      disk = 128 # dynamic, from WebUI - 128, 256 or 512 (S, M or L)
+//      cluster = false # dynamic, from WebUI, default is true
+//      wait_for_guest_net_timeout = 2 # static
+//      environment = "VMWARE" # static
+//      dns =  ["8.8.8.8", "8.8.4.4"] # static
+//      ntp = ["95.81.173.155", "188.165.236.162"] # static
+//      floatingIp = "1.1.1.1" # static
+//      from_email = "avicontroller@vmc.local" # static
+//      se_in_provider_context = "false" # static
+//      tenant_access_to_provider_se = "true" # static
+//      tenant_vrf = "false" # static
+//      public_ip = true # dynamic, from WebUI - if public IP for controller has been enabled
+//    }
+//    domains = [
+//      {
+//        name = "vmc.local" # dynamic, from WebUI - if application is enabled - keep a default value anyway
+//      }
+//    ]
+//    network_management = {
+//      name = "avi-mgmt" # dynamic from NSX-T API
+//      networkRangeBegin = "11" # Not needed in Easy Avi
+//      networkRangeEnd = "50" # Not needed in Easy Avi
+//      defaultGateway = "10.1.1.1/24" # dynamic from NSX-T API
+//      avi_ctrl_mgmt_ips = ["", "", ""] # dynamic, from WebUI, if dhcp is enabled then ["", "", ""], if dhcp is disabled then ["a.b.c.d", "a.b.c.e", "a.b.c.f"]
+//    }
+//    network_vip = {
+//      name = "avi-vip" # dynamic from NSX-T API
+//      networkRangeBegin = "11" # Not needed in Easy Avi
+//      networkRangeEnd = "50" # Not needed in Easy Avi
+//      ipStartPool = "200" # dynamic, from WebUI - if application is enabled
+//      ipEndPool = "219" # dynamic, from WebUI - if application is enabled
+//      defaultGateway = "10.1.3.1/24" # dynamic from NSX-T API
+//    }
+//    network_backend = {
+//      name = "avi-backend" # dynamic from NSX-T API
+//      networkRangeBegin = "11" # Not needed in Easy Avi
+//      networkRangeEnd = "50" # Not needed in Easy Avi
+//      defaultGateway = "10.1.2.1/24" # dynamic from NSX-T API
+//    }
+//    serviceEngineGroup = [
+//      {
+//        name = "Default-Group"
+//        numberOfSe = 1
+//        ha_mode = "HA_MODE_SHARED"
+//        min_scaleout_per_vs = "1"
+//        disk_per_se = "25"
+//        vcpus_per_se = "1"
+//        cpu_reserve = "false"
+//        memory_per_se = "1024"
+//        mem_reserve = "false"
+//        extra_shared_config_memory = "0"
+//        management_network = {
+//          name = "avi-mgmt"
+//          defaultGateway = "10.1.1.1/24"
+//          ips = [
+//            "100"
+//          ]
+//          dhcp = false
+//        }
+//        data_networks = [
+//          {
+//            name = "avi-vip"
+//            defaultGateway = "10.1.3.1/24"
+//            defaultGatewaySeGroup = true
+//            ips = [
+//              "100"
+//            ]
+//            dhcp = false
+//          },
+//        ]
+//      },
+//    ]
+//    httppolicyset = [
+//      {
+//        name = "http-request-policy-app1-content-switching-vmc" # static
+//        http_request_policy = {
+//          rules = [
+//            {
+//              name = "Rule 1" # static
+//              match = {
+//                path = {
+//                  match_criteria = "CONTAINS" # static
+//                  match_str = ["hello", "world"] # static
+//                }
+//              }
+//              rewrite_url_action = {
+//                path = {
+//                  type = "URI_PARAM_TYPE_TOKENIZED" # static
+//                  tokens = [
+//                    {
+//                      type = "URI_TOKEN_TYPE_STRING" # static
+//                      str_value = "index.html" # static
+//                    }
+//                  ]
+//                }
+//                query = {
+//                  keep_query = true # static
+//                }
+//              }
+//              switching_action = {
+//                action = "HTTP_SWITCHING_SELECT_POOL" # static
+//                status_code = "HTTP_LOCAL_RESPONSE_STATUS_CODE_200" # static
+//                pool_ref = "/api/pool?name=pool1-hello-vmc" # static
+//              }
+//            },
+//            {
+//              name = "Rule 2" # static
+//              match = {
+//                path = {
+//                  match_criteria = "CONTAINS" # static
+//                  match_str = ["avi"] # static
+//                }
+//              }
+//              rewrite_url_action = {
+//                path = {
+//                  type = "URI_PARAM_TYPE_TOKENIZED" # static
+//                  tokens = [
+//                    {
+//                      type = "URI_TOKEN_TYPE_STRING" # static
+//                      str_value = "" # static
+//                    }
+//                  ]
+//                }
+//                query = {
+//                  keep_query = true # static
+//                }
+//              }
+//              switching_action = {
+//                action = "HTTP_SWITCHING_SELECT_POOL" # static
+//                status_code = "HTTP_LOCAL_RESPONSE_STATUS_CODE_200" # static
+//                pool_ref = "/api/pool?name=pool2-avi-vmc" # static
+//              }
+//            },
+//          ]
+//        }
+//      }
+//    ]
+//    pools = [
+//      {
+//        name = "pool1-hello-vmc" # static
+//        lb_algorithm = "LB_ALGORITHM_ROUND_ROBIN" # static
+//      },
+//      {
+//        name = "pool2-avi-vmc" # static
+//        application_persistence_profile_ref = "System-Persistence-Client-IP" # static
+//        default_server_port = 8080 # static
+//      }
+//    ]
+//    virtualservices = {
+//      http = [
+//        {
+//          name = "app1-content-switching-vmc" # static
+//          pool_ref = "pool1-hello-vmc" # static
+//          http_policies = [
+//            {
+//              http_policy_set_ref = "/api/httppolicyset?name=http-request-policy-app1-content-switching-vmc" # static
+//              index = 11 # static
+//            }
+//          ]
+//          services: [
+//            {
+//              port = 80 # static
+//              enable_ssl = "false" # static
+//            },
+//            {
+//              port = 443 # static
+//              enable_ssl = "true" # static
+//            }
+//          ]
+//        },
+//      ]
+//      dns = [
+//        {
+//          name = "dns" # static
+//          services: [
+//            {
+//              port = 53 # static
+//            }
+//          ]
+//        },
+//      ]
+//    }
+//  }
+//}
