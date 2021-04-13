@@ -11,7 +11,7 @@ do
   for url in "${arr[@]}"
   do
     echo "checking public IP on $url"
-    myPublicIP=$(curl $url)
+    myPublicIP=$(curl $url > /dev/null 2>&1)
     if [[ $myPublicIP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
     then
       break
@@ -24,7 +24,7 @@ do
     exit
   fi
 done
-echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
+echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json > /dev/null 2>&1
 #
 # vCenter prerequisites
 #
