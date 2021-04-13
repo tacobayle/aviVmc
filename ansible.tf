@@ -50,14 +50,14 @@ resource "null_resource" "ansible_hosts_backend_dynamic" {
   depends_on = [null_resource.ansible_hosts_static2]
   count = (var.no_access_vcenter.application == true ? 2 : 0)
   provisioner "local-exec" {
-    command = "echo '        ${vsphere_virtual_machine.backend[count.index].default_ip_address}:' | tee -a hosts}"
+    command = "echo '        ${vsphere_virtual_machine.backend[count.index].default_ip_address}:' | tee -a hosts"
   }
 }
 
 resource "null_resource" "ansible_hosts_static3" {
   depends_on = [null_resource.ansible_hosts_backend_dynamic]
   provisioner "local-exec" {
-    command = "echo '  vars:' | tee -a hosts ; echo '    ansible_user: ${var.backend.username}' | tee -a hosts}"
+    command = "echo '  vars:' | tee -a hosts ; echo '    ansible_user: ${var.backend.username}' | tee -a hosts"
   }
 }
 
