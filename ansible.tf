@@ -84,6 +84,7 @@ resource "null_resource" "ansible" {
 
   provisioner "remote-exec" {
     inline = [
+      "sudo mkdir -p /etc/ansible",
       "echo '[defaults]' | sudo tee /etc/ansible.cfg",
       "echo 'private_key_file = /home/${var.jump.username}/.ssh/${basename(var.jump.private_key_path)}' | sudo tee -a /etc/ansible.cfg",
       "echo 'host_key_checking = False' | sudo tee -a /etc/ansible.cfg",
