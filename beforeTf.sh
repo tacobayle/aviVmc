@@ -47,10 +47,13 @@ echo "++++++++++++++++++++++++++++++++"
 echo "Checking for VM conflict name..."
 for vm in $(govc find / -type m)
 do
-  if [[ $(basename $vm) == backend-* ]]
-  then
-    echo "ERROR: There is a VM called $(basename $vm) which will conflict with this deployment - please remove it before trying another attempt"
-    beforeTfError=1
+  if [[ $(cat sddc.json | jq -r .no_access_vcenter.application) == true ]]
+    then
+      if [[ $(basename $vm) == backend-* ]]
+        then
+        echo "ERROR: There is a VM called $(basename $vm) which will conflict with this deployment - please remove it before trying another attempt"
+        beforeTfError=1
+      fi
   fi
   if [[ $(basename $vm) == jump ]]
   then
