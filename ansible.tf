@@ -26,7 +26,7 @@
 
 resource "null_resource" "ansible_hosts_static1" {
   provisioner "local-exec" {
-    command = "echo '---' | tee hosts ; echo 'all:' | tee -a hosts ; echo '  children:' | tee -a hosts; echo '    controller:' | tee -a hosts; ; echo '      hosts:' | tee -a hosts"
+    command = "echo '---' | tee hosts ; echo 'all:' | tee -a hosts ; echo '  children:' | tee -a hosts ; echo '    controller:' | tee -a hosts ; echo '      hosts:' | tee -a hosts"
   }
 }
 
