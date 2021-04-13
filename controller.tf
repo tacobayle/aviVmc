@@ -1,14 +1,14 @@
-resource "vsphere_tag" "ansible_group_controller" {
-  name             = "controller"
-  category_id      = vsphere_tag_category.ansible_group_controller.id
-}
+//resource "vsphere_tag" "ansible_group_controller" {
+//  name             = "controller"
+//  category_id      = vsphere_tag_category.ansible_group_controller.id
+//}
 
 resource "vsphere_virtual_machine" "controller" {
   count            = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
   name             = "${split(".ova", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[0]}-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.folderController.path
+  folder           = data.vsphere_folder.folderController.path
   network_interface {
     network_id = data.vsphere_network.networkMgmt.id
   }
@@ -31,13 +31,13 @@ resource "vsphere_virtual_machine" "controller" {
 
   vapp {
     properties = {
-      "mgmt-ip"     = var.no_access_vcenter.controller.ips[count.index]
-      "mgmt-mask"   = var.no_access_vcenter.controller.mgmt_mask
-      "default-gw"  = var.no_access_vcenter.controller.default_gw
+      "mgmt-ip"     = element(var.no_access_vcenter.network_management.avi_ctrl_mgmt_ips, count.index)
+      "mgmt-mask"   = cidrnetmask(var.no_access_vcenter.network_management.defaultGateway)
+      "default-gw"  = split("/", var.no_access_vcenter.network_management.defaultGateway)[0]
     }
   }
 
-  tags = [
-        vsphere_tag.ansible_group_controller.id,
-  ]
+//  tags = [
+//        vsphere_tag.ansible_group_controller.id,
+//  ]
 }

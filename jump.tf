@@ -4,11 +4,11 @@ data "template_file" "jumpbox_userdata" {
     pubkey        = file(var.jump.public_key_path)
     avisdkVersion = var.jump.avisdkVersion
     ansibleVersion = var.ansible.version
-    vsphere_user  = var.vmc_vsphere_username
-    vsphere_password = var.vmc_vsphere_password
-    vsphere_server = var.vmc_vsphere_server
+//    vsphere_user  = var.vmc_vsphere_username
+//    vsphere_password = var.vmc_vsphere_password
+//    vsphere_server = var.vmc_vsphere_server
     username = var.jump.username
-    privateKey = var.jump.private_key_path
+//    privateKey = var.jump.private_key_path
   }
 }
 
@@ -16,7 +16,7 @@ resource "vsphere_virtual_machine" "jump" {
   name             = var.jump.name
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.folderController.path
+  folder           = data.vsphere_folder.folderController.path
   network_interface {
                       network_id = data.vsphere_network.networkMgmt.id
   }

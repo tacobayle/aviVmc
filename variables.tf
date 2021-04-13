@@ -124,9 +124,9 @@ variable "no_access_vcenter" {
     name = "cloudVmc" # static
     environment = "vmc" # static
     dhcp_enabled = true # static
-    application = false # dynamic, from WebUI - if application is enabled
-    public_ip = false # dynamic, from WebUI - if application is enabled and public_ip is enabled
-    dfw_rules = false # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
+    application = true # dynamic, from WebUI - if application is enabled
+    public_ip = true # dynamic, from WebUI - if application is enabled and public_ip is enabled
+    dfw_rules = true # dynamic, from WebUI - if application is enabled and dfw_rules is enabled
     nsxt_exclusion_list = true # dynamic, from WebUI - based of nsx_exclusion or Tunnel mode
     vcenter = {
       dc = "SDDC-Datacenter" # static
@@ -146,10 +146,7 @@ variable "no_access_vcenter" {
       cpu = 8 # dynamic, from WebUI - 8, 16 or 24 (S, M or L)
       memory = 24768 # dynamic, from WebUI -  24768, 32768 or 49152 (S, M or L)
       disk = 128 # dynamic, from WebUI - 128, 256 or 512 (S, M or L)
-      cluster = false # dynamic, from WebUI
-      ips = [""]
-      mgmt_mask = ""
-      default_gw = ""
+      cluster = false # dynamic, from WebUI, default is true
       wait_for_guest_net_timeout = 2 # static
       environment = "VMWARE" # static
       dns =  ["8.8.8.8", "8.8.4.4"] # static
@@ -171,6 +168,7 @@ variable "no_access_vcenter" {
       networkRangeBegin = "11" # Not needed in Easy Avi
       networkRangeEnd = "50" # Not needed in Easy Avi
       defaultGateway = "10.1.1.1/24" # dynamic from NSX-T API
+      avi_ctrl_mgmt_ips = ["", "", ""] # dynamic, from WebUI, if dhcp is enabled then ["", "", ""], if dhcp is disabled then ["a.b.c.d", "a.b.c.e", "a.b.c.f"]
     }
     network_vip = {
       name = "avi-vip" # dynamic from NSX-T API

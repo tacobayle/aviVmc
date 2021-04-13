@@ -21,7 +21,7 @@ resource "vsphere_virtual_machine" "backend" {
   name             = "backend-${count.index}"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
-  folder           = vsphere_folder.folderApp[0].path
+  folder           = data.vsphere_folder.folderApp[0].path
 
   network_interface {
                       network_id = data.vsphere_network.networkBackend[0].id

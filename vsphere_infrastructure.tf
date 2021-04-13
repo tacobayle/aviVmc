@@ -36,17 +36,26 @@ data "vsphere_network" "networkVip" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-resource "vsphere_folder" "folderController" {
-  path          = var.no_access_vcenter.vcenter.folderAvi
-  type          = "vm"
-  datacenter_id = data.vsphere_datacenter.dc.id
+//resource "vsphere_folder" "folderController" {
+//  path          = var.no_access_vcenter.vcenter.folderAvi
+//  type          = "vm"
+//  datacenter_id = data.vsphere_datacenter.dc.id
+//}
+//
+//resource "vsphere_folder" "folderApp" {
+//  count = (var.no_access_vcenter.application == true ? 1 : 0)
+//  path          = var.no_access_vcenter.vcenter.folderApps
+//  type          = "vm"
+//  datacenter_id = data.vsphere_datacenter.dc.id
+//}
+
+data "vsphere_folder" "folderController" {
+  path = "/${var.no_access_vcenter.vcenter.dc}/vm/${var.no_access_vcenter.vcenter.folderAvi}"
 }
 
-resource "vsphere_folder" "folderApp" {
+data "vsphere_folder" "folderApp" {
   count = (var.no_access_vcenter.application == true ? 1 : 0)
-  path          = var.no_access_vcenter.vcenter.folderApps
-  type          = "vm"
-  datacenter_id = data.vsphere_datacenter.dc.id
+  path = "/${var.no_access_vcenter.vcenter.dc}/vm/${var.no_access_vcenter.vcenter.folderApps}"
 }
 
 //resource "vsphere_tag_category" "ansible_group_backend" {
@@ -65,13 +74,13 @@ resource "vsphere_folder" "folderApp" {
 //  ]
 //}
 
-resource "vsphere_tag_category" "ansible_group_controller" {
-  name = "ansible_group_controller"
-  cardinality = "SINGLE"
-  associable_types = [
-    "VirtualMachine",
-  ]
-}
+//resource "vsphere_tag_category" "ansible_group_controller" {
+//  name = "ansible_group_controller"
+//  cardinality = "SINGLE"
+//  associable_types = [
+//    "VirtualMachine",
+//  ]
+//}
 
 //resource "vsphere_tag_category" "ansible_group_jump" {
 //  name = "ansible_group_jump"
