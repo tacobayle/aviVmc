@@ -24,7 +24,7 @@
       "cpu": 8,
       "memory": 24768,
       "disk": 128,
-      "cluster": false,
+      "cluster": true,
       "wait_for_guest_net_timeout": 2,
       "environment": "VMWARE",
       "dns":  ["8.8.8.8", "8.8.4.4"],
@@ -34,7 +34,8 @@
       "se_in_provider_context": "false",
       "tenant_access_to_provider_se": "true",
       "tenant_vrf": "false",
-      "public_ip": true
+      "public_ip": true,
+      "floating_ip": true
     },
     "domains": [
       {
@@ -46,7 +47,8 @@
       "networkRangeBegin": "11",
       "networkRangeEnd": "50",
       "defaultGateway": "10.1.1.1/24",
-      "avi_ctrl_mgmt_ips": ["", "", ""]
+      "avi_ctrl_mgmt_ips": ["11", "12", "13"],
+      "avi_ctrl_floating_ip": "10"
     },
     "network_vip": {
       "name": "avi-vip",

@@ -29,13 +29,13 @@ resource "vsphere_virtual_machine" "controller" {
     template_uuid = vsphere_content_library_item.avi.id
   }
 
-  vapp {
-    properties = {
-      "mgmt-ip"     = element(var.no_access_vcenter.network_management.avi_ctrl_mgmt_ips, count.index)
-      "mgmt-mask"   = cidrnetmask(var.no_access_vcenter.network_management.defaultGateway)
-      "default-gw"  = split("/", var.no_access_vcenter.network_management.defaultGateway)[0]
-    }
-  }
+//  vapp {
+//    properties = {
+//      "mgmt-ip"     = element(var.no_access_vcenter.network_management.avi_ctrl_mgmt_ips, count.index)
+//      "mgmt-mask"   = cidrnetmask(var.no_access_vcenter.network_management.defaultGateway)
+//      "default-gw"  = split("/", var.no_access_vcenter.network_management.defaultGateway)[0]
+//    }
+//  }
 
 //  tags = [
 //        vsphere_tag.ansible_group_controller.id,
