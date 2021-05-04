@@ -61,8 +61,26 @@ resource "null_resource" "ansible_hosts_static3" {
   }
 }
 
+resource "null_resource" "wait_https_controllers" {
+  depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
+  count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
+
+  connection {
+    host        = vmc_public_ip.public_ip_jump.ip
+    type        = "ssh"
+    agent       = false
+    user        = var.jump.username
+    private_key = file(var.jump.private_key_path)
+  }
+
+  provisioner "remote-exec" {
+    command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${element(vsphere_virtual_machine.controller.default_ip_address, count.index)}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready\"; sleep 30 ; count=$((count+1)) ;  if [[ $count == 10 ]];  then exit 1 ; fi ; done"
+  }
+}
+
+
 resource "null_resource" "ansible" {
-  depends_on = [null_resource.cgw_jump_create, null_resource.ansible_hosts_static3]
+  depends_on = [null_resource.wait_https_controllers, null_resource.ansible_hosts_static3]
   connection {
    host        = vmc_public_ip.public_ip_jump.ip
    type        = "ssh"

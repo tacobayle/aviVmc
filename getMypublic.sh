@@ -8,7 +8,7 @@ do
   for url in "${arr[@]}"
   do
     echo "checking public IP on $url"
-    myPublicIP=$(curl $url)
+    myPublicIP=$(curl $url --silent)
     if [[ $myPublicIP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
     then
       break
