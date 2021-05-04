@@ -1,6 +1,10 @@
 #!/bin/bash
 export GOVC_DATACENTER=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)
-export GOVC_URL=$(cat data.json | jq -r .vmc_vsphere_username):$(cat data.json | jq -r .vmc_vsphere_password)@$(cat data.json | jq -r .vmc_vsphere_server)
+if [ -f "data.json" ]; then
+    export GOVC_URL=$(cat data.json | jq -r .vmc_vsphere_username):$(cat data.json | jq -r .vmc_vsphere_password)@$(cat data.json | jq -r .vmc_vsphere_server)
+else
+    export GOVC_URL=$(cat sddc.json | jq -r .vmc_vsphere_username):$(cat sddc.json | jq -r .vmc_vsphere_password)@$(cat sddc.json | jq -r .vmc_vsphere_server)
+fi
 export GOVC_INSECURE=true
 export GOVC_DATASTORE=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.datastore)
 echo ""

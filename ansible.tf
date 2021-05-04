@@ -74,7 +74,9 @@ resource "null_resource" "wait_https_controllers" {
   }
 
   provisioner "remote-exec" {
-    command = "count=1 ; until $(curl --output /dev/null --silent --head -k https://${element(vsphere_virtual_machine.controller.default_ip_address, count.index)}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready\"; sleep 30 ; count=$((count+1)) ;  if [[ $count == 10 ]];  then exit 1 ; fi ; done"
+    inline = [
+      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${element(vsphere_virtual_machine.controller.default_ip_address, count.index)}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready\"; sleep 30 ; count=$((count+1)) ;  if [[ $count == 10 ]];  then exit 1 ; fi ; done"
+      ]
   }
 }
 

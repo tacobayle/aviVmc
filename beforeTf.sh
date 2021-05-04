@@ -3,7 +3,11 @@
 # vCenter prerequisites
 #
 export GOVC_DATACENTER=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)
-export GOVC_URL=$(cat data.json | jq -r .vmc_vsphere_username):$(cat data.json | jq -r .vmc_vsphere_password)@$(cat data.json | jq -r .vmc_vsphere_server)
+if [ -f "data.json" ]; then
+    export GOVC_URL=$(cat data.json | jq -r .vmc_vsphere_username):$(cat data.json | jq -r .vmc_vsphere_password)@$(cat data.json | jq -r .vmc_vsphere_server)
+else
+    export GOVC_URL=$(cat sddc.json | jq -r .vmc_vsphere_username):$(cat sddc.json | jq -r .vmc_vsphere_password)@$(cat sddc.json | jq -r .vmc_vsphere_server)
+fi
 export GOVC_INSECURE=true
 export GOVC_DATASTORE=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.datastore)
 # for folder in $(cat sddc.json | jq -r .no_access_vcenter.serviceEngineGroup[].name) ; do echo $folder ; done
@@ -82,7 +86,7 @@ do
   for url in "${arr[@]}"
   do
     echo "checking public IP on $url"
-    myPublicIP=$(curl $url)
+    myPublicIP=$(curl $url --silent)
     if [[ $myPublicIP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
     then
       break
@@ -95,4 +99,4 @@ do
     exit
   fi
 done
-echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json > /dev/null 2>&1
+echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
