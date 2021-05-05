@@ -110,11 +110,11 @@ if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.network_management.dhcp) == 
 then
   mv templates/controller.tf.dhcp controller.tf
   mv templates/jump.tf.dhcp jump.tf
-  mv templates/jump.userdata.dhcp jump.userdata
+  mv templates/jump.userdata.dhcp userdata/jump.userdata
 else
   mv templates/controller.tf.static controller.tf
   mv templates/jump.tf.static jump.tf
-  mv templates/jump.userdata.static jump.userdata
+  mv templates/jump.userdata.static userdatajump.userdata
 fi
 if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.controller.floating_ip) == true ]]
 then
