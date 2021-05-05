@@ -75,7 +75,7 @@ resource "null_resource" "wait_https_controllers" {
 
   provisioner "remote-exec" {
     inline = [
-      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ $count == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
+      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ \"$count\" == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
       ]
   }
 }
@@ -143,7 +143,7 @@ resource "null_resource" "ansible_avi_cluster_2" {
 
   provisioner "remote-exec" {
     inline = [
-      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ $count == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
+      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ \"$count\" == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
     ]
   }
 }
