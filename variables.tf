@@ -15,7 +15,6 @@ variable "vmc_org_id" {
 variable "vmc_sddc_id" {
   sensitive = true
 }
-variable "my_private_ip" {}
 variable "my_public_ip" {}
 
 variable "jump" {
