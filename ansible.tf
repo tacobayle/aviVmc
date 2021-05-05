@@ -128,8 +128,8 @@ resource "null_resource" "ansible_avi_cluster_1" {
 }
 
 resource "null_resource" "ansible_avi_cluster_2" {
-  depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
-  depends_on = [null_resource.wait_https_controllers, null_resource.ansible_hosts_static3]
+//  depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
+  depends_on = [null_resource.ansible_avi_cluster_1]
 
   count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
 
