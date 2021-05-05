@@ -57,6 +57,8 @@ variable "backend" {
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
     url_demovip_server = "https://github.com/tacobayle/demovip_server"
     username = "ubuntu"
+    netplanFile = "/etc/netplan/50-cloud-init.yaml"
+
   }
 }
 

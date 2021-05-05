@@ -64,7 +64,9 @@
       "networkRangeBegin": "11",
       "networkRangeEnd": "50",
       "backend_ips": ["51", "52"],
-      "defaultGateway": "10.1.2.1/24"
+      "dns": "8.8.8.8, 8.8.4.4",
+      "defaultGateway": "10.1.2.1/24",
+      "dhcp": true
     },
     "serviceEngineGroup": [
       {
