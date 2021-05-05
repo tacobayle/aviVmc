@@ -24,42 +24,42 @@
 //  }
 //}
 
-resource "null_resource" "ansible_hosts_static1" {
-  provisioner "local-exec" {
-    command = "echo '---' | tee hosts ; echo 'all:' | tee -a hosts ; echo '  children:' | tee -a hosts ; echo '    controller:' | tee -a hosts ; echo '      hosts:' | tee -a hosts"
-  }
-}
+//resource "null_resource" "ansible_hosts_static1" {
+//  provisioner "local-exec" {
+//    command = "echo '---' | tee hosts ; echo 'all:' | tee -a hosts ; echo '  children:' | tee -a hosts ; echo '    controller:' | tee -a hosts ; echo '      hosts:' | tee -a hosts"
+//  }
+//}
+//
+//resource "null_resource" "ansible_hosts_controllers_dynamic" {
+//  depends_on = [null_resource.ansible_hosts_static1]
+//  count      = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
+//  provisioner "local-exec" {
+//    command = "echo '        ${vsphere_virtual_machine.controller[count.index].default_ip_address}:' | tee -a hosts"
+//  }
+//}
+//
+//resource "null_resource" "ansible_hosts_static2" {
+//  depends_on = [null_resource.ansible_hosts_controllers_dynamic]
+//  count = (var.no_access_vcenter.application == true ? 1 : 0)
+//  provisioner "local-exec" {
+//    command = "echo '    backend:' | tee -a hosts ; echo '      hosts:' | tee -a hosts"
+//  }
+//}
 
-resource "null_resource" "ansible_hosts_controllers_dynamic" {
-  depends_on = [null_resource.ansible_hosts_static1]
-  count      = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
-  provisioner "local-exec" {
-    command = "echo '        ${vsphere_virtual_machine.controller[count.index].default_ip_address}:' | tee -a hosts"
-  }
-}
+//resource "null_resource" "ansible_hosts_backend_dynamic" {
+//  depends_on = [null_resource.ansible_hosts_static2]
+//  count = (var.no_access_vcenter.application == true ? 2 : 0)
+//  provisioner "local-exec" {
+//    command = "echo '        ${vsphere_virtual_machine.backend[count.index].default_ip_address}:' | tee -a hosts"
+//  }
+//}
 
-resource "null_resource" "ansible_hosts_static2" {
-  depends_on = [null_resource.ansible_hosts_controllers_dynamic]
-  count = (var.no_access_vcenter.application == true ? 1 : 0)
-  provisioner "local-exec" {
-    command = "echo '    backend:' | tee -a hosts ; echo '      hosts:' | tee -a hosts"
-  }
-}
-
-resource "null_resource" "ansible_hosts_backend_dynamic" {
-  depends_on = [null_resource.ansible_hosts_static2]
-  count = (var.no_access_vcenter.application == true ? 2 : 0)
-  provisioner "local-exec" {
-    command = "echo '        ${vsphere_virtual_machine.backend[count.index].default_ip_address}:' | tee -a hosts"
-  }
-}
-
-resource "null_resource" "ansible_hosts_static3" {
-  depends_on = [null_resource.ansible_hosts_backend_dynamic]
-  provisioner "local-exec" {
-    command = "echo '  vars:' | tee -a hosts ; echo '    ansible_user: ${var.backend.username}' | tee -a hosts"
-  }
-}
+//resource "null_resource" "ansible_hosts_static3" {
+//  depends_on = [null_resource.ansible_hosts_backend_dynamic]
+//  provisioner "local-exec" {
+//    command = "echo '  vars:' | tee -a hosts ; echo '    ansible_user: ${var.backend.username}' | tee -a hosts"
+//  }
+//}
 
 resource "null_resource" "wait_https_controllers" {
   depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
@@ -81,8 +81,10 @@ resource "null_resource" "wait_https_controllers" {
 }
 
 resource "null_resource" "ansible_avi_cluster_1" {
-  depends_on = [null_resource.wait_https_controllers, null_resource.ansible_hosts_static3]
-  connection {
+//  depends_on = [null_resource.wait_https_controllers, null_resource.ansible_hosts_static3]
+  depends_on = [null_resource.wait_https_controllers]
+
+    connection {
     host        = vmc_public_ip.public_ip_jump.ip
     type        = "ssh"
     agent       = false
@@ -127,6 +129,8 @@ resource "null_resource" "ansible_avi_cluster_1" {
 
 resource "null_resource" "ansible_avi_cluster_2" {
   depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
+  depends_on = [null_resource.wait_https_controllers, null_resource.ansible_hosts_static3]
+
   count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
 
   connection {
