@@ -114,10 +114,10 @@ resource "null_resource" "ansible_avi_cluster_1" {
     ]
   }
 
-  provisioner "file" {
-    source = "hosts"
-    destination = "${basename(var.ansible.aviConfigureUrl)}/hosts"
-  }
+//  provisioner "file" {
+//    source = "hosts"
+//    destination = "${basename(var.ansible.aviConfigureUrl)}/hosts"
+//  }
 
   provisioner "remote-exec" {
     inline      = [
