@@ -2,7 +2,7 @@ data "template_file" "jumpbox_userdata" {
   template = file("userdata/jump.userdata")
   vars = {
     pubkey        = file(var.jump.public_key_path)
-    avisdkVersion = var.jump.avisdkVersion
+    aviSdkVersion = var.jump.aviSdkVersion
     ansibleVersion = var.ansible.version
 //    vsphere_user  = var.vmc_vsphere_username
 //    vsphere_password = var.vmc_vsphere_password

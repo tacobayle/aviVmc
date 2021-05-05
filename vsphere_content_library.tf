@@ -16,7 +16,7 @@ resource "vsphere_content_library_item" "avi" {
   name        = "Avi OVA file"
   description = "Avi OVA file"
   library_id  = vsphere_content_library.library.id
-  file_url = var.no_access_vcenter.aviOvaFile
+  file_url = var.no_access_vcenter.aviOva
 }
 
 resource "vsphere_content_library_item" "ubuntu" {

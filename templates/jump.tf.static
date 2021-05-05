@@ -2,7 +2,7 @@ data "template_file" "jumpbox_userdata" {
   template = file("userdata/jump.userdata")
   vars = {
     pubkey        = file(var.jump.public_key_path)
-    avisdkVersion = var.jump.avisdkVersion
+    aviSdkVersion = var.jump.aviSdkVersion
     ansibleVersion = var.ansible.version
     username = var.jump.username
     ip = cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.jump_ip)
