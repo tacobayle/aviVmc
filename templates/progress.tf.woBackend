@@ -16,7 +16,7 @@ resource "null_resource" "avi_controller" {
 }
 
 resource "null_resource" "avi_cluster" {
-  depends_on = [null_resource.ansible_avi_cluster_2]
+  depends_on = [null_resource.ansible_avi_cluster_3]
 }
 
 resource "null_resource" "avi_cloud" {

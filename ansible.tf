@@ -126,19 +126,32 @@ resource "null_resource" "ansible_avi_cluster_1" {
 }
 
 resource "null_resource" "ansible_avi_cluster_2" {
-  depends_on = [null_resource.ansible_avi_cluster_1]
+  depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
+  count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
+
   connection {
     host        = vmc_public_ip.public_ip_jump.ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username
-    private_key = file(var.jump["private_key_path"])
+    private_key = file(var.jump.private_key_path)
   }
 
   provisioner "remote-exec" {
     inline = [
       "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ $count == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; then exit 1 ; fi ; done"
     ]
+  }
+}
+
+resource "null_resource" "ansible_avi_cluster_3" {
+  depends_on = [null_resource.ansible_avi_cluster_2]
+  connection {
+    host        = vmc_public_ip.public_ip_jump.ip
+    type        = "ssh"
+    agent       = false
+    user        = var.jump.username
+    private_key = file(var.jump["private_key_path"])
   }
 
   provisioner "remote-exec" {
