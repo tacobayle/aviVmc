@@ -102,6 +102,18 @@ resource "null_resource" "se_exclusion_list" {
   }
 }
 
+resource "null_resource" "jump_exclusion_list" {
+  provisioner "local-exec" {
+    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.jump.path}"
+  }
+}
+
+resource "null_resource" "avi_controller_exclusion_list" {
+  provisioner "local-exec" {
+    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.controller-private.path}"
+  }
+}
+
 resource "nsxt_policy_group" "management" {
   display_name = "EasyAvi-Management-Network"
   domain       = "cgw"
