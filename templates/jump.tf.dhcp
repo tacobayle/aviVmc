@@ -1,5 +1,5 @@
 data "template_file" "jumpbox_userdata" {
-  template = file("${path.module}/userdata/jump.userdata")
+  template = file("userdata/jump.userdata")
   vars = {
     pubkey        = file(var.jump.public_key_path)
     avisdkVersion = var.jump.avisdkVersion

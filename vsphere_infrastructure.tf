@@ -18,20 +18,20 @@ data "vsphere_resource_pool" "pool" {
 }
 
 data "vsphere_network" "networkMgmt" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_30_seconds]
   name = var.no_access_vcenter.network_management.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkBackend" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_30_seconds]
   count = (var.no_access_vcenter.application == true ? 1 : 0)
   name = var.no_access_vcenter.network_backend.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "networkVip" {
-  depends_on = [time_sleep.wait_60_seconds]
+  depends_on = [time_sleep.wait_30_seconds]
   name = var.no_access_vcenter.network_vip.name
   datacenter_id = data.vsphere_datacenter.dc.id
 }
