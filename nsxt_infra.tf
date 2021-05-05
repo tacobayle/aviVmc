@@ -102,15 +102,43 @@ resource "null_resource" "se_exclusion_list" {
   }
 }
 
+resource "nsxt_policy_group" "jump_exclusion_list" {
+  display_name = "EasyAvi-jump-exclusion-list"
+  domain       = "cgw"
+  description  = "EasyAvi-jump-exclusion-list"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key = "Name"
+      operator = "EQUALS"
+      value = "EasyAvi-jump"
+    }
+  }
+}
+
+resource "nsxt_policy_group" "controller_exclusion_list" {
+  display_name = "EasyAvi-controller-exclusion-list"
+  domain       = "cgw"
+  description  = "EasyAvi-controller-exclusion-list"
+  criteria {
+    condition {
+      member_type = "VirtualMachine"
+      key = "Name"
+      operator = "STARTSWITH"
+      value = "${split(".ova", basename(var.no_access_vcenter.aviOva))[0]}-"
+    }
+  }
+}
+
 resource "null_resource" "jump_exclusion_list" {
   provisioner "local-exec" {
-    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.jump.path}"
+    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.jump_exclusion_list.path}"
   }
 }
 
 resource "null_resource" "avi_controller_exclusion_list" {
   provisioner "local-exec" {
-    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.controller-private.path}"
+    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.controller_exclusion_list.path}"
   }
 }
 

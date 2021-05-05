@@ -14,7 +14,7 @@ data "template_file" "jumpbox_userdata" {
 }
 
 resource "vsphere_virtual_machine" "jump" {
-  name             = var.jump.name
+  name             = "EasyAvi-jump"
   datastore_id     = data.vsphere_datastore.datastore.id
   resource_pool_id = data.vsphere_resource_pool.pool.id
   folder           = data.vsphere_folder.folderController.path
@@ -43,7 +43,7 @@ resource "vsphere_virtual_machine" "jump" {
 
   vapp {
     properties = {
-     hostname    = var.jump.name
+     hostname    = "EasyAvi-jump"
      public-keys = file(var.jump.public_key_path)
      user-data   = base64encode(data.template_file.jumpbox_userdata.rendered)
     }

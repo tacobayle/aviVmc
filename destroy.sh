@@ -38,11 +38,11 @@ echo ""
 echo "removing EasyAvi-SE from exclusion list"
 python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list EasyAvi-SE
 echo ""
-echo "removing EasyAvi-jump from exclusion list"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list EasyAvi-jump
+echo "removing EasyAvi-jump-exclusion-list from exclusion list"
+python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list EasyAvi-jump-exclusion-list
 echo ""
-echo "removing EasyAvi-Controller-Private from exclusion list"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list EasyAvi-Controller-Private
+echo "removing EasyAvi-controller-exclusion-list from exclusion list"
+python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list EasyAvi-controller-exclusion-list
 echo ""
 echo "TF refresh..."
 terraform refresh -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color

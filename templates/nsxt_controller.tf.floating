@@ -21,14 +21,3 @@ resource "nsxt_policy_group" "controller" {
     }
   }
 }
-
-resource "nsxt_policy_group" "controller-private" {
-  display_name = "EasyAvi-Controller-Private"
-  domain       = "cgw"
-  description  = "EasyAvi-Controller-Private"
-  criteria {
-    ipaddress_expression {
-      ip_addresses = vsphere_virtual_machine.controller.*.default_ip_address
-    }
-  }
-}

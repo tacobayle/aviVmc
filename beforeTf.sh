@@ -35,7 +35,7 @@ do
         beforeTfError=1
       fi
   fi
-  if [[ $(basename $vm) == jump ]]
+  if [[ $(basename $vm) == "EasyAvi-jump" ]]
   then
     echo "ERROR: There is a VM called $(basename $vm) which will conflict with this deployment - please remove it before trying another attempt"
     beforeTfError=1
