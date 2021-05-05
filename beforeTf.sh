@@ -40,7 +40,7 @@ do
     echo "ERROR: There is a VM called $(basename $vm) which will conflict with this deployment - please remove it before trying another attempt"
     beforeTfError=1
   fi
-  if [[ $(basename $vm) == $(basename $(cat sddc.json | jq -r .no_access_vcenter.vcenter.contentLibrary.aviOvaFile) .ova)-* ]]
+  if [[ $(basename $vm) == $(basename $(cat sddc.json | jq -r .no_access_vcenter.aviOva) .ova)-* ]]
   then
     echo "ERROR: There is a VM called $(basename $vm) which will conflict with this deployment - please remove it before trying another attempt"
     beforeTfError=1
@@ -51,7 +51,7 @@ echo "++++++++++++++++++++++++++++++++"
 echo "Checking for Content Library conflict name..."
 for cl in $(govc library.ls)
 do
-  if [[ $(basename $cl) == $(cat sddc.json | jq -r .no_access_vcenter.vcenter.contentLibrary.name) ]]
+  if [[ $(basename $cl) == $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) ]]
   then
     echo "ERROR: There is a Content Library called $(basename cl) which will conflict with this deployment - please remove it before trying another attempt"
     beforeTfError=1

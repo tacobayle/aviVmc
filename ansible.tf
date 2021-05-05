@@ -75,7 +75,7 @@ resource "null_resource" "wait_https_controllers" {
 
   provisioner "remote-exec" {
     inline = [
-      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ \"$count\" == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
+      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ \"$count\" -eq 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
       ]
   }
 }
@@ -122,7 +122,7 @@ resource "null_resource" "ansible_avi_cluster_1" {
   provisioner "remote-exec" {
     inline      = [
       "chmod 600 ~/.ssh/${basename(var.jump["private_key_path"])}",
-      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook pbInitCluster.yml --extra-vars '{\"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"controllerFloatingIp\": ${jsonencode(var.no_access_vcenter.avi_ctrl_floating_ip)}, \"controllerDefaultGateway\": ${jsonencode(var.no_access_vcenter.defaultGateway)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
+      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook pbInitCluster.yml --extra-vars '{\"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.aviOva))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"controllerFloatingIp\": ${jsonencode(var.no_access_vcenter.network_management.avi_ctrl_floating_ip)}, \"controllerDefaultGateway\": ${jsonencode(var.no_access_vcenter.network_management.defaultGateway)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
     ]
   }
 }
@@ -143,7 +143,7 @@ resource "null_resource" "ansible_avi_cluster_2" {
 
   provisioner "remote-exec" {
     inline = [
-      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ \"$count\" == 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
+      "count=1 ; until $(curl --output /dev/null --silent --head -k https://${vsphere_virtual_machine.controller[count.index].default_ip_address}); do echo \"Attempt $count: Waiting for Avi Controllers to be ready...\"; sleep 20 ; count=$((count+1)) ;  if [[ \"$count\" -eq 30 ]]; then echo \"ERROR: Unable to connect to Avi Controller API\" ; exit 1 ; fi ; done"
     ]
   }
 }
@@ -160,7 +160,7 @@ resource "null_resource" "ansible_avi_cluster_3" {
 
   provisioner "remote-exec" {
     inline      = [
-      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook pbClusterConfig.yml --extra-vars '{\"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"controllerFloatingIp\": ${jsonencode(var.no_access_vcenter.avi_ctrl_floating_ip)}, \"controllerDefaultGateway\": ${jsonencode(var.no_access_vcenter.defaultGateway)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
+      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook pbClusterConfig.yml --extra-vars '{\"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.aviOva))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"controllerFloatingIp\": ${jsonencode(var.no_access_vcenter.network_management.avi_ctrl_floating_ip)}, \"controllerDefaultGateway\": ${jsonencode(var.no_access_vcenter.network_management.defaultGateway)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
     ]
   }
 }
@@ -177,7 +177,7 @@ resource "null_resource" "ansible_avi_cloud" {
 
   provisioner "remote-exec" {
     inline      = [
-      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook no_access_vcenter/pbCloudOnly.yml --extra-vars '{\"vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vsphere_password\": ${jsonencode(var.vmc_vsphere_password)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"vsphere_username\": ${jsonencode(var.vmc_vsphere_username)}, \"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
+      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook no_access_vcenter/pbCloudOnly.yml --extra-vars '{\"vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.aviOva))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vsphere_password\": ${jsonencode(var.vmc_vsphere_password)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"vsphere_username\": ${jsonencode(var.vmc_vsphere_username)}, \"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
     ]
   }
 }
@@ -194,7 +194,7 @@ resource "null_resource" "ansible_avi_se" {
 
   provisioner "remote-exec" {
     inline      = [
-      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook no_access_vcenter/pbSe.yml --extra-vars '{\"vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vsphere_password\": ${jsonencode(var.vmc_vsphere_password)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"vsphere_username\": ${jsonencode(var.vmc_vsphere_username)}, \"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
+      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook no_access_vcenter/pbSe.yml --extra-vars '{\"vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.aviOva))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vsphere_password\": ${jsonencode(var.vmc_vsphere_password)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"vsphere_username\": ${jsonencode(var.vmc_vsphere_username)}, \"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}}'",
     ]
   }
 }
@@ -211,7 +211,7 @@ resource "null_resource" "ansible_avi_vs" {
 
   provisioner "remote-exec" {
     inline      = [
-      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook no_access_vcenter/pbVsOnly.yml --extra-vars '{\"vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vsphere_password\": ${jsonencode(var.vmc_vsphere_password)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"vsphere_username\": ${jsonencode(var.vmc_vsphere_username)}, \"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}, \"avi_backend_servers_no_access_vcenter\": ${jsonencode(vsphere_virtual_machine.backend.*.guest_ip_addresses)}}'",
+      "cd ${basename(var.ansible.aviConfigureUrl)} ; ansible-playbook no_access_vcenter/pbVsOnly.yml --extra-vars '{\"vsphere_server\": ${jsonencode(var.vmc_vsphere_server)}, \"avi_version\": ${jsonencode(split("-", basename(var.no_access_vcenter.aviOva))[1])}, \"controllerPrivateIps\": ${jsonencode(vsphere_virtual_machine.controller.*.default_ip_address)}, \"vsphere_password\": ${jsonencode(var.vmc_vsphere_password)}, \"controller\": ${jsonencode(var.no_access_vcenter.controller)}, \"vsphere_username\": ${jsonencode(var.vmc_vsphere_username)}, \"no_access_vcenter\": ${jsonencode(var.no_access_vcenter)}, \"avi_username\": ${jsonencode(var.avi_username)}, \"avi_password\": ${jsonencode(var.avi_password)}, \"avi_backend_servers_no_access_vcenter\": ${jsonencode(vsphere_virtual_machine.backend.*.guest_ip_addresses)}}'",
     ]
   }
 }

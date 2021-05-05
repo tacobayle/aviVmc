@@ -17,7 +17,7 @@ vmc_org_id=blablabla
 vmc_sddc_name=blablabla
 TF_VAR_avi_password=blablabla
 ```
-- The following ova needs to be available in the TF host and path needs to be defined in var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile:
+- The following ova needs to be available in the TF host and path needs to be defined in var.no_access_vcenter.aviOva:
 ```
 - controller-20.1.4-9087.ova
 ...
@@ -28,7 +28,7 @@ TF_VAR_avi_password=blablabla
 ...
 ```
 
-- The following ova needs to be available in the TF host and path needs to be defined in var.no_access_vcenter.vcenter.contentLibrary.aviOvaFile:
+- The following ova needs to be available in the TF host and path needs to be defined in var.no_access_vcenter.aviOva:
 ```
 - bionic-server-cloudimg-amd64.ova
 ...

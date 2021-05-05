@@ -20,7 +20,7 @@ fi
 echo ""
 echo "destroying SE Content Libraries..."
 govc library.rm Easy-Avi-CL-SE-NoAccess || true
-govc library.rm $(cat sddc.json | jq -r .no_access_vcenter.vcenter.contentLibrary.name) || true
+govc library.rm $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) || true
 # for folder in $(cat sddc.json | jq -r .no_access_vcenter.serviceEngineGroup[].name) ; do echo $folder ; done
 IFS=$'\n'
 for vm in $(govc find / -type m)
