@@ -13,11 +13,11 @@ data "template_file" "backend_userdata" {
     pubkey       = file(var.jump["public_key_path"])
     url_demovip_server = var.backend.url_demovip_server
     username = var.backend.username
-    defaultGw          = split("/", var.nsxt.network_backend.defaultGateway)[0]
-    ip                 = cidrhost(var.nsxt.network_backend.defaultGateway, element(var.nsxt.network_backend.backend_ips, count.index))
-    mask               = split("/", var.nsxt.network_backend.defaultGateway)[1]
+    defaultGw          = split("/", var.no_access_vcenter.network_backend.defaultGateway)[0]
+    ip                 = cidrhost(var.no_access_vcenter.network_backend.defaultGateway, element(var.no_access_vcenter.network_backend.backend_ips, count.index))
+    mask               = split("/", var.no_access_vcenter.network_backend.defaultGateway)[1]
     netplanFile        = var.backend.netplanFile
-    dns                = var.nsxt.network_backend.dns
+    dns                = var.no_access_vcenter.network_backend.dns
   }
 }
 
