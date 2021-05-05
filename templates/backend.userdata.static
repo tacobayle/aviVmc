@@ -1,0 +1,53 @@
+#cloud-config
+users:
+  - name: ubuntu
+    lock_passwd: true
+    shell: /bin/bash
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+    chpasswd: {expire: False}
+    ssh_authorized_keys:
+      - ${pubkey}
+
+write_files:
+  - content: |
+      #!/bin/bash
+      iface=`ip -o link show | awk -F': ' '{print $2}' | tail -1`
+      mac=`ip -o link show | awk -F'link/ether ' '{print $2}' | awk -F' ' '{print $1}'| tail -1`
+      hostname=`hostname`
+      echo "${ip} $hostname" | sudo tee -a /etc/hosts
+      cp ${netplanFile} ${netplanFile}.old
+      echo "network:" | sudo tee ${netplanFile}
+      echo "    ethernets:" | sudo tee -a ${netplanFile}
+      echo "        $iface:" | sudo tee -a ${netplanFile}
+      echo "            dhcp4: false" | sudo tee -a ${netplanFile}
+      echo "            addresses: [${ip}/${mask}]" | sudo tee -a ${netplanFile}
+      echo "            match:" | sudo tee -a ${netplanFile}
+      echo "                macaddress: $mac" | sudo tee -a ${netplanFile}
+      echo "            set-name: $iface" | sudo tee -a ${netplanFile}
+      echo "            gateway4: ${defaultGw}" | sudo tee -a ${netplanFile}
+      echo "            nameservers:" | sudo tee -a ${netplanFile}
+      echo "              addresses: [${dns}]" | sudo tee -a ${netplanFile}
+      echo "    version: 2" | sudo tee -a ${netplanFile}
+      sudo netplan apply      # apt config
+      sudo apt update
+      sudo apt install -y apache2
+      sudo mv /var/www/html/index.html /var/www/html/index.html.old
+      echo -e "Hello World - cloud is VMC - Node is $(hostname) - IP is $(ip address show dev $(ip -o link show | awk -F': ' '{print $2}' | tail -1) | awk -F'inet ' '{print $2}' |  awk -F'/' '{print $1}' | tr -d '\n')" | sudo tee /var/www/html/index.html
+      sudo apt install -y docker.io
+      sudo usermod -a -G docker ${username}
+      git clone ${url_demovip_server}
+      cd $(basename ${url_demovip_server})
+      docker build . --tag demovip_server:latest
+      ifPrimary=`ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//"`
+      ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
+      docker run -d -p $ip:8080:80 demovip_server:latest
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ubuntu ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/ubuntu
+
+runcmd:
+  - /opt/bootstrap.sh

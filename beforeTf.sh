@@ -116,6 +116,14 @@ else
   mv templates/jump.tf.static jump.tf
   mv templates/jump.userdata.static userdatajump.userdata
 fi
+if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.network_backend.dhcp) == true ]]
+then
+  mv templates/backend.tf.dhcp backend.tf
+  mv templates/backend.userdata.dhcp userdata/backend.userdata
+else
+  mv templates/backend.tf.static backend.tf
+  mv templates/backend.userdata.static userdata/backend.userdata
+fi
 if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.controller.floating_ip) == true ]]
 then
   mv templates/nsxt_controller.tf.floating nsxt_controller.tf
