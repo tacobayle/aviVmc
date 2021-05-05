@@ -21,7 +21,7 @@ variable "my_public_ip" {}
 variable "jump" {
   type = map
   default = {
-    name = "jump"
+//    name = "jump"
     cpu = 2
     memory = 4096
     disk = 20
@@ -40,7 +40,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v5.58"
+    aviConfigureTag = "v5.59"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
