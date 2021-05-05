@@ -1,0 +1,23 @@
+resource "nsxt_policy_nat_rule" "dnat_controller" {
+  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
+  display_name         = "EasyAvi-dnat-controller"
+  action               = "DNAT"
+  source_networks      = []
+  destination_networks = [vmc_public_ip.public_ip_controller[count.index].ip]
+  translated_networks  = [vsphere_virtual_machine.controller[count.index].default_ip_address]
+  gateway_path         = "/infra/tier-1s/cgw"
+  logging              = false
+  firewall_match       = "MATCH_INTERNAL_ADDRESS"
+}
+
+resource "nsxt_policy_group" "controller" {
+  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
+  display_name = "EasyAvi-Controller"
+  domain       = "cgw"
+  description  = "EasyAvi-Controller"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = [vmc_public_ip.public_ip_controller[count.index].ip, vsphere_virtual_machine.controller[count.index].default_ip_address]
+    }
+  }
+}

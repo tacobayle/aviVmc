@@ -7,19 +7,17 @@
     "public_ip": true,
     "dfw_rules": true,
     "nsxt_exclusion_list": true,
+    "ubuntuJump": "/home/ubuntu/bionic-server-cloudimg-amd64.ova",
+    "ubuntuApp": "/home/ubuntu/bionic-server-cloudimg-amd64.ova",
+    "aviOva": "/home/ubuntu/controller-20.1.4-9087.ova",
+    "cl_avi_name": "EasyAvi-CL-Avi",
     "vcenter": {
       "dc": "SDDC-Datacenter",
       "cluster": "Cluster-1",
       "datastore": "WorkloadDatastore",
       "resource_pool": "Cluster-1/Resources",
       "folderApps": "Avi-Apps",
-      "folderAvi": "Avi-Controllers",
-      "contentLibrary": {
-        "name": "Easy-Avi-CL-Build",
-        "description": "Easy-Avi-CL-Build",
-        "aviOvaFile": "/home/ubuntu/controller-20.1.4-9087.ova",
-        "ubuntuOvaFile": "/home/ubuntu/bionic-server-cloudimg-amd64.ova"
-      }
+      "folderAvi": "Avi-Controllers"
     },
     "controller": {
       "cpu": 8,
@@ -30,7 +28,6 @@
       "environment": "VMWARE",
       "dns":  ["8.8.8.8", "8.8.4.4"],
       "ntp": ["95.81.173.155", "188.165.236.162"],
-      "floatingIp": "1.1.1.1",
       "from_email": "avicontroller@vmc.local",
       "se_in_provider_context": "false",
       "tenant_access_to_provider_se": "true",
@@ -45,11 +42,14 @@
     ],
     "network_management": {
       "name": "avi-mgmt",
-      "networkRangeBegin": "11",
-      "networkRangeEnd": "50",
+      "networkRangeBegin": "150",
+      "networkRangeEnd": "170",
       "defaultGateway": "10.1.1.1/24",
       "avi_ctrl_mgmt_ips": ["11", "12", "13"],
-      "avi_ctrl_floating_ip": "10"
+      "avi_ctrl_floating_ip": "10",
+      "jump_ip": "14",
+      "dhcp": true,
+      "dns": "8.8.8.8, 8.8.4.4"
     },
     "network_vip": {
       "name": "avi-vip",
@@ -83,7 +83,7 @@
           "ips": [
             "100"
           ],
-        "dhcp": false
+        "dhcp": true
         },
         "data_networks": [
           {
@@ -93,7 +93,7 @@
             "ips": [
               "100"
             ],
-            "dhcp": false
+            "dhcp": true
           }
         ]
       }

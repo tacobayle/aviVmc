@@ -39,21 +39,9 @@ resource "nsxt_policy_segment" "networkVip" {
   }
 }
 
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_30_seconds" {
   depends_on = [nsxt_policy_segment.networkMgmt, nsxt_policy_segment.networkBackend, nsxt_policy_segment.networkVip]
-  create_duration = "60s"
-}
-
-resource "nsxt_policy_nat_rule" "dnat_controller" {
-  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
-  display_name         = "EasyAvi-dnat-controller"
-  action               = "DNAT"
-  source_networks      = []
-  destination_networks = [vmc_public_ip.public_ip_controller[count.index].ip]
-  translated_networks  = [vsphere_virtual_machine.controller[count.index].default_ip_address]
-  gateway_path         = "/infra/tier-1s/cgw"
-  logging              = false
-  firewall_match       = "MATCH_INTERNAL_ADDRESS"
+  create_duration = "30s"
 }
 
 resource "nsxt_policy_nat_rule" "dnat_jump" {
@@ -137,17 +125,6 @@ resource "nsxt_policy_group" "backend" {
   }
 }
 
-resource "nsxt_policy_group" "controller" {
-  count = (var.no_access_vcenter.controller.public_ip == true ? 1 : 0)
-  display_name = "EasyAvi-Controller"
-  domain       = "cgw"
-  description  = "EasyAvi-Controller"
-  criteria {
-    ipaddress_expression {
-      ip_addresses = [vmc_public_ip.public_ip_controller[count.index].ip, vsphere_virtual_machine.controller[count.index].default_ip_address]
-    }
-  }
-}
 
 resource "nsxt_policy_group" "terraform" {
   display_name = "EasyAvi-Appliance"

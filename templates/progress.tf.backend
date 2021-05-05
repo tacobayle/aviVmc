@@ -1,0 +1,32 @@
+
+resource "null_resource" "content_library" {
+  depends_on = [vsphere_content_library.library, vsphere_content_library_item.avi, vsphere_content_library_item.ubuntu, vsphere_content_library_item.ubuntu_backend]
+}
+
+resource "null_resource" "vm" {
+  depends_on = [vsphere_virtual_machine.controller, vsphere_virtual_machine.jump, vsphere_virtual_machine.jump, vsphere_virtual_machine.backend]
+}
+
+resource "null_resource" "nsxt" {
+  depends_on = [nsxt_policy_nat_rule.dnat_jump, nsxt_policy_group.se, null_resource.se_exclusion_list, nsxt_policy_group.management, nsxt_policy_group.terraform, nsxt_policy_group.jump, null_resource.cgw_jump_create, null_resource.cgw_outbound_management_create, null_resource.cgw_outbound_backend_create, nsxt_policy_group.backend]
+}
+
+resource "null_resource" "avi_controller" {
+  depends_on = [null_resource.wait_https_controllers]
+}
+
+resource "null_resource" "avi_cluster" {
+  depends_on = [null_resource.ansible_avi_cluster_2]
+}
+
+resource "null_resource" "avi_cloud" {
+  depends_on = [null_resource.ansible_avi_cloud]
+}
+
+resource "null_resource" "avi_se" {
+  depends_on = [null_resource.ansible_avi_se]
+}
+
+resource "null_resource" "avi_vs" {
+  depends_on = [null_resource.ansible_avi_vs]
+}

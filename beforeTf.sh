@@ -100,3 +100,31 @@ do
   fi
 done
 echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
+#
+# TF setup
+#
+echo ""
+echo "++++++++++++++++++++++++++++++++"
+echo "Preparing TF files"
+if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.network_management.dhcp) == true ]]
+then
+  mv templates/controller.tf.dhcp controller.tf
+  mv templates/jump.tf.dhcp jump.tf
+  mv templates/jump.userdata.dhcp jump.userdata
+else
+  mv templates/controller.tf.static controller.tf
+  mv templates/jump.tf.static jump.tf
+  mv templates/jump.userdata.static jump.userdata
+fi
+if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.controller.floating_ip) == true ]]
+then
+  mv templates/nsxt_controller.tf.floating nsxt_controller.tf
+else
+  mv templates/nsxt_controller.tf.woFloating nsxt_controller.tf
+fi
+if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.application) == true ]]
+then
+  mv templates/progress.tf.backend progress.tf
+else
+  mv templates/progress.tf.woBackend progress.tf
+fi

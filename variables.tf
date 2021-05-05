@@ -31,6 +31,7 @@ variable "jump" {
     template_name = "ubuntu-bionic-18.04-cloudimg-template"
     avisdkVersion = "18.2.9"
     username = "ubuntu"
+    netplanFile = "/etc/netplan/50-cloud-init.yaml"
   }
 }
 
@@ -39,7 +40,7 @@ variable "ansible" {
   default = {
     version = "2.9.12"
     aviConfigureUrl = "https://github.com/tacobayle/aviConfigure"
-    aviConfigureTag = "v5.56"
+    aviConfigureTag = "v5.57"
 //    opencartInstallUrl = "https://github.com/tacobayle/ansibleOpencartInstall"
 //    opencartInstallTag = "v1.21"
 //    directory = "ansible"
