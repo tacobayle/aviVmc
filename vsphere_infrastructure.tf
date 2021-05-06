@@ -58,13 +58,18 @@ data "vsphere_folder" "folderApp" {
   path = "/${var.no_access_vcenter.vcenter.dc}/vm/${var.no_access_vcenter.vcenter.folderApps}"
 }
 
-//resource "vsphere_tag_category" "ansible_group_backend" {
-//  name = "ansible_group_backend"
-//  cardinality = "SINGLE"
-//  associable_types = [
-//    "VirtualMachine",
-//  ]
-//}
+resource "vsphere_tag_category" "EasyAvi" {
+  name = var.no_access_vcenter.EasyAviTagCategoryName
+  cardinality = "MULTIPLE"
+  associable_types = [
+    "VirtualMachine",
+  ]
+}
+
+resource "vsphere_tag" "EasyAvi" {
+  name             = var.no_access_vcenter.deployment_id
+  category_id      = vsphere_tag_category.EasyAvi.id
+}
 
 //resource "vsphere_tag_category" "ansible_group_client" {
 //  name = "ansible_group_client"

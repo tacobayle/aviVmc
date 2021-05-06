@@ -238,8 +238,8 @@ resource "null_resource" "cgw_outbound_backend_remove" {
   }
 }
 
-resource "null_resource" "local_file" {
-  provisioner "local-exec" {
-    command = "touch easyavi.ran"
-  }
-}
+//resource "null_resource" "local_file" {
+//  provisioner "local-exec" {
+//    command = "touch easyavi.ran"
+//  }
+//}

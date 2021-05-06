@@ -82,9 +82,9 @@ resource "nsxt_policy_nat_rule" "dnat_vsDns" {
 
 resource "nsxt_policy_group" "se" {
   count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
-  display_name = "EasyAvi-SE"
+  display_name = var.no_access_vcenter.EasyAvi-SE-exclusion-list
   domain       = "cgw"
-  description  = "EasyAvi-SE"
+  description  = var.no_access_vcenter.EasyAvi-SE-exclusion-list
   criteria {
     condition {
       member_type = "VirtualMachine"
@@ -103,9 +103,9 @@ resource "null_resource" "se_exclusion_list" {
 }
 
 resource "nsxt_policy_group" "controller_exclusion_list" {
-  display_name = "EasyAvi-controller-exclusion-list"
+  display_name = var.no_access_vcenter.EasyAvi-controller-exclusion-list
   domain       = "cgw"
-  description  = "EasyAvi-controller-exclusion-list"
+  description  = var.no_access_vcenter.EasyAvi-controller-exclusion-list
   criteria {
     condition {
       member_type = "VirtualMachine"

@@ -1,5 +1,32 @@
 #!/bin/bash
 #
+# Retrieve Public IP
+#
+#ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
+#ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
+#echo $ip
+declare -a arr=("checkip.amazonaws.com" "ifconfig.me" "ifconfig.co")
+while [ -z "$myPublicIP" ]
+do
+  for url in "${arr[@]}"
+  do
+    echo "checking public IP on $url"
+    myPublicIP=$(curl $url --silent)
+    if [[ $myPublicIP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
+    then
+      break
+    fi
+  done
+  if [ -z "$myPublicIP" ]
+  then
+    echo 'Failed to retrieve Public IP address' > /dev/stderr
+    /bin/false
+    exit
+  fi
+done
+#echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
+echo "{\"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
+#
 # vCenter prerequisites
 #
 export GOVC_DATACENTER=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)
@@ -21,6 +48,18 @@ then
   echo "ERROR: vCenter connectivity issue - please check that you have Internet connectivity and please check that vCenter API endpoint is reachable from this EasyAvi appliance"
   exit 1
 fi
+IFS=$'\n'
+echo ""
+echo "++++++++++++++++++++++++++++++++"
+echo "Checking for Tag conflict name..."
+for tag in $(govc tags.category.ls)
+do
+  if [[ $tag == $(cat sddc.json | jq -r .no_access_vcenter.EasyAviTagCategoryName) ]]
+    then
+        echo "ERROR: There is a Tag called $tag which will conflict with this deployment - please remove it before trying another attempt"
+        beforeTfError=1
+  fi
+done
 IFS=$'\n'
 echo ""
 echo "++++++++++++++++++++++++++++++++"
@@ -74,33 +113,6 @@ if [[ $(cat sddc.json | jq -r .no_access_vcenter.application) == true ]]
   then
     govc folder.create /$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)/vm/$(cat sddc.json | jq -r .no_access_vcenter.vcenter.folderApps) > /dev/null 2>&1 || true
 fi
-#
-# Retrieve Public IP
-#
-#ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
-#ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
-#echo $ip
-declare -a arr=("checkip.amazonaws.com" "ifconfig.me" "ifconfig.co")
-while [ -z "$myPublicIP" ]
-do
-  for url in "${arr[@]}"
-  do
-    echo "checking public IP on $url"
-    myPublicIP=$(curl $url --silent)
-    if [[ $myPublicIP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
-    then
-      break
-    fi
-  done
-  if [ -z "$myPublicIP" ]
-  then
-    echo 'Failed to retrieve Public IP address' > /dev/stderr
-    /bin/false
-    exit
-  fi
-done
-#echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
-echo "{\"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
 #
 # TF setup
 #
