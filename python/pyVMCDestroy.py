@@ -1717,7 +1717,7 @@ elif intent_name == "remove-easyavi-rules":
     for rule in EasyAviCgw:
       if rule['display_name'].startswith(sys.argv[5]):
         if removeSDDCCGWRule(proxy, session_token, rule['id']) == 200:
-          print("The rule called" + rule['display_name'] + " with id " + rule['id'] + " has been deleted")
+          print("The rule called " + rule['display_name'] + " with id " + rule['id'] + " has been deleted")
 #           print(getSDDCCGWRule(proxy,session_token))
         else :
            print("Issues deleting the security rule called " + rule['display_name']   + " - Check the syntax.")
