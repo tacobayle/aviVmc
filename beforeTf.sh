@@ -128,7 +128,7 @@ then
 else
   mv templates/controller.tf.static controller.tf
   mv templates/jump.tf.static jump.tf
-  mv templates/jump.userdata.static userdatajump.userdata
+  mv templates/jump.userdata.static userdata/jump.userdata
 fi
 if [[ $(cat sddc.json | jq -c -r .no_access_vcenter.network_backend.dhcp) == true ]]
 then
