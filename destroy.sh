@@ -1,10 +1,11 @@
 #!/bin/bash
-export GOVC_DATACENTER=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)
 if [ -f "data.json" ]; then
-    export GOVC_URL=$(cat data.json | jq -r .vmc_vsphere_username):$(cat data.json | jq -r .vmc_vsphere_password)@$(cat data.json | jq -r .vmc_vsphere_server)
+  credsFile="data.json"
 else
-    export GOVC_URL=$(cat sddc.json | jq -r .vmc_vsphere_username):$(cat sddc.json | jq -r .vmc_vsphere_password)@$(cat sddc.json | jq -r .vmc_vsphere_server)
+  credsFile="sddc.json"
 fi
+export GOVC_DATACENTER=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)
+export GOVC_URL=$(cat $credsFile | jq -r .vmc_vsphere_username):$(cat $credsFile | jq -r .vmc_vsphere_password)@$(cat $credsFile | jq -r .vmc_vsphere_server)
 export GOVC_INSECURE=true
 export GOVC_DATASTORE=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.datastore)
 echo ""
@@ -34,19 +35,28 @@ do
 done
 echo ""
 echo "removing CGW rules"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-easyavi-rules easyavi_
+python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) remove-easyavi-rules easyavi_
 echo ""
 echo "removing EasyAvi-SE-exclusion-list from exclusion list"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviSeExclusionList)
+python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviSeExclusionList)
 echo ""
 echo "removing EasyAvi-controller-exclusion-list from exclusion list"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviControllerExclusionList)
-echo ""
-echo "TF refresh..."
-terraform refresh -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
-echo ""
-echo "TF destroy..."
-terraform destroy -auto-approve -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
+python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviControllerExclusionList)
+if [ -f "data.json" ]; then
+  echo ""
+  echo "TF refresh..."
+  terraform refresh -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
+  echo ""
+  echo "TF destroy..."
+  terraform destroy -auto-approve -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
+else
+  echo ""
+  echo "TF refresh..."
+  terraform refresh -var-file=sddc.json -var-file=ip.json -no-color
+  echo ""
+  echo "TF destroy..."
+  terraform destroy -auto-approve -var-file=sddc.json -var-file=ip.json -no-color
+fi
 #echo ""
 #echo "Removing easyavi.ran"
 #rm easyavi.ran rm > /dev/null 2>&1 || true
