@@ -18,6 +18,9 @@ then
   echo "ERROR: vCenter connectivity issue - please check that you have Internet connectivity and please check that vCenter API endpoint is reachable from this EasyAvi appliance"
   exit 1
 fi
+#
+# Cleaning vCenter
+#
 echo ""
 echo "++++++++++++++++++++++++++++++++"
 echo "destroying SE Content Libraries..."
@@ -25,6 +28,8 @@ govc library.rm Easy-Avi-CL-SE-NoAccess > /dev/null 2>&1 || true
 govc library.rm $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) > /dev/null 2>&1 || true
 IFS=$'\n'
 echo ""
+echo "++++++++++++++++++++++++++++++++"
+echo "destroying VM matching tag and EasyAvi-se-* as a name..."
 for vm in $(govc tags.attached.ls $(cat sddc.json | jq -r .no_access_vcenter.deployment_id) | xargs govc ls -L)
 do
   if [[ $(basename $vm) == EasyAvi-se-* ]]
@@ -33,15 +38,24 @@ do
     govc vm.destroy $(basename $vm)
   fi
 done
+#
+# Removing NSX-T config
+#
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "removing CGW rules"
 python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) remove-easyavi-rules easyavi_
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "removing EasyAvi-SE-exclusion-list from exclusion list"
 python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviSeExclusionList)
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "removing EasyAvi-controller-exclusion-list from exclusion list"
 python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviControllerExclusionList)
+#
+# TF Refresh, destroy.
+#
 if [ -f "data.json" ]; then
   echo ""
   echo "TF refresh..."
