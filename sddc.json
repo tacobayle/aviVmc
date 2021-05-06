@@ -51,7 +51,7 @@
       "avi_ctrl_mgmt_ips": ["11", "12", "13"],
       "avi_ctrl_floating_ip": "10",
       "jump_ip": "14",
-      "dhcp": true,
+      "dhcp": false,
       "dns": "8.8.8.8, 8.8.4.4"
     },
     "network_vip": {
