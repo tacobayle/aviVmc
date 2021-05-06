@@ -23,9 +23,10 @@ govc library.rm Easy-Avi-CL-SE-NoAccess > /dev/null 2>&1 || true
 govc library.rm $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) > /dev/null 2>&1 || true
 # for folder in $(cat sddc.json | jq -r .no_access_vcenter.serviceEngineGroup[].name) ; do echo $folder ; done
 IFS=$'\n'
-for vm in $(govc find / -type m)
+#for vm in $(govc find / -type m)
+for vm in $(govc tags.attached.ls $(cat data.json | jq -r .no_access_vcenter.deployment_id) | xargs govc ls -L)
 do
-  if [[ $(basename $vm) == EasyAvi-se-$(cat sddc.json | jq -r .no_access_vcenter.deployment_id)-* ]]
+  if [[ $(basename $vm) == EasyAvi-se-* ]]
   then
     echo "removing VM called $(basename $vm)"
     govc vm.destroy $(basename $vm)
