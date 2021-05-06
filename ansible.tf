@@ -166,7 +166,7 @@ resource "null_resource" "ansible_avi_cluster_3" {
 }
 
 resource "null_resource" "ansible_avi_cloud" {
-  depends_on = [null_resource.ansible_avi_cluster_2]
+  depends_on = [null_resource.ansible_avi_cluster_3]
   connection {
    host        = vmc_public_ip.public_ip_jump.ip
    type        = "ssh"
