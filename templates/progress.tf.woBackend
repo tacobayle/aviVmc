@@ -4,7 +4,7 @@ resource "null_resource" "content_library" {
 }
 
 resource "null_resource" "vm" {
-  depends_on = [vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
+  depends_on = [vsphere_virtual_machine.controller, vsphere_virtual_machine.jump, vsphere_tag.EasyAvi]
 }
 
 resource "null_resource" "nsxt" {
