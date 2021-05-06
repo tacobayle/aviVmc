@@ -26,7 +26,7 @@
       "cpu": 8,
       "memory": 24768,
       "disk": 128,
-      "cluster": true,
+      "cluster": false,
       "wait_for_guest_net_timeout": 2,
       "environment": "VMWARE",
       "dns":  ["8.8.8.8", "8.8.4.4"],
@@ -36,7 +36,7 @@
       "tenant_access_to_provider_se": "true",
       "tenant_vrf": "false",
       "public_ip": true,
-      "floating_ip": true
+      "floating_ip": false
     },
     "domains": [
       {
@@ -72,6 +72,13 @@
       "defaultGateway": "10.1.2.1/24",
       "dhcp": false
     },
+  "network_fake": {
+    "name": "avi-fake",
+    "networkRangeBegin": "11",
+    "networkRangeEnd": "50",
+    "defaultGateway": "10.1.4.1/24",
+    "dhcp": true
+  },
     "serviceEngineGroup": [
       {
         "name": "Default-Group",
@@ -97,6 +104,15 @@
             "name": "avi-vip",
             "defaultGateway": "10.1.3.1/24",
             "defaultGatewaySeGroup": true,
+            "ips": [
+              "100"
+            ],
+            "dhcp": true
+          },
+          {
+            "name": "avi-fake",
+            "defaultGateway": "10.1.4.1/24",
+            "defaultGatewaySeGroup": false,
             "ips": [
               "100"
             ],

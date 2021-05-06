@@ -39,6 +39,18 @@ resource "nsxt_policy_segment" "networkVip" {
   }
 }
 
+resource "nsxt_policy_segment" "networkFake" {
+  display_name        = var.no_access_vcenter.network_fake.name
+  connectivity_path   = "/infra/tier-1s/cgw"
+  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
+  #domain_name         = "runvmc.local"
+  description         = "Network Segment built by Terraform for Avi"
+  subnet {
+    cidr        = var.no_access_vcenter.network_fake.defaultGateway
+    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_fake.defaultGateway, var.no_access_vcenter.network_fake.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_fake.defaultGateway, var.no_access_vcenter.network_fake.networkRangeEnd)}"]
+  }
+}
+
 resource "time_sleep" "wait_30_seconds" {
   depends_on = [nsxt_policy_segment.networkMgmt, nsxt_policy_segment.networkBackend, nsxt_policy_segment.networkVip]
   create_duration = "30s"
