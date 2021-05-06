@@ -18,13 +18,13 @@ then
   exit 1
 fi
 echo ""
+echo "++++++++++++++++++++++++++++++++"
 echo "destroying SE Content Libraries..."
 govc library.rm Easy-Avi-CL-SE-NoAccess > /dev/null 2>&1 || true
 govc library.rm $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) > /dev/null 2>&1 || true
-# for folder in $(cat sddc.json | jq -r .no_access_vcenter.serviceEngineGroup[].name) ; do echo $folder ; done
 IFS=$'\n'
-#for vm in $(govc find / -type m)
-for vm in $(govc tags.attached.ls $(cat data.json | jq -r .no_access_vcenter.deployment_id) | xargs govc ls -L)
+echo ""
+for vm in $(govc tags.attached.ls $(cat sddc.json | jq -r .no_access_vcenter.deployment_id) | xargs govc ls -L)
 do
   if [[ $(basename $vm) == EasyAvi-se-* ]]
   then
@@ -37,10 +37,10 @@ echo "removing CGW rules"
 python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-easyavi-rules easyavi_
 echo ""
 echo "removing EasyAvi-SE-exclusion-list from exclusion list"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list $(cat data.json | jq -r .no_access_vcenter.EasyAvi-SE-exclusion-list)
+python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviSeExclusionList)
 echo ""
 echo "removing EasyAvi-controller-exclusion-list from exclusion list"
-python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list $(cat data.json | jq -r .no_access_vcenter.EasyAvi-controller-exclusion-list)
+python3 python/pyVMCDestroy.py $(cat data.json | jq -r .vmc_nsx_token) $(cat data.json | jq -r .vmc_org_id) $(cat data.json | jq -r .vmc_sddc_id) remove-exclude-list $(cat sddc.json | jq -r .no_access_vcenter.EasyAviControllerExclusionList)
 echo ""
 echo "TF refresh..."
 terraform refresh -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
