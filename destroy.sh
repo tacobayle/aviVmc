@@ -29,7 +29,7 @@ govc library.rm $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) > /dev/n
 IFS=$'\n'
 echo ""
 echo "++++++++++++++++++++++++++++++++"
-echo "destroying VM matching tag and EasyAvi-se-* as a name..."
+echo "destroying VM matching deplyment tag and EasyAvi-se-* as a name..."
 for vm in $(govc tags.attached.ls $(cat sddc.json | jq -r .no_access_vcenter.deployment_id) | xargs govc ls -L)
 do
   if [[ $(basename $vm) == EasyAvi-se-* ]]
