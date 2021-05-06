@@ -36,7 +36,7 @@
       "tenant_access_to_provider_se": "true",
       "tenant_vrf": "false",
       "public_ip": true,
-      "floating_ip": false
+      "floating_ip": true
     },
     "domains": [
       {
