@@ -31,7 +31,7 @@ resource "vsphere_virtual_machine" "controller" {
 
   vapp {
     properties = {
-      "mgmt-ip"     = element(var.no_access_vcenter.network_management.avi_ctrl_mgmt_ips, count.index)
+      "mgmt-ip"     = cidrhost(var.no_access_vcenter.network_management.defaultGateway, element(var.no_access_vcenter.network_management.avi_ctrl_mgmt_ips, count.index))
       "mgmt-mask"   = cidrnetmask(var.no_access_vcenter.network_management.defaultGateway)
       "default-gw"  = split("/", var.no_access_vcenter.network_management.defaultGateway)[0]
     }
