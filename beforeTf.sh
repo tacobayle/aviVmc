@@ -2,8 +2,8 @@
 #
 # Retrieve Public IP
 #
-#ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
-#ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
+ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
+ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
 #echo $ip
 declare -a arr=("checkip.amazonaws.com" "ifconfig.me" "ifconfig.co")
 while [ -z "$myPublicIP" ]
@@ -24,8 +24,8 @@ do
     exit
   fi
 done
-#echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
-echo "{\"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
+echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
+#echo "{\"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
 #
 # vCenter prerequisites
 #
