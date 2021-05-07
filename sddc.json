@@ -107,7 +107,7 @@
             "ips": [
               "100"
             ],
-            "dhcp": true
+            "dhcp": false
           },
           {
             "name": "avi-fake",
