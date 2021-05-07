@@ -73,7 +73,7 @@
       "dhcp": false
     },
   "network_fake": {
-    "name": "Default-Group",
+    "name": "avi-fake",
     "networkRangeBegin": "11",
     "networkRangeEnd": "50",
     "defaultGateway": "10.1.4.1/24",
@@ -81,7 +81,7 @@
   },
     "serviceEngineGroup": [
       {
-        "name": "seg-vmc",
+        "name": "Default-Group",
         "numberOfSe": 1,
         "ha_mode": "HA_MODE_SHARED",
         "min_scaleout_per_vs": "1",
