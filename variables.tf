@@ -17,6 +17,8 @@ variable "vmc_sddc_id" {
 }
 variable "my_public_ip" {}
 
+variable "my_private_ip" {}
+
 variable "jump" {
   type = map
   default = {

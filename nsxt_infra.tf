@@ -164,7 +164,7 @@ resource "nsxt_policy_group" "terraform" {
   description  = "EasyAvi-Appliance"
   criteria {
     ipaddress_expression {
-      ip_addresses = [var.my_public_ip]
+      ip_addresses = [var.my_public_ip, var.my_private_ip]
     }
   }
 }

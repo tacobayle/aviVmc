@@ -2,8 +2,11 @@
 #
 # Retrieve Public IP
 #
-ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
-ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
+ip=$(getent hosts dockerhost | awk '{print $1}')
+if [ -z "$ip" ]; then
+  ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
+  ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
+fi
 #echo $ip
 declare -a arr=("checkip.amazonaws.com" "ifconfig.me" "ifconfig.co")
 while [ -z "$myPublicIP" ]
