@@ -73,7 +73,7 @@
       "dhcp": false
     },
   "network_fake": {
-    "name": "avi-fake",
+    "name": "Default-Group",
     "networkRangeBegin": "11",
     "networkRangeEnd": "50",
     "defaultGateway": "10.1.4.1/24",
