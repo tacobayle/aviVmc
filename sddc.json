@@ -81,7 +81,7 @@
   },
     "serviceEngineGroup": [
       {
-        "name": "Default-Group",
+        "name": "seg-vmc",
         "numberOfSe": 1,
         "ha_mode": "HA_MODE_SHARED",
         "min_scaleout_per_vs": "1",
