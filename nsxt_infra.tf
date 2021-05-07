@@ -2,59 +2,59 @@ data "nsxt_policy_transport_zone" "tzMgmt" {
   display_name = "vmc-overlay-tz"
 }
 
-resource "nsxt_policy_segment" "networkMgmt" {
-  display_name        = var.no_access_vcenter.network_management.name
-  connectivity_path   = "/infra/tier-1s/cgw"
-  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
-  #domain_name         = "runvmc.local"
-  description         = "Network Segment built by Terraform for Avi"
-  subnet {
-    cidr        = var.no_access_vcenter.network_management.defaultGateway
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.networkRangeEnd)}"]
-  }
-}
-
-resource "nsxt_policy_segment" "networkBackend" {
-  count = (var.no_access_vcenter.application == true ? 1 : 0)
-  display_name        = var.no_access_vcenter.network_backend.name
-  connectivity_path   = "/infra/tier-1s/cgw"
-  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
-  #domain_name         = "runvmc.local"
-  description         = "Network Segment built by Terraform for Avi"
-  subnet {
-    cidr        = var.no_access_vcenter.network_backend.defaultGateway
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, var.no_access_vcenter.network_backend.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, var.no_access_vcenter.network_backend.networkRangeEnd)}"]
-  }
-}
-
-resource "nsxt_policy_segment" "networkVip" {
-  display_name        = var.no_access_vcenter.network_vip.name
-  connectivity_path   = "/infra/tier-1s/cgw"
-  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
-  #domain_name         = "runvmc.local"
-  description         = "Network Segment built by Terraform for Avi"
-  subnet {
-    cidr        = var.no_access_vcenter.network_vip.defaultGateway
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.networkRangeEnd)}"]
-  }
-}
-
-resource "nsxt_policy_segment" "networkFake" {
-  display_name        = var.no_access_vcenter.network_fake.name
-  connectivity_path   = "/infra/tier-1s/cgw"
-  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
-  #domain_name         = "runvmc.local"
-  description         = "Network Segment built by Terraform for Avi"
-  subnet {
-    cidr        = var.no_access_vcenter.network_fake.defaultGateway
-    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_fake.defaultGateway, var.no_access_vcenter.network_fake.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_fake.defaultGateway, var.no_access_vcenter.network_fake.networkRangeEnd)}"]
-  }
-}
-
-resource "time_sleep" "wait_30_seconds" {
-  depends_on = [nsxt_policy_segment.networkMgmt, nsxt_policy_segment.networkBackend, nsxt_policy_segment.networkVip]
-  create_duration = "30s"
-}
+//resource "nsxt_policy_segment" "networkMgmt" {
+//  display_name        = var.no_access_vcenter.network_management.name
+//  connectivity_path   = "/infra/tier-1s/cgw"
+//  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
+//  #domain_name         = "runvmc.local"
+//  description         = "Network Segment built by Terraform for Avi"
+//  subnet {
+//    cidr        = var.no_access_vcenter.network_management.defaultGateway
+//    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_management.defaultGateway, var.no_access_vcenter.network_management.networkRangeEnd)}"]
+//  }
+//}
+//
+//resource "nsxt_policy_segment" "networkBackend" {
+//  count = (var.no_access_vcenter.application == true ? 1 : 0)
+//  display_name        = var.no_access_vcenter.network_backend.name
+//  connectivity_path   = "/infra/tier-1s/cgw"
+//  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
+//  #domain_name         = "runvmc.local"
+//  description         = "Network Segment built by Terraform for Avi"
+//  subnet {
+//    cidr        = var.no_access_vcenter.network_backend.defaultGateway
+//    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, var.no_access_vcenter.network_backend.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_backend.defaultGateway, var.no_access_vcenter.network_backend.networkRangeEnd)}"]
+//  }
+//}
+//
+//resource "nsxt_policy_segment" "networkVip" {
+//  display_name        = var.no_access_vcenter.network_vip.name
+//  connectivity_path   = "/infra/tier-1s/cgw"
+//  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
+//  #domain_name         = "runvmc.local"
+//  description         = "Network Segment built by Terraform for Avi"
+//  subnet {
+//    cidr        = var.no_access_vcenter.network_vip.defaultGateway
+//    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_vip.defaultGateway, var.no_access_vcenter.network_vip.networkRangeEnd)}"]
+//  }
+//}
+//
+//resource "nsxt_policy_segment" "networkFake" {
+//  display_name        = var.no_access_vcenter.network_fake.name
+//  connectivity_path   = "/infra/tier-1s/cgw"
+//  transport_zone_path = data.nsxt_policy_transport_zone.tzMgmt.path
+//  #domain_name         = "runvmc.local"
+//  description         = "Network Segment built by Terraform for Avi"
+//  subnet {
+//    cidr        = var.no_access_vcenter.network_fake.defaultGateway
+//    dhcp_ranges = ["${cidrhost(var.no_access_vcenter.network_fake.defaultGateway, var.no_access_vcenter.network_fake.networkRangeBegin)}-${cidrhost(var.no_access_vcenter.network_fake.defaultGateway, var.no_access_vcenter.network_fake.networkRangeEnd)}"]
+//  }
+//}
+//
+//resource "time_sleep" "wait_30_seconds" {
+//  depends_on = [nsxt_policy_segment.networkMgmt, nsxt_policy_segment.networkBackend, nsxt_policy_segment.networkVip]
+//  create_duration = "30s"
+//}
 
 resource "nsxt_policy_nat_rule" "dnat_jump" {
   display_name         = "EasyAvi-dnat-jump"
