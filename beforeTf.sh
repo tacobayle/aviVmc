@@ -19,7 +19,7 @@ while [ -z "$myPublicIP" ]
 do
   for url in "${arr[@]}"
   do
-    echo "checking public IP on $url"
+#    echo "checking public IP on $url"
     myPublicIP=$(curl $url --silent)
     if [[ $myPublicIP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
     then
@@ -33,6 +33,9 @@ do
     exit
   fi
 done
+echo ""
+echo "++++++++++++++++++++++++++++++++"
+echo "Saving private and public IP of the host..."
 echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
 #echo "{\"my_public_ip\": \"$myPublicIP\"}" | tee ip.json
 #

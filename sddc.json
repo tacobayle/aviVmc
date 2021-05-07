@@ -97,7 +97,7 @@
           "ips": [
             "100"
           ],
-        "dhcp": true
+        "dhcp": false
         },
         "data_networks": [
           {
