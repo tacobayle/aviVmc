@@ -88,6 +88,7 @@ resource "nsxt_policy_group" "se" {
   display_name = var.no_access_vcenter.EasyAviSeExclusionList
   domain       = "cgw"
   description  = var.no_access_vcenter.EasyAviSeExclusionList
+  
   criteria {
     condition {
       member_type = "VirtualMachine"
@@ -95,7 +96,13 @@ resource "nsxt_policy_group" "se" {
       operator = "STARTSWITH"
       value = "EasyAvi-"
     }
+  }
 
+  conjunction {
+    operator = "OR"
+  }
+
+  criteria {
     condition {
       member_type = "VirtualMachine"
       key = "Name"
@@ -103,12 +110,8 @@ resource "nsxt_policy_group" "se" {
       value = "${split(".ova", basename(var.no_access_vcenter.aviOva))[0]}-"
     }
   }
-
-  conjunction {
-    operator = "OR"
-  }
-  
 }
+
 
 resource "null_resource" "se_exclusion_list" {
   count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
