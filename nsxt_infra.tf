@@ -103,6 +103,11 @@ resource "nsxt_policy_group" "se" {
       value = "${split(".ova", basename(var.no_access_vcenter.aviOva))[0]}-"
     }
   }
+
+  conjunction {
+    operator = "OR"
+  }
+  
 }
 
 resource "null_resource" "se_exclusion_list" {
