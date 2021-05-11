@@ -59,10 +59,10 @@ python3 python/pyVMCDestroy.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $c
 if [ -f "data.json" ]; then
   echo ""
   echo "TF refresh..."
-  terraform refresh -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
+  terraform refresh -var-file=sddc.json -var-file=ip.json -var-file=data.json -var-file=EasyAviLocation.json -no-color
   echo ""
   echo "TF destroy..."
-  terraform destroy -auto-approve -var-file=sddc.json -var-file=ip.json -var-file=data.json -no-color
+  terraform destroy -auto-approve -var-file=sddc.json -var-file=ip.json -var-file=data.json -var-file=EasyAviLocation.json -no-color
 else
   echo ""
   echo "TF refresh..."
