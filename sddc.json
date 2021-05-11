@@ -26,7 +26,7 @@
       "cpu": 8,
       "memory": 24768,
       "disk": 128,
-      "cluster": false,
+      "cluster": true,
       "wait_for_guest_net_timeout": 2,
       "environment": "VMWARE",
       "dns":  ["8.8.8.8", "8.8.4.4"],
