@@ -96,19 +96,6 @@ resource "nsxt_policy_group" "se" {
       value = "EasyAvi-"
     }
   }
-}
-
-resource "null_resource" "se_exclusion_list" {
-  count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
-  provisioner "local-exec" {
-    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.se[count.index].path}"
-  }
-}
-
-resource "nsxt_policy_group" "controller_exclusion_list" {
-  display_name = var.no_access_vcenter.EasyAviControllerExclusionList
-  domain       = "cgw"
-  description  = var.no_access_vcenter.EasyAviControllerExclusionList
   criteria {
     condition {
       member_type = "VirtualMachine"
@@ -118,6 +105,27 @@ resource "nsxt_policy_group" "controller_exclusion_list" {
     }
   }
 }
+
+resource "null_resource" "se_exclusion_list" {
+  count = (var.no_access_vcenter.nsxt_exclusion_list == true ? 1 : 0)
+  provisioner "local-exec" {
+    command = "python3 python/pyVMC2.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} append-exclude-list ${nsxt_policy_group.se[count.index].path}"
+  }
+}
+
+//resource "nsxt_policy_group" "controller_exclusion_list" {
+//  display_name = var.no_access_vcenter.EasyAviControllerExclusionList
+//  domain       = "cgw"
+//  description  = var.no_access_vcenter.EasyAviControllerExclusionList
+//  criteria {
+//    condition {
+//      member_type = "VirtualMachine"
+//      key = "Name"
+//      operator = "STARTSWITH"
+//      value = "${split(".ova", basename(var.no_access_vcenter.aviOva))[0]}-"
+//    }
+//  }
+//}
 
 //resource "null_resource" "avi_controller_exclusion_list" {
 //  provisioner "local-exec" {
