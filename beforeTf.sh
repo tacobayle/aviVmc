@@ -22,7 +22,7 @@ fi
 echo ""
 echo "++++++++++++++++++++++++++++++++"
 echo "Checking for easyavi location..."
-python3 python/EasyAviInSDDC.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) > EasyAviLocation.json
+python3 python/EasyAviInSDDC.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) | tee EasyAviLocation.json
 #
 #
 #
