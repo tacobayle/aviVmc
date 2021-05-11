@@ -410,6 +410,7 @@ resource "nsxt_policy_group" "jump" {
 }
 
 resource "null_resource" "cgw_jump_create" {
+  count = (var.EasyAviInSDDC == true ? 0 : 1)
   provisioner "local-exec" {
     command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump ${nsxt_policy_group.terraform[0].id} ${nsxt_policy_group.jump[0].id} SSH ALLOW public 0"
   }
