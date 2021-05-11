@@ -56,16 +56,7 @@ data "nsxt_policy_transport_zone" "tzMgmt" {
 //  create_duration = "30s"
 //}
 
-resource "nsxt_policy_nat_rule" "dnat_jump" {
-  display_name         = "EasyAvi-dnat-jump"
-  action               = "DNAT"
-  source_networks      = []
-  destination_networks = [vmc_public_ip.public_ip_jump.ip]
-  translated_networks  = [vsphere_virtual_machine.jump.default_ip_address]
-  gateway_path         = "/infra/tier-1s/cgw"
-  logging              = false
-  firewall_match       = "MATCH_INTERNAL_ADDRESS"
-}
+
 
 resource "nsxt_policy_nat_rule" "dnat_vsHttp" {
   count = (var.no_access_vcenter.public_ip == true ? 1 : 0)
@@ -145,6 +136,8 @@ resource "nsxt_policy_group" "management" {
   }
 }
 
+
+
 resource "nsxt_policy_group" "backend" {
   count = (var.no_access_vcenter.application == true ? 1 : 0)
   display_name = "EasyAvi-Backend-Servers"
@@ -158,27 +151,6 @@ resource "nsxt_policy_group" "backend" {
 }
 
 
-resource "nsxt_policy_group" "terraform" {
-  display_name = "EasyAvi-Appliance"
-  domain       = "cgw"
-  description  = "EasyAvi-Appliance"
-  criteria {
-    ipaddress_expression {
-      ip_addresses = [var.my_public_ip, var.my_private_ip]
-    }
-  }
-}
-
-resource "nsxt_policy_group" "jump" {
-  display_name = "EasyAvi-jump"
-  domain       = "cgw"
-  description  = "EasyAvi-jump"
-  criteria {
-    ipaddress_expression {
-      ip_addresses = [vmc_public_ip.public_ip_jump.ip, vsphere_virtual_machine.jump.default_ip_address]
-    }
-  }
-}
 
 resource "nsxt_policy_group" "vsHttp" {
   count = (var.no_access_vcenter.dfw_rules == true ? 1 : 0)
@@ -246,11 +218,7 @@ resource "nsxt_policy_group" "vsDns" {
 //  }
 //}
 
-resource "null_resource" "cgw_jump_create" {
-  provisioner "local-exec" {
-    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump ${nsxt_policy_group.terraform.id} ${nsxt_policy_group.jump.id} SSH ALLOW public 0"
-  }
-}
+
 
 //resource "nsxt_policy_predefined_gateway_policy" "cgw_vsHttp" {
 //  path = "/infra/domains/cgw/gateway-policies/default"

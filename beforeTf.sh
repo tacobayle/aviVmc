@@ -162,3 +162,11 @@ then
 else
   mv templates/progress.tf.woBackend progress.tf
 fi
+if [[ $(python3 python/EasyAviInSDDC.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) | jq -c -r .EasyAviInSDDC) == true ]]
+then
+  mv templates/ansible.tf.jump_private ansible.tf
+else
+  mv templates/ansible.tf.jump_public ansible.tf
+  mv templates/vmc_jump.tf vmc_jump.tf
+  mv templates/nsxt_jump.tf.public nsxt_jump.tf
+fi
