@@ -95,8 +95,7 @@ resource "nsxt_policy_group" "se" {
       operator = "STARTSWITH"
       value = "EasyAvi-"
     }
-  }
-  criteria {
+
     condition {
       member_type = "VirtualMachine"
       key = "Name"
