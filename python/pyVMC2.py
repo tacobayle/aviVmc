@@ -1950,6 +1950,7 @@ elif intent_name == "append-exclude-list":
     if new_exclude_list == 200:
         print("\n The new exclusion list has been updated.")
     else:
+        exit(1)
         print("Incorrect syntax. Try again.")
 elif intent_name == "new-cgw-rule":
     sequence_number = 0
