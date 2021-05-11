@@ -10,6 +10,16 @@ if [ -z "$ip" ]; then
   ifPrimary=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
   ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
 fi
+#
+#
+#
+echo ""
+echo "++++++++++++++++++++++++++++++++"
+echo "Checking for easyavi location..."
+python3 python/EasyAviInSDDC.py $(cat $credsFile | jq -r .vmc_nsx_token) $(cat $credsFile | jq -r .vmc_org_id) $(cat $credsFile | jq -r .vmc_sddc_id) > EasyAviLocation.json
+#
+#
+#
 #echo $ip
 echo ""
 echo "++++++++++++++++++++++++++++++++"
