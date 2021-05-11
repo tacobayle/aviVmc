@@ -1,5 +1,11 @@
 #!/bin/bash
 #
+if [ -f "data.json" ]; then
+  credsFile="data.json"
+else
+  credsFile="sddc.json"
+fi
+#
 # Retrieve Public IP
 #
 echo ""
@@ -51,11 +57,6 @@ echo "{\"my_private_ip\": \"$ip\", \"my_public_ip\": \"$myPublicIP\"}" | tee ip.
 #
 # vCenter prerequisites
 #
-if [ -f "data.json" ]; then
-  credsFile="data.json"
-else
-  credsFile="sddc.json"
-fi
 export GOVC_DATACENTER=$(cat sddc.json | jq -r .no_access_vcenter.vcenter.dc)
 export GOVC_URL=$(cat $credsFile | jq -r .vmc_vsphere_username):$(cat $credsFile | jq -r .vmc_vsphere_password)@$(cat $credsFile | jq -r .vmc_vsphere_server)
 export GOVC_INSECURE=true
