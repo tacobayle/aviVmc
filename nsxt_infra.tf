@@ -371,3 +371,46 @@ resource "null_resource" "cgw_controller_https_create" {
 //    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} remove-cgw-rule easyavi_inbound_vsDns"
 //  }
 //}
+
+
+resource "nsxt_policy_nat_rule" "dnat_jump" {
+  count = (var.EasyAviInSDDC == true ? 0 : 1)
+  display_name         = "EasyAvi-dnat-jump"
+  action               = "DNAT"
+  source_networks      = []
+  destination_networks = [vmc_public_ip.public_ip_jump[0].ip]
+  translated_networks  = [vsphere_virtual_machine.jump.default_ip_address]
+  gateway_path         = "/infra/tier-1s/cgw"
+  logging              = false
+  firewall_match       = "MATCH_INTERNAL_ADDRESS"
+}
+
+resource "nsxt_policy_group" "terraform" {
+  count = (var.EasyAviInSDDC == true ? 0 : 1)
+  display_name = "EasyAvi-Appliance"
+  domain       = "cgw"
+  description  = "EasyAvi-Appliance"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = [var.my_public_ip, var.my_private_ip]
+    }
+  }
+}
+
+resource "nsxt_policy_group" "jump" {
+  count = (var.EasyAviInSDDC == true ? 0 : 1)
+  display_name = "EasyAvi-jump"
+  domain       = "cgw"
+  description  = "EasyAvi-jump"
+  criteria {
+    ipaddress_expression {
+      ip_addresses = [vmc_public_ip.public_ip_jump[0].ip, vsphere_virtual_machine.jump.default_ip_address]
+    }
+  }
+}
+
+resource "null_resource" "cgw_jump_create" {
+  provisioner "local-exec" {
+    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_inbound_jump ${nsxt_policy_group.terraform[0].id} ${nsxt_policy_group.jump[0].id} SSH ALLOW public 0"
+  }
+}

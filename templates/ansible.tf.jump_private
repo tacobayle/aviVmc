@@ -1,6 +1,6 @@
 
 resource "null_resource" "wait_https_controllers" {
-  depends_on = [null_resource.cgw_jump_create, vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
+  depends_on = [vsphere_virtual_machine.controller, vsphere_virtual_machine.jump]
   count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
 
   connection {

@@ -167,6 +167,4 @@ then
   mv templates/ansible.tf.jump_private ansible.tf
 else
   mv templates/ansible.tf.jump_public ansible.tf
-  mv templates/vmc_jump.tf vmc_jump.tf
-  mv templates/nsxt_jump.tf.public nsxt_jump.tf
 fi

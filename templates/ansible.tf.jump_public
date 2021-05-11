@@ -66,7 +66,7 @@ resource "null_resource" "wait_https_controllers" {
   count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
 
   connection {
-    host        = vmc_public_ip.public_ip_jump.ip
+    host        = vmc_public_ip.public_ip_jump[0].ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username
@@ -85,7 +85,7 @@ resource "null_resource" "ansible_avi_cluster_1" {
   depends_on = [null_resource.wait_https_controllers]
 
     connection {
-    host        = vmc_public_ip.public_ip_jump.ip
+    host        = vmc_public_ip.public_ip_jump[0].ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username
@@ -134,7 +134,7 @@ resource "null_resource" "ansible_avi_cluster_2" {
   count = (var.no_access_vcenter.controller.cluster == true ? 3 : 1)
 
   connection {
-    host        = vmc_public_ip.public_ip_jump.ip
+    host        = vmc_public_ip.public_ip_jump[0].ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username
@@ -151,7 +151,7 @@ resource "null_resource" "ansible_avi_cluster_2" {
 resource "null_resource" "ansible_avi_cluster_3" {
   depends_on = [null_resource.ansible_avi_cluster_2]
   connection {
-    host        = vmc_public_ip.public_ip_jump.ip
+    host        = vmc_public_ip.public_ip_jump[0].ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username
@@ -168,7 +168,7 @@ resource "null_resource" "ansible_avi_cluster_3" {
 resource "null_resource" "ansible_avi_cloud" {
   depends_on = [null_resource.ansible_avi_cluster_3]
   connection {
-   host        = vmc_public_ip.public_ip_jump.ip
+   host        = vmc_public_ip.public_ip_jump[0].ip
    type        = "ssh"
    agent       = false
    user        = var.jump.username
@@ -185,7 +185,7 @@ resource "null_resource" "ansible_avi_cloud" {
 resource "null_resource" "ansible_avi_se" {
   depends_on = [null_resource.ansible_avi_cloud]
   connection {
-    host        = vmc_public_ip.public_ip_jump.ip
+    host        = vmc_public_ip.public_ip_jump[0].ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username
@@ -202,7 +202,7 @@ resource "null_resource" "ansible_avi_se" {
 resource "null_resource" "ansible_avi_vs" {
   depends_on = [null_resource.ansible_avi_se]
   connection {
-    host        = vmc_public_ip.public_ip_jump.ip
+    host        = vmc_public_ip.public_ip_jump[0].ip
     type        = "ssh"
     agent       = false
     user        = var.jump.username

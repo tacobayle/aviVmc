@@ -19,6 +19,8 @@ variable "my_public_ip" {}
 
 variable "my_private_ip" {}
 
+variable "EasyAviInSDDC" {}
+
 variable "jump" {
   type = map
   default = {
