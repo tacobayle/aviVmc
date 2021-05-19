@@ -11,7 +11,7 @@ users:
 write_files:
   - content: |
       #!/bin/bash
-      iface=`ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//"`
+      iface=ens192
       mac=`ip -o link show $iface | awk -F'link/ether ' '{print $2}' | awk -F' ' '{print $1}'`
       hostname=`hostname`
       echo "${ip} $hostname" | sudo tee -a /etc/hosts
