@@ -125,8 +125,9 @@ do
     beforeTfError=1
   fi
 done
-if [[ $beforeTfError -eq 1 ]]
+if [[ $beforeTfError == 1 ]]
 then
+  echo "toto"
   exit 1
 fi
 echo ""
