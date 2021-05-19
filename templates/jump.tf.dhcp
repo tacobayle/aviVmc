@@ -4,11 +4,7 @@ data "template_file" "jumpbox_userdata" {
     pubkey        = file(var.jump.public_key_path)
     aviSdkVersion = var.jump.aviSdkVersion
     ansibleVersion = var.ansible.version
-//    vsphere_user  = var.vmc_vsphere_username
-//    vsphere_password = var.vmc_vsphere_password
-//    vsphere_server = var.vmc_vsphere_server
     username = var.jump.username
-//    privateKey = var.jump.private_key_path
   }
 }
 

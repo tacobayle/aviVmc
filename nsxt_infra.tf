@@ -88,7 +88,7 @@ resource "nsxt_policy_group" "se" {
   display_name = var.no_access_vcenter.EasyAviSeExclusionList
   domain       = "cgw"
   description  = var.no_access_vcenter.EasyAviSeExclusionList
-  
+
   criteria {
     condition {
       member_type = "VirtualMachine"
