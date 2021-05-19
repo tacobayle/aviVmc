@@ -116,7 +116,7 @@ for cl in $(govc library.ls)
 do
   if [[ $(basename $cl) == $(cat sddc.json | jq -r .no_access_vcenter.cl_avi_name) ]]
   then
-    echo "ERROR: There is a Content Library called $(basename cl) which will conflict with this deployment - please remove it before trying another attempt"
+    echo "ERROR: There is a Content Library called $(basename $cl) which will conflict with this deployment - please remove it before trying another attempt"
     beforeTfError=1
   fi
   if [[ $(basename $cl) == "Easy-Avi-CL-SE-NoAccess" ]]
