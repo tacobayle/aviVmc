@@ -127,7 +127,6 @@ do
 done
 if [[ $beforeTfError == 1 ]]
 then
-  echo "toto"
   exit 1
 fi
 echo ""
