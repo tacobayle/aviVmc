@@ -7,7 +7,7 @@
     "public_ip": true,
     "EasyAviControllerExclusionList": "EasyAviControllerExclusionList",
     "EasyAviSeExclusionList": "EasyAviSeExclusionList",
-    "dfw_rules": true,
+    "dfw_rules": false,
     "nsxt_exclusion_list": true,
     "ubuntuJump": "/home/ubuntu/easyavi-ubuntu-bionic.ova",
     "ubuntuApp": "/home/ubuntu/easyavi-ubuntu-bionic.ova",

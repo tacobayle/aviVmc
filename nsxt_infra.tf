@@ -315,18 +315,18 @@ resource "null_resource" "cgw_vsDns_create" {
 //  }
 //}
 
-resource "null_resource" "cgw_outbound_management_create" {
-  provisioner "local-exec" {
-    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_management_outbound ${nsxt_policy_group.management.id} any any ALLOW public 0"
-  }
-}
-
-resource "null_resource" "cgw_outbound_backend_create" {
-  count = (var.no_access_vcenter.application == true ? 1 : 0)
-  provisioner "local-exec" {
-    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_backend_outbound ${nsxt_policy_group.backend[0].id} any any ALLOW public 0"
-  }
-}
+//resource "null_resource" "cgw_outbound_management_create" {
+//  provisioner "local-exec" {
+//    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_management_outbound ${nsxt_policy_group.management.id} any any ALLOW public 0"
+//  }
+//}
+//
+//resource "null_resource" "cgw_outbound_backend_create" {
+//  count = (var.no_access_vcenter.application == true ? 1 : 0)
+//  provisioner "local-exec" {
+//    command = "python3 python/pyVMC.py ${var.vmc_nsx_token} ${var.vmc_org_id} ${var.vmc_sddc_id} new-cgw-rule easyavi_backend_outbound ${nsxt_policy_group.backend[0].id} any any ALLOW public 0"
+//  }
+//}
 
 //resource "nsxt_policy_predefined_gateway_policy" "cgw_controller" {
 //  path = "/infra/domains/cgw/gateway-policies/default"
