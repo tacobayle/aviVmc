@@ -26,7 +26,7 @@
       "cpu": 8,
       "memory": 24768,
       "disk": 128,
-      "cluster": true,
+      "cluster": false,
       "wait_for_guest_net_timeout": 2,
       "environment": "VMWARE",
       "dns":  ["8.8.8.8", "8.8.4.4"],
@@ -35,8 +35,8 @@
       "se_in_provider_context": "false",
       "tenant_access_to_provider_se": "true",
       "tenant_vrf": "false",
-      "public_ip": true,
-      "floating_ip": true
+      "public_ip": false,
+      "floating_ip": false
     },
     "domains": [
       {
@@ -51,7 +51,7 @@
       "avi_ctrl_mgmt_ips": ["11", "12", "13"],
       "avi_ctrl_floating_ip": "10",
       "jump_ip": "14",
-      "dhcp": false,
+      "dhcp": true,
       "dns": "8.8.8.8, 8.8.4.4"
     },
     "network_vip": {
@@ -70,7 +70,7 @@
       "backend_ips": ["51", "52"],
       "dns": "8.8.8.8, 8.8.4.4",
       "defaultGateway": "10.1.2.1/24",
-      "dhcp": false
+      "dhcp": true
     },
   "network_fake": {
     "name": "avi-fake",
@@ -97,7 +97,7 @@
           "ips": [
             "100"
           ],
-        "dhcp": false
+        "dhcp": true
         },
         "data_networks": [
           {
@@ -107,7 +107,7 @@
             "ips": [
               "100"
             ],
-            "dhcp": false
+            "dhcp": true
           },
           {
             "name": "avi-fake",
@@ -116,7 +116,7 @@
             "ips": [
               "100"
             ],
-            "dhcp": false
+            "dhcp": true
           }
         ]
       }
