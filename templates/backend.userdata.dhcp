@@ -18,7 +18,7 @@ write_files:
       # sudo mv /var/www/html/index.html /var/www/html/index.html.old
       ifPrimary=`ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//"`
       ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
-      echo -e "Hello World - cloud is VMC - Node is $(hostname)" | sudo tee /var/www/html/index.html
+      echo -e "Hello World - cloud is VMC - Node is $(hostname) - IP is $ip" | sudo tee /var/www/html/index.html
       # sudo apt install -y docker.io
       # sudo usermod -a -G docker ${username}
       # git clone ${url_demovip_server}
