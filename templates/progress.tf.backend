@@ -8,7 +8,7 @@ resource "null_resource" "vm" {
 }
 
 resource "null_resource" "nsxt" {
-  depends_on = [nsxt_policy_nat_rule.dnat_jump, nsxt_policy_group.se, null_resource.se_exclusion_list, nsxt_policy_group.management, nsxt_policy_group.terraform, nsxt_policy_group.jump, null_resource.cgw_jump_create, null_resource.cgw_outbound_management_create, null_resource.cgw_outbound_backend_create, nsxt_policy_group.backend]
+  depends_on = [nsxt_policy_nat_rule.dnat_jump, nsxt_policy_group.se, null_resource.se_exclusion_list, nsxt_policy_group.management, nsxt_policy_group.terraform, nsxt_policy_group.jump, null_resource.cgw_jump_create, nsxt_policy_group.backend]
 }
 
 resource "null_resource" "avi_controller" {
