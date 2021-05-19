@@ -125,7 +125,7 @@ do
     beforeTfError=1
   fi
 done
-if [[ $beforeTfError == 1 ]]
+if [[ $beforeTfError -eq 1 ]]
 then
   exit 1
 fi
