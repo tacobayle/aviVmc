@@ -40,8 +40,6 @@ write_files:
       # git clone ${url_demovip_server}
       # cd $(basename ${url_demovip_server})
       # docker build . --tag demovip_server:latest
-      ifPrimary=`ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//"`
-      ip=$(ip -f inet addr show $ifPrimary | awk '/inet / {print $2}' | awk -F/ '{print $1}')
       docker run -d -p $ip:8080:80 demovip_server:latest
       echo "cloud init done" | tee /tmp/cloudInitDone.log
     path: /opt/bootstrap.sh
