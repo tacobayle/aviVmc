@@ -28,7 +28,9 @@ write_files:
       echo "            nameservers:" | sudo tee -a ${netplanFile}
       echo "              addresses: [${dns}]" | sudo tee -a ${netplanFile}
       echo "    version: 2" | sudo tee -a ${netplanFile}
-      sudo netplan apply      # apt config
+      sudo netplan apply
+      sleep 5
+      # apt config
       # sudo apt update
       # sudo apt install -y apache2
       # sudo mv /var/www/html/index.html /var/www/html/index.html.old
