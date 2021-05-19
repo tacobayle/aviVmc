@@ -4,7 +4,7 @@
     "environment": "vmc",
     "dhcp_enabled": true,
     "application": true,
-    "public_ip": true,
+    "public_ip": false,
     "EasyAviControllerExclusionList": "EasyAviControllerExclusionList",
     "EasyAviSeExclusionList": "EasyAviSeExclusionList",
     "dfw_rules": false,
