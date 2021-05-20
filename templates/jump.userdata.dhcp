@@ -32,7 +32,8 @@ write_files:
       # sudo gunzip govc_linux_amd64.gz
       # sudo mv govc_linux_amd64 govc
       # sudo chmod +x govc
-      # echo "cloud init done" | tee /tmp/cloudInitDone.log
+      echo "${vCenterIp} ${vCenterFqdn}" | sudo tee -a /etc/hosts
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
     path: /opt/bootstrap.sh
     permissions: 0755
 
