@@ -95,7 +95,7 @@ ubuntu@nic-jump-sofia:~/aviVmc$
 ## Run the terraform:
 - build:
 ```
-cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; /bin/bash ./beforeTf.sh ; terraform init ; terraform apply -var-file=sddc.json -var-file=ip.json -var-file=data.json -var-file=EasyAviLocation.json -auto-approve
+cd ~ ; git clone https://github.com/tacobayle/aviVmc ; cd aviVmc ; python3 python/getSDDCDetails.py ; /bin/bash ./beforeTf.sh ; terraform init ; terraform apply -var-file=sddc.json -var-file=ip.json -var-file=data.json -var-file=EasyAviLocation.json -var-file=vCenterIp.json -auto-approve
 ```
 - destroy:
 ```
